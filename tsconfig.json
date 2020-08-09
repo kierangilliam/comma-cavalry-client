@@ -1,0 +1,30 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "include": [
+        "src/**/*"
+    ],
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@gql": [
+                "./src/lib/gql"
+            ],
+            "@components": [
+                "./src/components/index.ts"
+            ],
+            "@types": [
+                "./src/types/index.ts"
+            ],
+            "@lib/*": [
+                "./src/lib/*"
+            ],
+            "@templates": [
+                "./src/components/templates/index.ts"
+            ],
+        },
+    },
+    "exclude": [
+        "node_modules/*",
+        "dist/*"
+    ],
+}
