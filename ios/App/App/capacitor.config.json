@@ -1,0 +1,16 @@
+{
+  "appId": "com.kierangill.commacavalry",
+  "appName": "comma-cavalry",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "dist",
+  "plugins": {
+    "Keyboard": {
+      "resize": "none"
+    },
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
