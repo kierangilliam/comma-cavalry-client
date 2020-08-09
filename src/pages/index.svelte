@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import { url } from '@sveltech/routify'
     import { getImages } from '@gql'
 
     const imageNames = getImages()
@@ -10,6 +11,9 @@
 {#await imageNames}
     Loading...
 {:then names}
+    <div style='padding-top: 200px;'>
+        <a  href={$url('/labeler')}>Labeler</a>
+    </div>
     {#each names.splice(0, 10) as name}
         <img src={getImage(name)} alt={name}>
     {/each}
