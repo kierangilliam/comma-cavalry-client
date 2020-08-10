@@ -23,14 +23,6 @@
             max='1' 
             step='.1' 
         />
-
-        <label>Draw</label>
-        <input 
-            type="checkbox" 
-            on:change={({ srcElement: { checked } }) => { 
-                $brush = { ...$brush, mode: checked ? 'draw' : 'move' } 
-            }}
-        >
     </div>
 </div>
 
