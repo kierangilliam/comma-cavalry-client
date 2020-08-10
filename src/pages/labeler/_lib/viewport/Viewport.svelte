@@ -87,14 +87,15 @@
 
     interface GestureEvent {
         detail: { 
-            e: TouchEvent, 
-            eStart?: TouchEvent, 
+
+            x?: number, 
+            y?: number, 
             scale?: number, 
             delta?: Point, 
         }
     }
 
-    const startNewPath = ({ detail: { e } }: GestureEvent) => {
+    const startNewPath = ({ detail: { x, y } }: GestureEvent) => {
         if ($toolMode !== 'brush') {
             return
         }
@@ -104,37 +105,23 @@
         const path: Path = {
             type: $brushType,
             size: $brushSize,
-            points: [pointFromEvent(e)],
+            points: [{ x, y }],
         }
 
         $paths = [...$paths, path]
     }
 
-    const addPointToLastPath = ({ detail: { e } }: GestureEvent) => {
+    const addPointToLastPath = ({ detail: { x, y } }: GestureEvent) => {
         const lastPath = $paths.pop()
         
         if (lastPath) {
             console.debug('add point to last path')
-            lastPath.points.push(pointFromEvent(e))
+            lastPath.points.push({ x, y })
             $paths = [...$paths, lastPath]
         }
     }
 
-    const pointFromEvent = (e: TouchEvent) => {
-        const rect = canvas.getBoundingClientRect()
-        const { clientX, clientY } = e.touches[0]
-
-        return {
-            x: (clientX - rect.left) / $zoom,
-            y: (clientY - rect.top) / $zoom,
-        }
-    }
-
-    const onEnd = ({ detail: { e }}: GestureEvent) => {
-        if (e.touches.length !== 0) {
-            return
-        }
-        
+    const onEnd = () => {
         // Remove paths with 1 point
         console.debug('end')
         $paths = $paths.filter(({ points }) => points.length > 1)
@@ -176,8 +163,8 @@
 {#if canvas}
     <GestureEmitter 
         {canvas} 
-        on:singlestart={startNewPath}
-        on:singlemove={addPointToLastPath}
+        on:panstart={startNewPath}
+        on:panmove={addPointToLastPath}
         on:end={onEnd}
         on:doubletap={undo}
         on:pinchstart={setMode('move')} 

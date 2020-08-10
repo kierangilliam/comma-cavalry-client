@@ -3,6 +3,7 @@
 <script lang='ts'>
     import { createEventDispatcher } from 'svelte'
     import Hammer from 'hammerjs'
+    import { zoom } from '../state'
 
     export let canvas: HTMLCanvasElement
 
@@ -31,28 +32,31 @@
         dispatch('doubletap')
     })
 
-    canvas.addEventListener('touchstart', (e: TouchEvent) => {        
-        if (e.touches.length === 1) {
-            dispatch('singlestart', { e })
-        }
+    gestures.get('pan').set({ direction: Hammer.DIRECTION_ALL})
 
-        lastTouchEvent = e
-    }, false)
-
-    canvas.addEventListener('touchmove', (e: TouchEvent) => {
-        if (
-            e.touches.length === 1
-            // Not a pinch event
-            // Prevents firing an event after pinching and one finger leaves the screen
-            && (!lastTouchEvent || lastTouchEvent.touches.length <= 1)
-        ) {
-            console.log('single move')
-            dispatch('singlemove', { e })
-        }
+    gestures.on('panstart', (e) => {
+        console.log('pan start', e)
+        dispatch('panstart', { ...pointFromEvent(e) })
+    })
+    
+    gestures.on('panmove', (e) => {
+        console.log('pan move', e)
+        dispatch('panmove', { ...pointFromEvent(e) }) 
     })
 
-    canvas.addEventListener('touchend', (e: TouchEvent) => {
-        dispatch('end', { e })
+    gestures.on('panend pinchend pancancel pinchcancel', () => {
+        console.log('END')
+        dispatch('end')
     })
+
+    function pointFromEvent(e: HammerInput) {
+        const rect = canvas.getBoundingClientRect()        
+        const { x, y } = e.center
+
+        return {
+            x: (x - rect.left) / $zoom,
+            y: (y - rect.top) / $zoom,
+        }
+    }
 </script>
 
