@@ -80,7 +80,7 @@
     }
 
     const setMode = (mode: 'brush' | 'move' | 'fill') => 
-        (_) => {
+        (_?) => {
         console.debug('Set mode', mode)
         $toolMode = mode
     }
@@ -111,12 +111,13 @@
     }
 
     const addPointToLastPath = ({ detail: { e } }: GestureEvent) => {
-        console.debug('add point to last path')
-
         const lastPath = $paths.pop()
-
-        lastPath.points.push(pointFromEvent(e))
-        $paths = [...$paths, lastPath]
+        
+        if (lastPath) {
+            console.debug('add point to last path')
+            lastPath.points.push(pointFromEvent(e))
+            $paths = [...$paths, lastPath]
+        }
     }
 
     const pointFromEvent = (e: TouchEvent) => {
@@ -164,7 +165,7 @@
         const onPinchEnd = () => {
             lastScale = 1
             lastDelta = { x: 0, y: 0 }
-            setMode('brush')
+            setMode('brush')()
         }
 
         return { onPinchEnd, onPinch }
