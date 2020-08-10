@@ -38,18 +38,23 @@
             on:touchstart={() => { $positionLocked = true }}
             on:touchend={() => { $positionLocked = false }}
         >
-            <label for='brush-size'>Brush size</label>
+            <Flex justify='between'>
+                <label for='brush-size'>Brush size</label>
+                <strong>{$brushSize}</strong>
+            </Flex>
             <input 
                 for='brush-size'
                 type='range' 
-                value={$brushSize}
-                on:input={(e) => { console.log(e) }}
+                bind:value={$brushSize}
                 min='1' 
                 max='20' 
                 step='1' 
             />
 
-            <label for='overlay-opacity'>Overlay Opacity</label>
+            <Flex justify='between'>
+                <label for='overlay-opacity'>Overlay Opacity</label>
+                <strong>{$overlayOpacity}</strong>
+            </Flex>
             <input 
                 id='overlay-opacity'
                 type='range' 

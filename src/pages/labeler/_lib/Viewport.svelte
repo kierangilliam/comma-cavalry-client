@@ -6,7 +6,8 @@
         paths, 
         toolMode, 
         brushType, 
-        brushSize 
+        overlayOpacity,
+        brushSize, 
     } from './state'
     import type { Path } from './state'
     import { getColor } from './utils'
@@ -119,8 +120,10 @@
         }
     }
 
-    const undo = () => {
+    const doubleTapUndo = () => {
         console.debug('Undo')
+        // Pop two paths: the first tap of the double tap
+        // then the path before double tap sequence began
         $paths.pop()
         $paths.pop()
         // Trigger state update
@@ -151,7 +154,7 @@
         on:singlemove={addPointToLastPath}
         on:doublemove={pan}
         on:end={setMode('brush')}
-        on:doubletap={undo}
+        on:doubletap={doubleTapUndo}
     />
 {/if}
 
@@ -162,7 +165,10 @@
             src={imageSrc} 
             alt='Source'
         >
-        <canvas bind:this={canvas} />
+        <canvas 
+            style='opacity: {$overlayOpacity};'
+            bind:this={canvas} 
+        />
     </div>
 </div>
 
@@ -185,9 +191,5 @@
         position: absolute;
         top: 0;
         left: 0;
-    }
-
-    canvas {
-        opacity: .5;
     }
 </style>
