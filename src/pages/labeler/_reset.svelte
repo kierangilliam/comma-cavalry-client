@@ -4,6 +4,6 @@
 
 <style>
     div {
-        /* overflow: hidden; */
+        overflow: hidden;
     }
 </style>
