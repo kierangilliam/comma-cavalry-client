@@ -28,7 +28,7 @@ export type ClassType =
 export const paths = writable<Path[]>([])
 
 export const brush = writable<BrushSettings>({
-    mode: 'move',
+    mode: 'draw',
     size: 10,
     type: 'road',
 })
