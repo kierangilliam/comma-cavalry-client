@@ -1,14 +1,14 @@
 <script lang='ts'>
     import type { ClassType } from './state'
-    import { brush } from './state'
+    import { tool } from './state'
     import { getColor, COLORS } from './utils'
 
     export let showLabels: boolean = false
 
-    const updateBrush = (type: string) => 
+    const updateTool = (type: string) => 
         (_: Event) => {
             console.log('Changed to brush', type)
-            $brush = { ...$brush, type: type as ClassType }
+            $tool = { ...$tool, type: type as ClassType }
         }
 </script>
             
@@ -16,7 +16,7 @@
     {#each Object.entries(COLORS) as [id, color]}
         <div 
             class='item'
-            on:click={updateBrush(id)}
+            on:click={updateTool(id)}
         >
             <div 
                 class='bubble' 

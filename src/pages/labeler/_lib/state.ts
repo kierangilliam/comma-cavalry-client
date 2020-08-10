@@ -5,8 +5,8 @@ interface ViewportSettings {
     zoom: number
 }
 
-interface BrushSettings {
-    mode: 'fill' | 'draw' | 'move'
+interface ToolSettings {
+    mode: 'fill' | 'brush' | 'move'
     size: number
     type: ClassType
 }
@@ -27,8 +27,8 @@ export type ClassType =
 
 export const paths = writable<Path[]>([])
 
-export const brush = writable<BrushSettings>({
-    mode: 'draw',
+export const tool = writable<ToolSettings>({
+    mode: 'brush',
     size: 10,
     type: 'road',
 })

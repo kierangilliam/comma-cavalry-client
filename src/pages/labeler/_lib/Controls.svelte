@@ -1,5 +1,5 @@
 <script>
-    import { viewport, brush } from './state'
+    import { viewport, tool } from './state'
 	import ColorSelector from './ColorSelector.svelte'
 </script>
 
@@ -9,7 +9,7 @@
         <label>Brush size</label>
         <input 
             type='range' 
-            bind:value={$brush.size}
+            bind:value={$tool.size}
             min='1' 
             max='20' 
             step='1' 

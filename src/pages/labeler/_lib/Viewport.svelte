@@ -1,7 +1,7 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <script lang='ts'>
-    import { viewport, paths, brush } from './state'
+    import { viewport, paths, tool } from './state'
     import type { Path } from './state'
     import { getColor } from './utils'
     import { onMount } from 'svelte'
@@ -65,10 +65,10 @@
         mask.onerror = () => mask = null
     }
 
-    const setMode = (mode: 'draw' | 'move' | 'fill') => 
+    const setMode = (mode: 'brush' | 'move' | 'fill') => 
         (_) => {
         // console.debug('Set mode', mode)
-        $brush = { ...$brush, mode }
+        $tool = { ...$tool, mode }
     }
 
     interface GestureEvent {
@@ -79,15 +79,15 @@
     }
 
     const startNewPath = ({ detail: { e } }: GestureEvent) => {
-        if ($brush.mode !== 'draw') {
+        if ($tool.mode !== 'brush') {
             return
         }
 
         console.debug('Start new path')
 
         const path: Path = {
-            type: $brush.type,
-            size: $brush.size,
+            type: $tool.type,
+            size: $tool.size,
             points: [pointFromEvent(e)],
         }
 
@@ -144,12 +144,12 @@
         on:doublestart={setMode('move')}
         on:singlemove={addPointToLastPath}
         on:doublemove={pan}
-        on:end={setMode('draw')}
+        on:end={setMode('brush')}
         on:doubletap={undo}
     />
 {/if}
 
-<div class='outer' class:scrollable={$brush.mode === 'move'}>
+<div class='outer' class:scrollable={$tool.mode === 'move'}>
     <div class='inner'>
         <img 
             bind:this={image}
