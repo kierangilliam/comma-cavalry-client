@@ -71,4 +71,8 @@
         -ms-user-select: auto !important;
         user-select: auto !important;
     }
+
+    :global(label) {
+        font-weight: lighter;
+    }
 </style>
