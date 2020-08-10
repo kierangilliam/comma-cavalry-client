@@ -28,7 +28,6 @@
     canvas.addEventListener('touchstart', (e: TouchEvent) => {
         const now = Date.now()
 
-        // TODO Should account for a tap distance to be smaller than 25ish px
         if (withinDoubleTapThreshold(e, now)) {
             dispatch('doubletap')
             lastTouchTime = 0
