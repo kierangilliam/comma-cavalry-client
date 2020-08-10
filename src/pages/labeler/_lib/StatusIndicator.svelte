@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { toolMode, brushType } from './state'
+    import { toolMode, brushType, paths } from './state'
 </script>
 
 <div>
-    {$brushType} • {$toolMode}
+    {$brushType} • {$toolMode} • {$paths.length}
 </div>
 
 <style>
