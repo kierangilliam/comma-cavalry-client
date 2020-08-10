@@ -2,6 +2,7 @@
     import { overlayOpacity, brushSize } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
+    import { undo } from '../utils'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
     import { getContext } from 'svelte'
 
@@ -30,7 +31,10 @@
 
     <Flex justify='between' stretch>
         <Flex column justify='between'>
-            <Button stretch>undo</Button>
+            <Flex column>
+                <Button on:click={undo} stretch>undo</Button>
+                <label>Or, double tap to undo</label>
+            </Flex>
             <Button stretch warn>clear all</Button>
         </Flex>
 

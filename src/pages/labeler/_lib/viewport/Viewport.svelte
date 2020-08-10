@@ -8,7 +8,7 @@
         brushSize, 
     } from '../state'
     import type { Path, Point } from '../state'
-    import { getColor } from '../utils'
+    import { getColor, undo } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
 
@@ -128,13 +128,6 @@
             x: (clientX - rect.left) / $zoom,
             y: (clientY - rect.top) / $zoom,
         }
-    }
-
-    const undo = () => {
-        console.debug('Undo')
-        $paths.pop()
-        // Trigger state update
-        $paths = $paths 
     }
 
     const onEnd = () => {

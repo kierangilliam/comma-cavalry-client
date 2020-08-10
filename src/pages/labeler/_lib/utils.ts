@@ -1,4 +1,5 @@
-import type { ClassType } from './state'
+import { get } from 'svelte/store'
+import { ClassType, paths } from './state'
 
 export const COLORS: Record<ClassType, string> = {
     empty: '#fff',
@@ -11,4 +12,12 @@ export const COLORS: Record<ClassType, string> = {
 
 export const getColor = (type: ClassType): string => {
     return COLORS[type]
+}
+
+export const undo = () => {
+    console.debug('Undo')
+    const _paths = get(paths)
+
+    _paths.pop()
+    paths.set(_paths)
 }
