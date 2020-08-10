@@ -130,14 +130,17 @@
         }
     }
 
-    const doubleTapUndo = () => {
+    const undo = () => {
         console.debug('Undo')
-        // Pop two paths: the first tap of the double tap
-        // then the path before double tap sequence began
-        $paths.pop()
         $paths.pop()
         // Trigger state update
         $paths = $paths 
+    }
+
+    const onEnd = () => {
+        // Remove paths with 1 point
+        $paths = $paths.filter(({ points }) => points.length > 1)
+        setMode('brush')()
     }
 
     const { onPinch, onPinchEnd } = (() => {
@@ -177,8 +180,8 @@
         {canvas} 
         on:singlestart={startNewPath}
         on:singlemove={addPointToLastPath}
-        on:end={setMode('brush')}
-        on:doubletap={doubleTapUndo}
+        on:end={onEnd}
+        on:doubletap={undo}
         on:pinchstart={setMode('move')} 
         on:pinch={onPinch}
         on:pinchend={onPinchEnd}

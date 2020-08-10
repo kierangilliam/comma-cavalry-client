@@ -28,6 +28,8 @@
     canvas.addEventListener('touchstart', (e: TouchEvent) => {
         const now = Date.now()
 
+        console.log(e)
+
         if (withinDoubleTapThreshold(e, now)) {
             dispatch('doubletap')
             lastTouchTime = 0
@@ -41,7 +43,7 @@
 
         lastTouchTime = now
         lastTouchEvent = e
-    })
+    }, false)
 
     canvas.addEventListener('touchmove', (e: TouchEvent) => {
         const details = { e }
@@ -52,17 +54,23 @@
     })
 
     canvas.addEventListener('touchend', (e: TouchEvent) => {
-        dispatch('touchend')
+        dispatch('end')
     })
 
-    function withinDoubleTapThreshold(event: TouchEvent, now: number) {        
+    function withinDoubleTapThreshold(event: TouchEvent, now: number): boolean {        
+        if (!lastTouchEvent || event.touches.length !== 1) {
+            return false
+        }
+
+        const cx = (e: TouchEvent) => e.touches.item(0).clientX
+        const cy = (e: TouchEvent) => e.touches.item(0).clientY
         const withinTimeThreshold = Math.abs(now - lastTouchTime) <= DOUBLE_TAP_THRESHOLD_MS
-        const cx = (e?: TouchEvent) => e?.touches[0]?.clientX
-        const cy = (e?: TouchEvent) => e?.touches[0]?.clientY
+        const withinXThreshold = Math.abs(cx(lastTouchEvent) - cx(event)) <= DOUBLE_TAP_THRESHOLD_DIST
+        const withinYThreshold = Math.abs(cy(lastTouchEvent) - cy(event)) <= DOUBLE_TAP_THRESHOLD_DIST
 
         return withinTimeThreshold
-            && Math.abs(cx(lastTouchEvent) - cx(event)) <= DOUBLE_TAP_THRESHOLD_DIST
-            && Math.abs(cy(lastTouchEvent) - cy(event)) <= DOUBLE_TAP_THRESHOLD_DIST
+            && withinXThreshold
+            && withinYThreshold
     }
 </script>
 
