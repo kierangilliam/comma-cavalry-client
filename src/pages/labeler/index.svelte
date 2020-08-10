@@ -1,5 +1,6 @@
 <script lang='ts'>
     import { getImages } from '@gql'
+    import { BottomSheet } from '@lib/components'
     import Viewport from './_lib/Viewport.svelte'
     import Controls from './_lib/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
@@ -15,7 +16,9 @@
 {:then names}
     <Viewport imageSrc={getImage(names[0])} />
     <StatusIndicator />
-    <Controls />
+    <BottomSheet>
+        <Controls />
+    </BottomSheet>
 {:catch error}
     Error { error }
 {/await}
