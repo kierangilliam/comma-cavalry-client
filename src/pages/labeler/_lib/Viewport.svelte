@@ -5,6 +5,7 @@
     import type { Path } from './state'
     import { getColor } from './utils'
     import { onMount } from 'svelte'
+    import GestureEmitter from './GestureEmitter.svelte'
 
     export let imageSrc: string 
     export let maskSrc: string = null
@@ -39,18 +40,14 @@
         }
 
         $paths.forEach(({ points, size, type }) => {
-            const color = getColor(type)
-
-            console.log('color:', color)
-
             ctx.beginPath()
             ctx.moveTo(points[0].x, points[0].y)
 
             points.forEach(({ x, y }) => ctx.lineTo(x, y))
 
             ctx.lineWidth = size
-            ctx.strokeStyle = color
-            ctx.fillStyle = color
+            ctx.strokeStyle = getColor(type)
+            ctx.fillStyle = getColor(type)
             ctx.stroke()
             ctx.fill()
         })
@@ -68,44 +65,41 @@
         mask.onerror = () => mask = null
     }
 
-    const handleTouchStart = (e: TouchEvent) => {
-        if ($brush.mode === 'draw') {
-            return startNewPath(e)
+    const setMode = (mode: 'draw' | 'move' | 'fill') => 
+        (_) => {
+        // console.debug('Set mode', mode)
+        $brush = { ...$brush, mode }
+    }
+
+    interface GestureEvent {
+        detail: { 
+            e: TouchEvent, 
+            eStart: TouchEvent, 
         }
     }
 
-    const handleTouchMove = (e: TouchEvent) => {
-        if (
-            $brush.mode === 'draw'
-            && e.touches.length === 1
-        ) {
-            return addPointToLastPath(e)
+    const startNewPath = ({ detail: { e } }: GestureEvent) => {
+        if ($brush.mode !== 'draw') {
+            return
         }
 
-        // TODO Delete last path if touches > 1?
-        // Pan
-        console.log('pan')
-    }
+        console.debug('Start new path')
 
-    const startNewPath = (e: TouchEvent) => {
-        const { type, size } = $brush
-        
         const path: Path = {
-            type,
-            size,
-            points: [pointFromEvent(e)]
+            type: $brush.type,
+            size: $brush.size,
+            points: [pointFromEvent(e)],
         }
-
-        console.log('start new path', type)
 
         $paths = [...$paths, path]
     }
 
-    const addPointToLastPath = (e: TouchEvent) => {
+    const addPointToLastPath = ({ detail: { e } }: GestureEvent) => {
+        console.debug('add point to last path')
+
         const lastPath = $paths.pop()
 
         lastPath.points.push(pointFromEvent(e))
-
         $paths = [...$paths, lastPath]
     }
 
@@ -118,7 +112,42 @@
             y: (clientY - rect.top) / $viewport.zoom,
         }
     }
+
+    const undo = () => {
+        console.debug('Undo')
+        $paths.pop()
+        $paths.pop()
+        // Trigger state update
+        $paths = $paths 
+    }
+
+    const pan = ({ detail: { e, eStart }}: GestureEvent) => {
+        // if (
+        //     e.touches.length < 2
+        //     // eStart.touches.length < 2
+        // ) {
+        //     throw Error('Cannot pan with only one finger')
+        // }
+
+        // const { clientX, clientY } = eStart.touches[1]
+        // const deltaX = e.changedTouches[0].clientX - clientX
+        // const deltaY = e.changedTouches[0].clientY - clientY
+
+        // console.log(deltaX, deltaY)
+    }
 </script>
+
+{#if canvas}
+    <GestureEmitter 
+        {canvas} 
+        on:singlestart={startNewPath}
+        on:doublestart={setMode('move')}
+        on:singlemove={addPointToLastPath}
+        on:doublemove={pan}
+        on:end={setMode('draw')}
+        on:doubletap={undo}
+    />
+{/if}
 
 <div class='outer' class:scrollable={$brush.mode === 'move'}>
     <div class='inner'>
@@ -127,11 +156,7 @@
             src={imageSrc} 
             alt='Source'
         >
-        <canvas 
-            bind:this={canvas} 
-            on:touchstart={handleTouchStart}
-            on:touchmove={handleTouchMove}
-        />
+        <canvas bind:this={canvas} />
     </div>
 </div>
 
