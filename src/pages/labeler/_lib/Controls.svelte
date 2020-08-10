@@ -8,8 +8,9 @@
 <div class='sheet'>
     <ColorSelector showLabels={true} />
     <div>
-        <label>Brush size</label>
+        <label for='brush-size'>Brush size</label>
         <input 
+            for='brush-size'
             type='range' 
             bind:value={$tool.brushSize}
             min='1' 
@@ -17,8 +18,9 @@
             step='1' 
         />
 
-        <label>Overlay Opacity</label>
+        <label for='overlay-opacity'>Overlay Opacity</label>
         <input 
+            id='overlay-opacity'
             type='range' 
             bind:value={$viewport.overlayOpacity}
             min='0' 

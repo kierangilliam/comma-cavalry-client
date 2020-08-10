@@ -25,7 +25,7 @@
             ></div>
 
             {#if showLabels}
-                <label>
+                <label for=''>
                     {id === 'lane markings' ? 'lanes' : id }
                 </label>
             {/if}
