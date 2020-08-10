@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { overlayOpacity, brushSize } from './state'
+    import { overlayOpacity, brushSize } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    

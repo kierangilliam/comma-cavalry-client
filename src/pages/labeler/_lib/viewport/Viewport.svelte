@@ -8,9 +8,9 @@
         brushType, 
         overlayOpacity,
         brushSize, 
-    } from './state'
-    import type { Path } from './state'
-    import { getColor } from './utils'
+    } from '../state'
+    import type { Path } from '../state'
+    import { getColor } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
 
@@ -81,7 +81,8 @@
     interface GestureEvent {
         detail: { 
             e: TouchEvent, 
-            eStart: TouchEvent, 
+            eStart?: TouchEvent, 
+            scale?: number, 
         }
     }
 
@@ -130,6 +131,15 @@
         $paths = $paths 
     }
 
+    const handleZoom = () => {
+        let lastScale = $zoom
+
+        return ({ detail: { scale }}: GestureEvent) => {
+            $zoom = $zoom - (lastScale - scale) // $zoom + (1 - scale * .1 /* dampen */)
+            lastScale = scale
+        }
+    }
+
     const pan = ({ detail: { e, eStart }}: GestureEvent) => {
         // if (
         //     e.touches.length < 2
@@ -155,7 +165,11 @@
         on:doublemove={pan}
         on:end={setMode('brush')}
         on:doubletap={doubleTapUndo}
+        on:pinchstart={setMode('')} 
+        on:pinch={handleZoom()}
+        on:pinchend={setMode('brush')}
     />
+    <!-- TODO Set mode locked, 'last' -->
 {/if}
 
 <div class='outer' class:scrollable={$toolMode === 'move'}>
@@ -163,10 +177,11 @@
         <img 
             bind:this={image}
             src={imageSrc} 
+            style='transform: scale({$zoom})'
             alt='Source'
         >
         <canvas 
-            style='opacity: {$overlayOpacity};'
+            style='opacity: {$overlayOpacity}; transform: scale({$zoom})'
             bind:this={canvas} 
         />
     </div>

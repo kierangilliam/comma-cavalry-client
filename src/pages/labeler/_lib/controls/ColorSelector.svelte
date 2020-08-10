@@ -1,7 +1,7 @@
 <script lang='ts'>
-    import type { ClassType } from './state'
-    import { brushType } from './state'
-    import { COLORS } from './utils'
+    import type { ClassType } from '../state'
+    import { brushType } from '../state'
+    import { COLORS } from '../utils'
 
     export let showLabels: boolean = false
 

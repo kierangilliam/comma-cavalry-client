@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { getImages } from '@gql'
     import { BottomSheet } from '@lib/components'
-    import Viewport from './_lib/Viewport.svelte'
-    import Controls from './_lib/Controls.svelte'
+    import Viewport from './_lib/viewport/Viewport.svelte'
+    import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
 
     const imageNames = getImages()
