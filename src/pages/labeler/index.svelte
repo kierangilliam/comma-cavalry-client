@@ -2,6 +2,7 @@
     import { getImages } from '@gql'
     import Viewport from './_lib/Viewport.svelte'
     import Controls from './_lib/Controls.svelte'
+    import StatusIndicator from './_lib/StatusIndicator.svelte'
 
     const imageNames = getImages()
 
@@ -13,7 +14,7 @@
     Loading...
 {:then names}
     <Viewport imageSrc={getImage(names[0])} />
-
+    <StatusIndicator />
     <Controls />
 {:catch error}
     Error { error }
