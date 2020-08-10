@@ -1,7 +1,9 @@
 <script lang='ts'>
     import { viewport, tool } from './state'
-	import ColorSelector from './ColorSelector.svelte'
+    import ColorSelector from './ColorSelector.svelte'
+    import { H1, H2 } from '@ollopa/cedar'
 </script>
+
 
 <div class='sheet'>
     <ColorSelector showLabels={true} />
@@ -32,8 +34,11 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        width: 100%;
-        background: white;
+        right: 0;
+        background: var(--background);
+        border-radius: var(--borderRadius) var(--borderRadius) 0 0;
         height: 200px;
+        margin: 0 4px;
+        padding: var(--viewPadding);
     }
 </style>

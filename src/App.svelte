@@ -1,6 +1,7 @@
 <script lang='ts'>
     import { Router } from '@sveltech/routify'
     import { routes } from '../.routify/routes'
+    import { Theme } from '@lib/components'
 </script>
 
 <style>
@@ -13,4 +14,6 @@
     @import '../static/global.css';
 </style> -->
 
-<Router {routes} />
+<Theme>
+    <Router {routes} />
+</Theme>

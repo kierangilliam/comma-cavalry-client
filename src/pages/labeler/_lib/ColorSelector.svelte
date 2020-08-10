@@ -24,7 +24,7 @@
             ></div>
 
             {#if showLabels}
-                {id}
+                {id === 'lane markings' ? 'lanes' : id }
             {/if}
         </div>
     {/each}
@@ -33,6 +33,7 @@
 <style>
     .row {
         display: flex;
+        justify-content: space-evenly;
     }
 
     .item {
