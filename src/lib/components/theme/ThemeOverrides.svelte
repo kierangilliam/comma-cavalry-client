@@ -6,15 +6,18 @@
         --primary: #558DE0;
         --white: #F7F7F7;
         --lightGray: #D9D7E0;
-        --warn: #EC7A73;
+        --red: #EC7A73;
+        --danger: var(--red);
 
         --background: var(--black);
         --textColor: var(--white);
-        --buttonTextColor: var(--white);
+        --buttonColor: var(--white);
+        --buttonTextColor: var(--background);
+        --buttonWarnTextColor: var(--white);
         --lineColor: var(--white);
 
         --borderRadius: 12px;
-        --borderRadiusFull: 999px;
+        --buttonBorderRadius: var(--borderRadiusFull);
 
         --bodyFont: "Avenir";
         --headingFont: "Avenir";
