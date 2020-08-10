@@ -1,8 +1,10 @@
 import { writable } from 'svelte/store'
 
+export type Point = { x: number, y: number }
+
 export interface Path {
     type: ClassType
-    points: { x: number, y: number }[]
+    points: Point[]
     size: number
 }
 
