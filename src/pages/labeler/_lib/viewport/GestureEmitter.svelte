@@ -46,15 +46,19 @@
     }, false)
 
     canvas.addEventListener('touchmove', (e: TouchEvent) => {
-        const details = { e }
-
-        if (e.touches.length === 1) {
-            dispatch('singlemove', details)
+        if (
+            e.touches.length === 1
+            // Not a pinch event
+            // Prevents firing an event after pinching and one finger leaves the screen
+            && (!lastTouchEvent || lastTouchEvent.touches.length <= 1)
+        ) {
+            console.log('single move')
+            dispatch('singlemove', { e })
         }
     })
 
     canvas.addEventListener('touchend', (e: TouchEvent) => {
-        dispatch('end')
+        dispatch('end', { e })
     })
 
     function withinDoubleTapThreshold(event: TouchEvent, now: number): boolean {        

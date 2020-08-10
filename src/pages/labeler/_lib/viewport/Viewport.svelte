@@ -130,8 +130,13 @@
         }
     }
 
-    const onEnd = () => {
+    const onEnd = ({ detail: { e }}: GestureEvent) => {
+        if (e.touches.length !== 0) {
+            return
+        }
+        
         // Remove paths with 1 point
+        console.debug('end')
         $paths = $paths.filter(({ points }) => points.length > 1)
         setMode('brush')()
     }
