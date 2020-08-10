@@ -1,14 +1,14 @@
 <script lang='ts'>
     import type { ClassType } from './state'
-    import { tool } from './state'
-    import { getColor, COLORS } from './utils'
+    import { brushType } from './state'
+    import { COLORS } from './utils'
 
     export let showLabels: boolean = false
 
     const updateTool = (type: string) => 
         (_: Event) => {
             console.log('Changed to brush', type)
-            $tool = { ...$tool, brushType: type as ClassType }
+            $brushType = (type as ClassType)
         }
 </script>
             
@@ -20,7 +20,7 @@
         >
             <div 
                 class='bubble' 
-                class:selected={$tool.brushType === id}
+                class:selected={$brushType === id}
                 style='background: {color}'
             ></div>
 

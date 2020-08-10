@@ -6,8 +6,12 @@
     import Hammer from 'hammerjs'
 
     const open = writable(false)
+    const positionLocked = writable(false)
 
-    setContext('open', { open })
+    setContext('bottomSheet', { 
+        open,
+        positionLocked,
+    })
     
     const top = tweened(0, {
 		duration: 400,
@@ -30,6 +34,10 @@
             .set({ direction: Hammer.DIRECTION_ALL })
 
         gestures.on('panup pandown', ({ velocityY, isFirst, center, deltaY }) => {
+            if ($positionLocked) {
+                return
+            }
+
             if (
                 velocityY > 0 && velocityY > velocityThreshold
                 || deltaY > deltaThreshold

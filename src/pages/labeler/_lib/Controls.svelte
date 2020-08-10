@@ -1,11 +1,11 @@
 <script lang='ts'>
-    import { viewport, tool } from './state'
+    import { overlayOpacity, brushSize } from './state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
     import { getContext } from 'svelte'
 
-    const { open } = getContext('open')
+    const { open, positionLocked } = getContext('bottomSheet')
 
     export let imageID = -1
 </script>
@@ -34,12 +34,16 @@
             <Button stretch warn>clear all</Button>
         </Flex>
 
-        <div>
+        <div
+            on:touchstart={() => { $positionLocked = true }}
+            on:touchend={() => { $positionLocked = false }}
+        >
             <label for='brush-size'>Brush size</label>
             <input 
                 for='brush-size'
                 type='range' 
-                bind:value={$tool.brushSize}
+                value={$brushSize}
+                on:input={(e) => { console.log(e) }}
                 min='1' 
                 max='20' 
                 step='1' 
@@ -49,7 +53,7 @@
             <input 
                 id='overlay-opacity'
                 type='range' 
-                bind:value={$viewport.overlayOpacity}
+                bind:value={$overlayOpacity}
                 min='0' 
                 max='1' 
                 step='.1' 

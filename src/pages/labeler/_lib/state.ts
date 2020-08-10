@@ -1,16 +1,5 @@
 import { writable } from 'svelte/store'
 
-interface ViewportSettings {
-    overlayOpacity: number
-    zoom: number
-}
-
-interface ToolSettings {
-    mode: 'fill' | 'brush' | 'move'
-    brushSize: number
-    brushType: ClassType
-}
-
 export interface Path {
     type: ClassType
     points: { x: number, y: number }[]
@@ -27,13 +16,12 @@ export type ClassType =
 
 export const paths = writable<Path[]>([])
 
-export const tool = writable<ToolSettings>({
-    mode: 'brush',
-    brushSize: 10,
-    brushType: 'road',
-})
+export const toolMode = writable<'fill' | 'brush' | 'move'>('brush')
 
-export const viewport = writable<ViewportSettings>({
-    zoom: 1,
-    overlayOpacity: .5,
-})
+export const brushSize = writable<number>(10)
+
+export const brushType = writable<ClassType>('road')
+
+export const zoom = writable<number>(1)
+
+export const overlayOpacity = writable<number>(.5)

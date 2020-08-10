@@ -1,7 +1,13 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 <script lang='ts'>
-    import { viewport, paths, tool } from './state'
+    import { 
+        zoom, 
+        paths, 
+        toolMode, 
+        brushType, 
+        brushSize 
+    } from './state'
     import type { Path } from './state'
     import { getColor } from './utils'
     import { onMount } from 'svelte'
@@ -67,8 +73,8 @@
 
     const setMode = (mode: 'brush' | 'move' | 'fill') => 
         (_) => {
-        // console.debug('Set mode', mode)
-        $tool = { ...$tool, mode }
+        console.debug('Set mode', mode)
+        $toolMode = mode
     }
 
     interface GestureEvent {
@@ -79,15 +85,15 @@
     }
 
     const startNewPath = ({ detail: { e } }: GestureEvent) => {
-        if ($tool.mode !== 'brush') {
+        if ($toolMode !== 'brush') {
             return
         }
 
         console.debug('Start new path')
 
         const path: Path = {
-            type: $tool.brushType,
-            size: $tool.brushSize,
+            type: $brushType,
+            size: $brushSize,
             points: [pointFromEvent(e)],
         }
 
@@ -108,8 +114,8 @@
         const { clientX, clientY } = e.touches[0]
 
         return {
-            x: (clientX - rect.left) / $viewport.zoom,
-            y: (clientY - rect.top) / $viewport.zoom,
+            x: (clientX - rect.left) / $zoom,
+            y: (clientY - rect.top) / $zoom,
         }
     }
 
@@ -149,7 +155,7 @@
     />
 {/if}
 
-<div class='outer' class:scrollable={$tool.mode === 'move'}>
+<div class='outer' class:scrollable={$toolMode === 'move'}>
     <div class='inner'>
         <img 
             bind:this={image}
