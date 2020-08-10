@@ -9,7 +9,7 @@
     const dispatch = createEventDispatcher()    
     const gestures = new Hammer(canvas)
     const DOUBLE_TAP_THRESHOLD_MS = 500
-    const DOUBLE_TAP_THRESHOLD_DIST = 25
+    const DOUBLE_TAP_THRESHOLD_DIST = 7.5
 
     let lastTouchTime = 0
     let lastTouchEvent: TouchEvent
