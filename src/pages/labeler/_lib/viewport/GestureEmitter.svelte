@@ -8,18 +8,20 @@
 
     const dispatch = createEventDispatcher()    
     const gestures = setupHammer()
-    const DOUBLE_CLICK_THRESHOLD = 500
+    const DOUBLE_TAP_THRESHOLD_MS = 500
+    const DOUBLE_TAP_THRESHOLD_DIST = 25
 
-    let lastTouch = 0
-    // let lastTouchEvent: TouchEvent
+    let lastTouchTime = 0
+    let lastTouchEvent: TouchEvent
 
     canvas.addEventListener('touchstart', (e: TouchEvent) => {
         const now = Date.now()
 
         // TODO Should account for a tap distance to be smaller than 25ish px
-        if (Math.abs(now - lastTouch) <= DOUBLE_CLICK_THRESHOLD) {
+        if (withinDoubleTapThreshold(e, now)) {
             dispatch('doubletap')
-            lastTouch = 0
+            lastTouchTime = 0
+            lastTouchEvent = null
             return
         }         
         
@@ -27,8 +29,8 @@
             dispatch('singlestart', { e })
         }
 
-        lastTouch = now
-        // lastTouchEvent = e
+        lastTouchTime = now
+        lastTouchEvent = e
     })
 
     canvas.addEventListener('touchmove', (e: TouchEvent) => {
@@ -56,6 +58,16 @@
                 delta: { x: deltaX, y: deltaY },
             })
         })
+    }
+
+    function withinDoubleTapThreshold(event: TouchEvent, now: number) {        
+        const withinTimeThreshold = Math.abs(now - lastTouchTime) <= DOUBLE_TAP_THRESHOLD_MS
+        const cx = (e?: TouchEvent) => e?.touches[0]?.clientX
+        const cy = (e?: TouchEvent) => e?.touches[0]?.clientY
+
+        return withinTimeThreshold
+            && Math.abs(cx(lastTouchEvent) - cx(event)) <= DOUBLE_TAP_THRESHOLD_DIST
+            && Math.abs(cy(lastTouchEvent) - cy(event)) <= DOUBLE_TAP_THRESHOLD_DIST
     }
 </script>
 
