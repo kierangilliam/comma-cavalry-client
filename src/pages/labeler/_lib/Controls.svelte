@@ -1,46 +1,59 @@
 <script lang='ts'>
     import { viewport, tool } from './state'
+    import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
-    import { H1, H2 } from '@ollopa/cedar'
+    import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
+    import { getContext } from 'svelte'
+
+    const { open } = getContext('open')
+
+    export let imageID = -1
 </script>
 
+<Fade visible={$open}>
+    <H3>Image {imageID}</H3>
+    <Spacer s={12} />
+</Fade>
 
-<div class='sheet'>
-    <ColorSelector showLabels={true} />
-    <div>
-        <label for='brush-size'>Brush size</label>
-        <input 
-            for='brush-size'
-            type='range' 
-            bind:value={$tool.brushSize}
-            min='1' 
-            max='20' 
-            step='1' 
-        />
+<ColorSelector showLabels={$open} />
 
-        <label for='overlay-opacity'>Overlay Opacity</label>
-        <input 
-            id='overlay-opacity'
-            type='range' 
-            bind:value={$viewport.overlayOpacity}
-            min='0' 
-            max='1' 
-            step='.1' 
-        />
-    </div>
-</div>
+<Fade visible={$open}>
+    <Spacer s={12} />
 
+    <Flex>
+        <Button outline warn stretch>exit</Button>
+        <Spacer s={12} />
+        <Button stretch>save</Button>
+    </Flex>
 
-<style>
-    .sheet {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--background);
-        border-radius: var(--borderRadius) var(--borderRadius) 0 0;
-        height: 200px;
-        margin: 0 4px;
-        padding: var(--viewPadding);
-    }
-</style>
+    <Spacer s={12} />
+
+    <Flex justify='between' stretch>
+        <Flex column justify='between'>
+            <Button stretch>undo</Button>
+            <Button stretch warn>clear all</Button>
+        </Flex>
+
+        <div>
+            <label for='brush-size'>Brush size</label>
+            <input 
+                for='brush-size'
+                type='range' 
+                bind:value={$tool.brushSize}
+                min='1' 
+                max='20' 
+                step='1' 
+            />
+
+            <label for='overlay-opacity'>Overlay Opacity</label>
+            <input 
+                id='overlay-opacity'
+                type='range' 
+                bind:value={$viewport.overlayOpacity}
+                min='0' 
+                max='1' 
+                step='.1' 
+            />
+        </div>
+    </Flex>
+</Fade>
