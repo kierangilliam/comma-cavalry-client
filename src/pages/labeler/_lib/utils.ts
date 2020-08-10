@@ -9,7 +9,6 @@ export const COLORS: Record<ClassType, string> = {
     movable: '#f00',
 }
 
-
 export const getColor = (type: ClassType): string => {
     return COLORS[type]
 }
