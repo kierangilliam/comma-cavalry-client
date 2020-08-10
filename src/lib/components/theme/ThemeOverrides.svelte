@@ -14,7 +14,7 @@
         --lineColor: var(--white);
 
         --borderRadius: 12px;
-        --borderRadiusPill: 999px;
+        --borderRadiusFull: 999px;
 
         --bodyFont: "Avenir";
         --headingFont: "Avenir";
