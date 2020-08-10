@@ -8,7 +8,7 @@
         brushSize, 
     } from '../state'
     import type { Path, Point } from '../state'
-    import { getColor, undo } from '../utils'
+    import { getColor, undo, setMode } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
 
@@ -79,15 +79,8 @@
         mask.onerror = () => mask = null
     }
 
-    const setMode = (mode: 'brush' | 'move' | 'fill') => 
-        (_?) => {
-        console.debug('Set mode', mode)
-        $toolMode = mode
-    }
-
     interface GestureEvent {
         detail: { 
-
             x?: number, 
             y?: number, 
             scale?: number, 
@@ -125,7 +118,7 @@
         // Remove paths with 1 point
         console.debug('end')
         $paths = $paths.filter(({ points }) => points.length > 1)
-        setMode('brush')()
+        setMode('last')
     }
 
     const { onPinch, onPinchEnd } = (() => {
@@ -153,7 +146,7 @@
         const onPinchEnd = () => {
             lastScale = 1
             lastDelta = { x: 0, y: 0 }
-            setMode('brush')()
+            setMode('last')
         }
 
         return { onPinchEnd, onPinch }
@@ -167,7 +160,7 @@
         on:panmove={addPointToLastPath}
         on:end={onEnd}
         on:doubletap={undo}
-        on:pinchstart={setMode('move')} 
+        on:pinchstart={() => setMode('move')} 
         on:pinch={onPinch}
         on:pinchend={onPinchEnd}
     />

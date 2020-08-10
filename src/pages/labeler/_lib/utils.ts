@@ -1,5 +1,5 @@
 import { get } from 'svelte/store'
-import { ClassType, paths } from './state'
+import { ClassType, paths, toolMode } from './state'
 
 export const COLORS: Record<ClassType, string> = {
     empty: '#fff',
@@ -21,3 +21,20 @@ export const undo = () => {
     _paths.pop()
     paths.set(_paths)
 }
+
+export const setMode = (() => {
+    let lastPaintTool: 'brush' | 'fill' = 'brush'
+
+    return (mode: 'brush' | 'move' | 'fill' | 'last') => {
+        const tmp = get(toolMode)
+        console.debug('Set mode', mode, 'last:', lastPaintTool)
+
+        mode === 'last'
+            ? toolMode.set(lastPaintTool)
+            : toolMode.set(mode)
+
+        lastPaintTool = tmp === 'brush' || tmp === 'fill'
+            ? tmp
+            : lastPaintTool
+    }
+})()
