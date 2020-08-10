@@ -25,9 +25,6 @@
         
         if (e.touches.length === 1) {
             dispatch('singlestart', { e })
-        } else {
-            console.log('doublestart')
-            dispatch('doublestart', { e })
         }
 
         lastTouch = now
@@ -39,14 +36,11 @@
 
         if (e.touches.length === 1) {
             dispatch('singlemove', details)
-        } else {
-            console.log('doublemove')
-            dispatch('doublemove', details)
-        } 
+        }
     })
 
     canvas.addEventListener('touchend', (e: TouchEvent) => {
-        dispatch('end')
+        dispatch('touchend')
     })
 
     function setupHammer() {
@@ -56,9 +50,11 @@
             .get('pinch')
             .set({ enable: true })
 
-        gestures.on('pinch pinchstart pinchend', ({ scale, type }) => {
-            console.log('pinch', type, scale)
-            dispatch(type, { scale })
+        gestures.on('pinch pinchstart pinchend', ({ scale, type, deltaX, deltaY }) => {
+            dispatch(type, { 
+                scale, 
+                delta: { x: deltaX, y: deltaY },
+            })
         })
     }
 </script>

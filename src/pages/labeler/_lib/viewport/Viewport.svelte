@@ -1,5 +1,3 @@
-<svelte:window bind:innerWidth bind:innerHeight />
-
 <script lang='ts'>
     import { 
         zoom, 
@@ -9,15 +7,18 @@
         overlayOpacity,
         brushSize, 
     } from '../state'
-    import type { Path } from '../state'
+    import type { Path, Point } from '../state'
     import { getColor } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
 
     export let imageSrc: string 
     export let maskSrc: string = null
+    
+    const WIDTH = 1164
+    const HEIGHT = 874
 
-    let innerWidth: number, innerHeight: number
+    let origin: Point = { x: -(WIDTH / 2), y: 0 }
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement
     let ctx: CanvasRenderingContext2D
@@ -25,12 +26,18 @@
 
     $: drawPaths($paths)
     $: setMask(maskSrc)
+    $: imageStyle = `
+        transform: scale(${$zoom});
+        top: ${origin.y}px;
+        left: ${origin.x}px;
+    `
+    $: canvasStyle = imageStyle + `opacity: ${$overlayOpacity};`
 
     onMount(() => {
         ctx = canvas.getContext('2d')
         drawPaths($paths)       
-        image.width = canvas.width = 1164
-        image.height = canvas.height = 874
+        image.width = canvas.width = WIDTH
+        image.height = canvas.height = HEIGHT
     })
 
     const drawPaths = (_) => {
@@ -83,6 +90,7 @@
             e: TouchEvent, 
             eStart?: TouchEvent, 
             scale?: number, 
+            delta?: Point, 
         }
     }
 
@@ -131,57 +139,62 @@
         $paths = $paths 
     }
 
-    const handleZoom = () => {
+    const { onPinch, onPinchEnd } = (() => {
+        const MIN_ZOOM = .3
+        const MAX_ZOOM = 3
         let lastScale = $zoom
+        let lastDelta: Point = { x: 0, y: 0 }
+        
+        const onPinch = ({ detail: { scale, delta }}: GestureEvent) => {
+            const newZoom = $zoom + (scale - lastScale) 
+            
+            $zoom = newZoom < MIN_ZOOM 
+                ? $zoom
+                : Math.min(MAX_ZOOM, newZoom)
 
-        return ({ detail: { scale }}: GestureEvent) => {
-            $zoom = $zoom - (lastScale - scale) // $zoom + (1 - scale * .1 /* dampen */)
+            origin = {
+                x: origin.x + delta.x - lastDelta.x,
+                y: origin.y + delta.y - lastDelta.y,
+            }
+    
+            lastDelta = delta
             lastScale = scale
+        }    
+    
+        const onPinchEnd = () => {
+            lastScale = 1
+            lastDelta = { x: 0, y: 0 }
+            setMode('brush')
         }
-    }
 
-    const pan = ({ detail: { e, eStart }}: GestureEvent) => {
-        // if (
-        //     e.touches.length < 2
-        //     // eStart.touches.length < 2
-        // ) {
-        //     throw Error('Cannot pan with only one finger')
-        // }
-
-        // const { clientX, clientY } = eStart.touches[1]
-        // const deltaX = e.changedTouches[0].clientX - clientX
-        // const deltaY = e.changedTouches[0].clientY - clientY
-
-        // console.log(deltaX, deltaY)
-    }
+        return { onPinchEnd, onPinch }
+    })()
 </script>
 
 {#if canvas}
     <GestureEmitter 
         {canvas} 
         on:singlestart={startNewPath}
-        on:doublestart={setMode('move')}
         on:singlemove={addPointToLastPath}
-        on:doublemove={pan}
         on:end={setMode('brush')}
         on:doubletap={doubleTapUndo}
-        on:pinchstart={setMode('')} 
-        on:pinch={handleZoom()}
-        on:pinchend={setMode('brush')}
+        on:pinchstart={setMode('move')} 
+        on:pinch={onPinch}
+        on:pinchend={onPinchEnd}
     />
     <!-- TODO Set mode locked, 'last' -->
 {/if}
 
-<div class='outer' class:scrollable={$toolMode === 'move'}>
+<div class='outer'>
     <div class='inner'>
         <img 
             bind:this={image}
             src={imageSrc} 
-            style='transform: scale({$zoom})'
+            style={imageStyle}
             alt='Source'
         >
         <canvas 
-            style='opacity: {$overlayOpacity}; transform: scale({$zoom})'
+            style={canvasStyle}
             bind:this={canvas} 
         />
     </div>
@@ -192,9 +205,6 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-    }
-    .outer.scrollable {
-        overflow: auto;
     }
 
     .inner {
