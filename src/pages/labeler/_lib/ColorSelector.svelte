@@ -8,7 +8,7 @@
     const updateTool = (type: string) => 
         (_: Event) => {
             console.log('Changed to brush', type)
-            $tool = { ...$tool, type: type as ClassType }
+            $tool = { ...$tool, brushType: type as ClassType }
         }
 </script>
             

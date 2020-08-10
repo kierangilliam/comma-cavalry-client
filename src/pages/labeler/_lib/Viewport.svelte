@@ -86,8 +86,8 @@
         console.debug('Start new path')
 
         const path: Path = {
-            type: $tool.type,
-            size: $tool.size,
+            type: $tool.brushType,
+            size: $tool.brushSize,
             points: [pointFromEvent(e)],
         }
 

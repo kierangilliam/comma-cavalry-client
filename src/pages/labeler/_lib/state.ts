@@ -7,8 +7,8 @@ interface ViewportSettings {
 
 interface ToolSettings {
     mode: 'fill' | 'brush' | 'move'
-    size: number
-    type: ClassType
+    brushSize: number
+    brushType: ClassType
 }
 
 export interface Path {
@@ -29,8 +29,8 @@ export const paths = writable<Path[]>([])
 
 export const tool = writable<ToolSettings>({
     mode: 'brush',
-    size: 10,
-    type: 'road',
+    brushSize: 10,
+    brushType: 'road',
 })
 
 export const viewport = writable<ViewportSettings>({

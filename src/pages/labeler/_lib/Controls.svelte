@@ -1,15 +1,15 @@
-<script>
+<script lang='ts'>
     import { viewport, tool } from './state'
 	import ColorSelector from './ColorSelector.svelte'
 </script>
 
-<div class="sheet">
+<div class='sheet'>
     <ColorSelector showLabels={true} />
     <div>
         <label>Brush size</label>
         <input 
             type='range' 
-            bind:value={$tool.size}
+            bind:value={$tool.brushSize}
             min='1' 
             max='20' 
             step='1' 
