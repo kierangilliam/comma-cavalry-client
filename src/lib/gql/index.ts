@@ -41,7 +41,10 @@ export const getImage = async (id: string): Promise<Image> => {
 }
 
 export const getUnclaimed = async (): Promise<Image> => {
-    const { data, errors } = await client.query({ query: UNCLAIMED_QUERY })
+    const { data } = await client.query({
+        query: UNCLAIMED_QUERY,
+        fetchPolicy: 'network-only',
+    })
 
     return data.unclaimed
 }
