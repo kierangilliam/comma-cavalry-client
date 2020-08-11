@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { overlayOpacity, dirty, brushSize } from '../state'
+    import { overlayOpacity, dirty, brushSize, reset } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
     import { undo, save } from '../utils'
@@ -15,7 +15,8 @@
         if ($dirty && window.confirm('Save changes before exiting?')) {
             save()
         }
-
+        
+        reset()
         $goto('/')
     }
 </script>

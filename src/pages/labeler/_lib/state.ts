@@ -37,3 +37,12 @@ export const dirty = derived(
         return savedPathsString !== pathsString
     }
 )
+
+export const reset = () => {
+    paths.set([])
+    toolMode.set('brush')
+    brushSize.set(10)
+    brushType.set('road')
+    zoom.set(1)
+    overlayOpacity.set(.5)
+}
