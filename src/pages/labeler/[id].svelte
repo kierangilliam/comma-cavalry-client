@@ -11,6 +11,7 @@
 
 {#await image}
     Loading...
+    <!-- TODO loading spinner & cancel button at bottom -->
 {:then image}
     <Viewport imageUrl={image.url} />
     <StatusIndicator />
