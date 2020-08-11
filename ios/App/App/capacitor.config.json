@@ -1,6 +1,6 @@
 {
   "appId": "com.kierangill.commacavalry",
-  "appName": "comma-cavalry",
+  "appName": "cavalry",
   "bundledWebRuntime": false,
   "npmClient": "yarn",
   "webDir": "dist",
