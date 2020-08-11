@@ -14,8 +14,9 @@
             $goto(`/labeler/${id}`)
         } catch (error) {
             window.alert(error)
-            console.error(error)
             disabled = false
+
+            console.error(error)
         }
     }
 </script>
