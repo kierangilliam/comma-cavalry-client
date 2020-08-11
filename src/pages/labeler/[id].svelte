@@ -5,8 +5,20 @@
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
     import { params } from '@sveltech/routify'
+    import { getSaved } from './_lib/utils'
+    import { paths } from './_lib/state'
 
-    const image = getImage($params.id)
+    $: loadSaved($params.id)
+    $: image = getImage($params.id)
+    
+    function loadSaved(id: string) {
+        const [loadedPaths] = getSaved(id)
+
+        if (loadedPaths.length > 0) {
+            console.log('Resuming progress from last session')
+            $paths = loadedPaths
+        }
+    }
 </script>
 
 {#await image}
