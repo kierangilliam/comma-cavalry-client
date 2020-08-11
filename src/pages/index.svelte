@@ -1,9 +1,12 @@
 <script lang='ts'>
     import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
+    import { getSaved } from '@lib/storage'
     import { Button, Flex, H4, Spacer } from '@ollopa/cedar'
+    import InProgress from './_inProgress.svelte'
 
     let disabled = false
+
 
     const labelNewImage = async () => {
         disabled = true
@@ -24,7 +27,13 @@
 <Flex justify='between' span column>
     <H4>comma cavalry</H4>
 
-    <div class="footer">
+    <Spacer s={12} />
+    
+    <InProgress />
+
+    <Spacer s={12} />
+
+    <div class='footer'>
         <Button on:click={labelNewImage} {disabled}>
             label a new image
         </Button>

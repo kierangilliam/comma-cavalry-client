@@ -1,14 +1,6 @@
-import type { ClassType } from '@lib/types'
+import type { ClassType, Path } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { derived, get, writable } from 'svelte/store'
-
-export type Point = { x: number, y: number }
-
-export interface Path {
-    type: ClassType
-    points: Point[]
-    size: number
-}
 
 export const paths = writable<Path[]>([])
 

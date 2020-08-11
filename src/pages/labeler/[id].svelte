@@ -5,14 +5,14 @@
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
     import { params } from '@sveltech/routify'
-    import { getSaved } from './_lib/utils'
+    import { getEntry } from '@lib/storage'
     import { paths } from './_lib/state'
 
     $: loadSaved($params.id)
     $: image = getImage($params.id)
     
     function loadSaved(id: string) {
-        const [loadedPaths] = getSaved(id)
+        const [loadedPaths] = getEntry(id)
 
         if (loadedPaths.length > 0) {
             console.log('Resuming progress from last session')

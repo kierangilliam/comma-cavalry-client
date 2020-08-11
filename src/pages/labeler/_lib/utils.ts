@@ -1,10 +1,10 @@
 import { PATH_COLORS } from '@lib/constants'
+import { getSaved, LOCAL_STORAGE_SAVED } from '@lib/storage'
 import type { ClassType } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { get } from 'svelte/store'
-import { Path, paths, toolMode } from './state'
+import { paths, toolMode } from './state'
 
-const LOCAL_STORAGE_SAVED = 'saved'
 const VIEWPORT_VERSION = 0
 
 export const getColor = (type: ClassType): string => {
@@ -19,14 +19,10 @@ export const undo = () => {
     paths.set(_paths)
 }
 
-const getSavedFromLocalStorage = (): [string, { version?: number, paths?: Path[] }] => {
-    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_SAVED)) || {}
-}
-
 export const save = () => {
     console.debug('Save')
     const { id } = get(params)
-    const saved = getSavedFromLocalStorage()
+    const saved = getSaved()
 
     saved[id] = {
         version: VIEWPORT_VERSION,
@@ -37,14 +33,6 @@ export const save = () => {
 
     // Trigger state refresh so that derived 'dirty' updates
     paths.set(get(paths))
-}
-
-// TODO Add image and mask?
-export const getSaved = (id: string): [Path[]] => {
-    const saved = getSavedFromLocalStorage()
-    const entry = saved[id]
-
-    return [entry?.paths || []]
 }
 
 export const setMode = (() => {
