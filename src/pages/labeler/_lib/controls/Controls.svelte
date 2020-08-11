@@ -31,13 +31,13 @@
     <Spacer s={12} />
 
     <Flex>
-        <Button on:click={exit} outline warn stretch >
+        <Button on:click={exit} outline warn stretch>
             exit
         </Button>
 
         <Spacer s={12} />
 
-        <Button on:click={save} disabled={$dirty} stretch >   
+        <Button on:click={save} disabled={!$dirty} stretch>
             save
         </Button>
     </Flex>
