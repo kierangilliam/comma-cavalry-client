@@ -35,9 +35,10 @@
 
     onMount(() => {
         ctx = canvas.getContext('2d')
-        drawPaths($paths)       
         image.width = canvas.width = WIDTH
         image.height = canvas.height = HEIGHT
+    
+        drawPaths($paths)
     })
 
     const drawPaths = (_) => {
