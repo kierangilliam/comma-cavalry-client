@@ -1,14 +1,23 @@
 <script lang='ts'>
-    import { overlayOpacity, brushSize } from '../state'
+    import { overlayOpacity, dirty, brushSize } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
-    import { undo } from '../utils'
+    import { undo, save } from '../utils'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
     import { getContext } from 'svelte'
+    import { goto } from '@sveltech/routify'
 
     const { open, positionLocked } = getContext('bottomSheet')
 
     export let imageID = -1
+
+    const exit = () => {
+        if ($dirty && window.confirm('Save changes before exiting?')) {
+            save()
+        }
+
+        $goto('/')
+    }
 </script>
 
 <Fade visible={$open}>
@@ -22,9 +31,15 @@
     <Spacer s={12} />
 
     <Flex>
-        <Button outline warn stretch>exit</Button>
+        <Button on:click={exit} outline warn stretch >
+            exit
+        </Button>
+
         <Spacer s={12} />
-        <Button stretch>save</Button>
+
+        <Button on:click={save} disabled={$dirty} stretch >   
+            save
+        </Button>
     </Flex>
 
     <Spacer s={12} />
