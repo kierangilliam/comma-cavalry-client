@@ -41,8 +41,6 @@ export const dirty = derived(
                 : []
         )
 
-        // TODO Gets laggy around 40 paths, need to collapse paths
-
         return savedPathsString !== pathsString
     }
 )
