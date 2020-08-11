@@ -1,14 +1,29 @@
+<script lang='ts'>
+    import { COLORS } from '@lib/constants'
+
+    const setCSSVariable = ([name, value]: [string, string]) => {
+        document.documentElement.style.setProperty(`--${name}`, value)
+    }
+
+    Object.entries(COLORS).forEach(setCSSVariable)
+</script>
+
 <slot></slot>
 
 <style>
     :global(:root) {
         --black: #181818;
-        --primary: #558DE0;
-        --white: #F7F7F7;
         --lightGray: #D9D7E0;
-        --red: #EC7A73;
-        --danger: var(--red);
 
+        /* These colors are defined using js */        
+        --white: magenta;
+        --brown: magenta;
+        --red: magenta;
+        --red: magenta;
+        --red: magenta;
+        --red: magenta;
+
+        --danger: var(--red);
         --background: var(--black);
         --textColor: var(--white);
         --buttonColor: var(--white);

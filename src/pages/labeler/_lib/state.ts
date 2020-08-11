@@ -1,3 +1,4 @@
+import type { ClassType } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { derived, get, writable } from 'svelte/store'
 
@@ -8,14 +9,6 @@ export interface Path {
     points: Point[]
     size: number
 }
-
-export type ClassType =
-    'empty'
-    | 'road'
-    | 'lane markings'
-    | 'undrivable'
-    | 'movable'
-    | 'ego'
 
 export const paths = writable<Path[]>([])
 

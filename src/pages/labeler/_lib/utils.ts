@@ -1,21 +1,14 @@
+import { PATH_COLORS } from '@lib/constants'
+import type { ClassType } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { get } from 'svelte/store'
-import { ClassType, paths, toolMode } from './state'
+import { Path, paths, toolMode } from './state'
 
 const LOCAL_STORAGE_SAVED = 'saved'
 const VIEWPORT_VERSION = 0
 
-export const COLORS: Record<ClassType, string> = {
-    empty: '#fff',
-    road: '#0f0',
-    undrivable: '#000',
-    ego: '#ffa',
-    'lane markings': '#00f',
-    movable: '#f00',
-}
-
 export const getColor = (type: ClassType): string => {
-    return COLORS[type]
+    return PATH_COLORS[type]
 }
 
 export const undo = () => {
@@ -26,10 +19,14 @@ export const undo = () => {
     paths.set(_paths)
 }
 
+const getSavedFromLocalStorage = (): [string, { version?: number, paths?: Path[] }] => {
+    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_SAVED)) || {}
+}
+
 export const save = () => {
     console.debug('Save')
     const { id } = get(params)
-    const saved = JSON.parse(localStorage.getItem(LOCAL_STORAGE_SAVED)) || {}
+    const saved = getSavedFromLocalStorage()
 
     saved[id] = {
         version: VIEWPORT_VERSION,
@@ -40,6 +37,14 @@ export const save = () => {
 
     // Trigger state refresh so that derived 'dirty' updates
     paths.set(get(paths))
+}
+
+// TODO Add image and mask?
+export const getSaved = (id: string): [Path[]] => {
+    const saved = getSavedFromLocalStorage()
+    const entry = saved[id]
+
+    return [entry?.paths || []]
 }
 
 export const setMode = (() => {

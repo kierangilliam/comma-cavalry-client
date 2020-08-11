@@ -1,7 +1,7 @@
 <script lang='ts'>
-    import type { ClassType } from '../state'
+    import { PATH_COLORS } from '@lib/constants'
+    import type { ClassType } from '@lib/types'
     import { brushType } from '../state'
-    import { COLORS } from '../utils'
 
     export let showLabels: boolean = false
 
@@ -13,7 +13,7 @@
 </script>
             
 <div class='row'>
-    {#each Object.entries(COLORS) as [id, color]}
+    {#each Object.entries(PATH_COLORS) as [id, color]}
         <div 
             class='item'            
             on:click={updateTool(id)}
