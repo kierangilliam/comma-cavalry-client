@@ -1,30 +1,25 @@
 <script lang='ts'>
     import { url } from '@sveltech/routify'
-    import { getImages } from '@gql'
+    import { getUnclaimed } from '@gql'
+    import { Button } from '@ollopa/cedar'
 
-    const imageNames = getImages()
+    let disabled = false
 
-    const getImage = (name: string) => 
-        `https://raw.githubusercontent.com/commaai/comma10k/master/imgs/${name}`
+    const labelNewImage = async () => {
+        disabled = true
+
+        const image = await getUnclaimed()
+
+        console.log(image)
+
+        disabled = false
+    }
 </script>
 
-{#await imageNames}
-    Loading...
-{:then names}
-    <div style='padding-top: 200px;'>
-        <a  href={$url('/labeler')}>Labeler</a>
-    </div>
-    {#each names.splice(0, 10) as name}
-        <img src={getImage(name)} alt={name}>
-    {/each}
-    { JSON.stringify(names) }
-{:catch error}
-    Error { error }
-{/await}
+<div style='padding-top: 200px;'>
+    <a  href={$url('/labeler')}>Labeler</a>
+</div>
 
-<style>
-    img {
-        max-width: 400px;
-        max-height: 400px;
-    }
-</style>
+<Button on:click={labelNewImage} {disabled}>
+    label a new image
+</Button>

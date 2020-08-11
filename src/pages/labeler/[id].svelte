@@ -1,20 +1,18 @@
 <script lang='ts'>
-    import { getImages } from '@gql'
+    import { getImage } from '@gql'
     import { BottomSheet } from '@lib/components'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
+    import { params } from '@sveltech/routify'
 
-    const imageNames = getImages()
-
-    const getImage = (name: string) => 
-        `https://raw.githubusercontent.com/commaai/comma10k/master/imgs/${name}`
+    const image = getImage($params.id)
 </script>
 
-{#await imageNames}
+{#await image}
     Loading...
-{:then names}
-    <Viewport imageSrc={getImage(names[0])} />
+{:then image}
+    <Viewport imageUrl={image.url} />
     <StatusIndicator />
     <BottomSheet>
         <Controls />
