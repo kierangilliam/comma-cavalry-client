@@ -105,13 +105,15 @@
     }
 
     const addPointToLastPath = ({ detail: { x, y } }: GestureEvent) => {
-        const lastPath = $paths.pop()
-        
-        if (lastPath) {
-            console.debug('add point to last path')
-            lastPath.points.push({ x, y })
-            $paths = [...$paths, lastPath]
+        if ($paths.length < 1) {
+            return
         }
+
+        $paths[$paths.length - 1].points.push({ x, y })
+
+        ctx.lineTo(x, y)
+        ctx.stroke()
+        ctx.fill()
     }
 
     const onEnd = () => {
