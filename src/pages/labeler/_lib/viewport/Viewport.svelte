@@ -167,6 +167,7 @@
     <!-- TODO Set mode locked, 'last' -->
 {/if}
 
+<div class='background'></div>
 <div class='outer'>
     <div class='inner'>
         <img 
@@ -183,6 +184,16 @@
 </div>
 
 <style>
+    .background {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        background: var(--background);
+        filter: brightness(225%);
+    }
+
     .outer {
         width: 100vw;
         height: 100vh;
