@@ -1,2 +1,10 @@
+<div>
+    <slot />
+</div>
 
-<slot />
+<style>
+    div {
+        padding: var(--viewPadding);
+        min-height: 100vh; 
+    }
+</style>
