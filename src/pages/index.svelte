@@ -1,25 +1,38 @@
 <script lang='ts'>
-    import { url } from '@sveltech/routify'
+    import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
-    import { Button } from '@ollopa/cedar'
+    import { Button, Flex, H4, Spacer } from '@ollopa/cedar'
 
     let disabled = false
 
     const labelNewImage = async () => {
         disabled = true
 
-        const image = await getUnclaimed()
-
-        console.log(image)
-
-        disabled = false
+        try {
+            const { id } = await getUnclaimed()
+    
+            $goto(`/labeler/${id}`)
+        } catch (error) {
+            window.alert(error)
+            console.error(error)
+            disabled = false
+        }
     }
 </script>
 
-<div style='padding-top: 200px;'>
-    <a  href={$url('/labeler')}>Labeler</a>
-</div>
+<Flex justify='between' span column>
+    <H4>comma cavalry</H4>
 
-<Button on:click={labelNewImage} {disabled}>
-    label a new image
-</Button>
+    <div class="footer">
+        <Button on:click={labelNewImage} {disabled}>
+            label a new image
+        </Button>
+    </div>
+</Flex>
+
+<style>
+    .footer {
+        position: absolute;
+        bottom: var(--s-8);
+    }
+</style>

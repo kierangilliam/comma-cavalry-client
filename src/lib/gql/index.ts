@@ -2,7 +2,7 @@ import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client
 import type { Image } from '@lib/types'
 
 const httpLink = createHttpLink({
-    uri: 'https://localhost:4000/',
+    uri: 'http://localhost:4000/',
 })
 
 const client = new ApolloClient({
@@ -27,7 +27,7 @@ const UNCLAIMED_QUERY = gql`
 `
 
 const IMAGE_QUERY = gql`
-    query image(id: ID!) {
+    query image($id: ID!) {
         image(id: $id) {
             ${IMAGE_FRAGMENT}
         }
