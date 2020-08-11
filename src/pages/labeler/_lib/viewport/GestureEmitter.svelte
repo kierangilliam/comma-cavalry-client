@@ -49,6 +49,8 @@
         dispatch('end')
     })
 
+    // TODO Shortpress to enable making the brush size bigger and smaller
+
     function pointFromEvent(e: HammerInput) {
         const rect = canvas.getBoundingClientRect()        
         const { x, y } = e.center
