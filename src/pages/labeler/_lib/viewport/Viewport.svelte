@@ -12,8 +12,8 @@
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
 
-    export let imageSrc: string 
-    export let maskSrc: string = null
+    export let imageUrl: string 
+    export let maskUrl: string = null
     
     const WIDTH = 1164
     const HEIGHT = 874
@@ -25,7 +25,7 @@
     let mask: CanvasImageSource
 
     $: drawPaths($paths)
-    $: setMask(maskSrc)
+    $: setMask(maskUrl)
     $: imageStyle = `
         transform: scale(${$zoom});
         top: ${origin.y}px;
@@ -68,13 +68,13 @@
     }
 
     const setMask = (_) => {
-        if (!maskSrc) { 
+        if (!maskUrl) { 
             mask = null
             return 
         }
 
         mask = new Image()
-        mask.src = maskSrc
+        mask.src = maskUrl
         mask.onload = drawPaths
         mask.onerror = () => mask = null
     }
@@ -171,7 +171,7 @@
     <div class='inner'>
         <img 
             bind:this={image}
-            src={imageSrc} 
+            src={imageUrl} 
             style={imageStyle}
             alt='Source'
         >
