@@ -35,12 +35,12 @@
     gestures.get('pan').set({ direction: Hammer.DIRECTION_ALL})
 
     gestures.on('panstart', (e) => {
-        console.log('pan start', e)
+        console.log('pan start')
         dispatch('panstart', { ...pointFromEvent(e) })
     })
     
     gestures.on('panmove', (e) => {
-        console.log('pan move', e)
+        console.log('pan move')
         dispatch('panmove', { ...pointFromEvent(e) }) 
     })
 
