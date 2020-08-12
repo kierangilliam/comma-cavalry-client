@@ -51,3 +51,22 @@ export const setMode = (() => {
             : lastPaintTool
     }
 })()
+
+// export const getPercentEmpty = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+//     const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height)
+//     const { count } = calculate({
+//         data: Array.from(data),
+//         colors: {
+//             empty: hexToRgb(PATH_COLORS.empty)
+//         }
+//     })
+
+//     function hexToRgb(hex) {
+//         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+//         return result ? {
+//             r: parseInt(result[1], 16),
+//             g: parseInt(result[2], 16),
+//             b: parseInt(result[3], 16)
+//         } : null;
+//     }
+// }

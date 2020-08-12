@@ -1,5 +1,7 @@
-import type { ClassType, Path } from '@lib/types'
+import type { ClassType, Path, Point } from '@lib/types'
 import { params } from '@sveltech/routify'
+import { quintOut } from 'svelte/easing'
+import { tweened } from 'svelte/motion'
 import { derived, get, writable } from 'svelte/store'
 
 export const paths = writable<Path[]>([])
@@ -10,9 +12,17 @@ export const brushSize = writable<number>(10)
 
 export const brushType = writable<ClassType>('road')
 
-export const zoom = writable<number>(1)
+export const zoom = tweened<number>(1, {
+    duration: 500,
+    easing: quintOut,
+})
 
 export const overlayOpacity = writable<number>(.5)
+
+export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, {
+    duration: 500,
+    easing: quintOut,
+})
 
 export const dirty = derived(
     paths,

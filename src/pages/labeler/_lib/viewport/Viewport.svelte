@@ -6,8 +6,9 @@
         brushType, 
         overlayOpacity,
         brushSize, 
+        canvasPosition,
     } from '../state'
-    import type { Path, Point } from '../state'
+    import type { Path, Point } from '@lib/types'
     import { getColor, undo, setMode } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
@@ -17,19 +18,21 @@
     
     const WIDTH = 1164
     const HEIGHT = 874
+    const CURSOR_OFFSET = 40
 
     let origin: Point = { x: -(WIDTH / 2), y: 0 }
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement
     let ctx: CanvasRenderingContext2D
     let mask: CanvasImageSource
-
+    
     $: drawPaths($paths)
     $: setMask(maskUrl)
     $: imageStyle = `
+        transform-origin: ${origin.x}px ${origin.y}px;
         transform: scale(${$zoom});
-        top: ${origin.y}px;
-        left: ${origin.x}px;
+        top: ${$canvasPosition.y}px;
+        left: ${$canvasPosition.x}px;
     `
     $: canvasStyle = imageStyle + `opacity: ${$overlayOpacity};`
 
@@ -40,6 +43,17 @@
     
         drawPaths($paths)
     })
+
+    /**
+     * Calculate a y offset to lift returned value 
+     * a consistent height above finger, despite the 
+     * zoom level
+     */  
+    const yWithOffset = (y: number): number => {
+        // TODO Make more even
+        console.log((CURSOR_OFFSET / $zoom * .75))
+        return y - (CURSOR_OFFSET / $zoom * .75)
+    }
 
     const drawPaths = (_) => {
         if (!ctx) return 
@@ -84,12 +98,14 @@
         detail: { 
             x?: number, 
             y?: number, 
+            canvasX?: number, 
+            canvasY?: number, 
             scale?: number, 
             delta?: Point, 
         }
     }
 
-    const startNewPath = ({ detail: { x, y } }: GestureEvent) => {
+    const startNewPath = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
         if ($toolMode !== 'brush') {
             return
         }
@@ -99,49 +115,53 @@
         const path: Path = {
             type: $brushType,
             size: $brushSize,
-            points: [{ x, y }],
+            points: [{ x: canvasX, y: yWithOffset(canvasY) }],
         }
 
         $paths = [...$paths, path]
     }
 
-    const addPointToLastPath = ({ detail: { x, y } }: GestureEvent) => {
+    const addPointToLastPath = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
         if ($paths.length < 1) {
             return
-        }
+        }        
 
-        $paths[$paths.length - 1].points.push({ x, y })
-
-        ctx.lineTo(x, y)
+        $paths[$paths.length - 1].points.push({ 
+            x: canvasX, y: yWithOffset(canvasY) 
+        })
+        
+        ctx.lineTo(canvasX, yWithOffset(canvasY))
+        ctx.lineWidth = $brushSize
         ctx.stroke()
-        ctx.fill()
     }
 
     const onEnd = () => {
-        // Remove paths with 1 point
         console.debug('end')
+        // Remove paths with 1 point
         $paths = $paths.filter(({ points }) => points.length > 1)
         setMode('last')
     }
 
     const { onPinch, onPinchEnd } = (() => {
-        const MIN_ZOOM = .3
-        const MAX_ZOOM = 3
+        const MIN_ZOOM = .2
+        const MAX_ZOOM = 6
         let lastScale = $zoom
         let lastDelta: Point = { x: 0, y: 0 }
         
-        const onPinch = ({ detail: { scale, delta }}: GestureEvent) => {
-            const newZoom = $zoom + (scale - lastScale) 
+        const onPinch = ({ detail: { scale, delta, x, y }}: GestureEvent) => {
+            const SPEED = 5
+            const newZoom = $zoom + ((scale - lastScale) * SPEED)
             
             $zoom = newZoom < MIN_ZOOM 
                 ? $zoom
                 : Math.min(MAX_ZOOM, newZoom)
 
-            origin = {
-                x: origin.x + delta.x - lastDelta.x,
-                y: origin.y + delta.y - lastDelta.y,
+            $canvasPosition = {
+                x: $canvasPosition.x + ((delta.x - lastDelta.x) * SPEED),
+                y: $canvasPosition.y + ((delta.y - lastDelta.y) * SPEED),
             }
-    
+
+            origin = { x, y }
             lastDelta = delta
             lastScale = scale
         }    
@@ -156,22 +176,8 @@
     })()
 </script>
 
-{#if canvas}
-    <GestureEmitter 
-        {canvas} 
-        on:panstart={startNewPath}
-        on:panmove={addPointToLastPath}
-        on:end={onEnd}
-        on:doubletap={undo}
-        on:pinchstart={() => setMode('move')} 
-        on:pinch={onPinch}
-        on:pinchend={onPinchEnd}
-    />
-    <!-- TODO Set mode locked, 'last' -->
-{/if}
-
 <div class='background'></div>
-<div class='outer'>
+<div class='outer'>    
     <div class='inner'>
         <img 
             bind:this={image}
@@ -185,6 +191,17 @@
         />
     </div>
 </div>
+
+<GestureEmitter 
+    {canvas} 
+    on:panstart={startNewPath}
+    on:panmove={addPointToLastPath}
+    on:end={onEnd}
+    on:doubletap={undo}
+    on:pinchstart={() => setMode('move')} 
+    on:pinch={onPinch}
+    on:pinchend={onPinchEnd}
+/>
 
 <style>
     .background {
