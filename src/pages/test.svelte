@@ -43,6 +43,7 @@
 
         ctx.drawImage(image, 0, 0, WIDTH, HEIGHT)
         const imageData = ctx.getImageData(start.x, start.y, size, size)
+        ctx.clearRect(0, 0, WIDTH, HEIGHT)
         const r = blurRadius|0;
         const kernel_size = (r + 1) << 1;
         
@@ -72,12 +73,6 @@
             }
         }
 
-        const debugRed = alpha | (0x00 << 16) | (0x00 << 8) | 0xff
-
-        points.forEach(({ x, y }) => {
-            data_u32[(x * size) + y] = debugRed
-        })
-
         function withinSearchRadius(x, y) {
             const absoluteX = start.x + x
             const absoluteY = start.y + y
@@ -85,6 +80,12 @@
 
             return dist < searchRadius
         }
+
+        const debugRed = alpha | (0x00 << 16) | (0x00 << 8) | 0xff
+
+        points.forEach(({ x, y }) => {
+            data_u32[(x * size) + y] = debugRed
+        })
 
         ctx.putImageData(imageData, start.x, start.y)
     }
@@ -103,16 +104,23 @@ low: {lowThreshold}
 high: {highThreshold}
 search space: {searchSpace}
 
-<canvas 
-    width={WIDTH} height={HEIGHT} bind:this={canvas}
-    on:mousemove={handleMousemove}
-></canvas>
-<img bind:this={image} alt="">
+<div class="inner">
+    <img bind:this={image} alt="">
+    <canvas 
+        width={WIDTH} height={HEIGHT} bind:this={canvas}
+        on:mousemove={handleMousemove}
+    ></canvas>
+</div>
 
 <style>
+    .inner {
+        position: relative;
+    }
+
     img, canvas {
         width: 600px;
         height: 400px;
+        position: absolute;
     }
 
     canvas {
