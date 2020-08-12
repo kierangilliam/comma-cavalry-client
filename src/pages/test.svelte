@@ -27,10 +27,10 @@
         ctx = canvas.getContext('2d')
     })    
 
-	const handleMousemove = ({ clientX, clientY }) => {
+	const handleMousemove = ({ touches }) => {
         const { x, y } = cannyCanvas.getBoundingClientRect()
-		m.x = clientX - x
-        m.y = clientY - y
+		m.x = touches[0].clientX - x
+        m.y = touches[0].clientY - y
         renderLines()
 	}
 
@@ -158,8 +158,9 @@ search space: {searchSpace}
         id='main-canvas'
         width={WIDTH} 
         height={HEIGHT} 
-        on:mousemove={handleMousemove}
-        on:click={drawCannyPoints}
+        on:touchmove={handleMousemove}
+        on:touchmove={drawCannyPoints}
+        on:touchend={() => { cannyCtx.clearRect(0, 0, WIDTH, HEIGHT) }}
     ></canvas>
 </div>
 
