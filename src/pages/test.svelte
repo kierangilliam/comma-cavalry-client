@@ -81,11 +81,9 @@
         function withinSearchRadius(x, y) {
             const absoluteX = start.x + x
             const absoluteY = start.y + y
+            const dist = Math.hypot(absoluteX - m.x, absoluteY - m.y)
 
-            return m.x < absoluteX + searchRadius
-                && m.x > absoluteX - searchRadius
-                && m.y < absoluteY + searchRadius
-                && m.y > absoluteY - searchRadius
+            return dist < searchRadius
         }
 
         ctx.putImageData(imageData, start.x, start.y)
