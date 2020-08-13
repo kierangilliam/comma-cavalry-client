@@ -19,7 +19,6 @@ export const copyImageData = ({ ctx, x, y, image }: CopyImageDataOpts): ImageDat
 }
 
 export const renderImageData = ({ imageData, canvas, ctx, x, y }: RenderImageDataOpts) => {
-    // console.log(canvas.width, canvas.height)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.putImageData(imageData, x, y)
 }

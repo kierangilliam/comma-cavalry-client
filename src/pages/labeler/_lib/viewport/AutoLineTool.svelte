@@ -31,18 +31,22 @@
         debounceTimer = setTimeout(() => { debounced = false }, 15)
     }
     
-    $: $toolMode == 'autoLine' 
+    $: $toolMode === 'autoLine' 
         && !debounced
         && img_u8
         && $isTouching 
         && $cursor
         && generateAutoLine()
 
+    $: !$isTouching
+        && ctx
+        && (ctx.clearRect(0, 0, canvas.width, canvas.height))
+
     $: img_u8 = cannyProcessImage(
         imageData,
-        $highThreshold,
-        $lowThreshold,
         $blurRadius,
+        $lowThreshold,
+        $highThreshold,
     )
 
     onMount(() => {
@@ -52,7 +56,10 @@
 
     // TODO: Probably should've just gone with tensorflow
     const generateAutoLine = () => {
-        debounce()
+        debounce()        
+
+        // Triggers a reprocess on next go around
+        imageData = copyImageData({ x: 0, y: 0, ctx, image })
 
         const points = getCannyPointsAndRender(
             imageData, 
@@ -68,7 +75,7 @@
         
         currentPath.points = [...currentPath.points, ...points]
         $paths = [...$paths, currentPath]
-        // (TODO collapse overlapping points?)
+        // (TODO collapse overlapping points?)        
     }
     
     const cannyProcessImage = (
@@ -105,7 +112,7 @@
         height: number, 
         cursor: Point
     ): Point[] => {
-        const WHITE = 0
+        const WHITE = 255
         const ALPHA = (0xff << 24)
         const RENDER_RADIUS = 50
         const withinRenderRadius = withinRadiusHelper(cursor, RENDER_RADIUS)
@@ -120,6 +127,7 @@
             const y = Math.floor((i - x) / height)            
 
             if (!withinRenderRadius(x, y)) {
+                data_u32[i] = 0x000000
                 continue
             }
 
@@ -130,6 +138,7 @@
             // Get canny point
             if (img_u8.data[i] == WHITE && withinSearchRadius(x, y)) {                
                 result.push({ x, y })
+                data_u32[i] = ALPHA | 0x0000ff
             }
         }
 
