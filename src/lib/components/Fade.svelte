@@ -1,13 +1,24 @@
 <script>
-    import { fade } from 'svelte/transition'
-
     export let visible
+    export let duration = 300
+
+    let style = `
+        transition: all ${duration}ms ease-in-out; 
+    `
 </script>
 
-{#if visible}
-    <div
-        transition:fade={{ duration: 250 }}
-    >
-        <slot />
-    </div>
-{/if}
+<div class:visible {style}>
+    <slot />
+</div>
+
+<style>
+    div {
+        opacity: 0;
+        height: 0;        
+    }
+
+    .visible {
+        height: auto;
+        opacity: 1;
+    }
+</style>
