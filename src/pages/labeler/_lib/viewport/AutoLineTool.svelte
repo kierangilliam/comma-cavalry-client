@@ -1,7 +1,17 @@
 <script lang='ts'>
     import { onMount } from 'svelte'
     import * as jsfeat from 'jsfeat'
-    import { isTouching, cursor, paths, toolMode, brushSize, canvasStyle } from '../state'
+    import { 
+        isTouching, 
+        cursor, 
+        paths, 
+        toolMode, 
+        brushSize, 
+        canvasStyle,
+        highThreshold,
+        lowThreshold,
+        blurRadius,
+    } from '../state'
     import type { Point } from '@lib/types'
     import { renderImageData, copyImageData } from './canvas-helpers'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
@@ -28,10 +38,18 @@
         && $cursor
         && generateAutoLine()
 
+    $: imageData && (
+        img_u8 = cannyProcessImage(
+            imageData,
+            $highThreshold,
+            $lowThreshold,
+            $blurRadius,
+        )
+    )
+
     onMount(() => {
         ctx = canvas.getContext('2d')
-        imageData = copyImageData({ x: 0, y: 0, ctx, image })         
-        img_u8 = cannyProcessImage(imageData)     
+        imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
     })
 
     // TODO: Probably should've just gone with tensorflow
@@ -55,10 +73,12 @@
         // (TODO collapse overlapping points?)
     }
     
-    const cannyProcessImage = (imageData: ImageData): jsfeat.matrix_t => {
-        const blurRadius = 1
-        const lowThreshold = 20
-        const highThreshold = 50
+    const cannyProcessImage = (
+        imageData: ImageData,
+        blurRadius: number,
+        lowThreshold: number, 
+        highThreshold: number, 
+    ): jsfeat.matrix_t => {
         const r = blurRadius|0
         const kernel_size = (r + 1) << 1
         let img_u8 = new jsfeat.matrix_t(imageData.width, imageData.height, jsfeat.U8C1_t)
