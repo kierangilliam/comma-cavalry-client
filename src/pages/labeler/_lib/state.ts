@@ -21,6 +21,8 @@ export const overlayOpacity = writable<number>(.5)
 
 export const isTouching = writable<boolean>(false)
 
+export const origin = writable<Point>({ x: -400, y: 0 })
+
 // TODO can i replace canvasPosition using cursor instead?
 export const cursor = writable<Point>(null)
 
@@ -42,6 +44,26 @@ export const dirty = derived(
         )
 
         return savedPathsString !== pathsString
+    }
+)
+
+export const imageStyle = derived(
+    [origin, zoom, canvasPosition],
+    ([$origin, $zoom, $canvasPosition]) => {
+        return `
+            position: absolute;
+            transform-origin: ${$origin.x}px ${$origin.y}px;
+            transform: scale(${$zoom});
+            top: ${$canvasPosition.y}px;
+            left: ${$canvasPosition.x}px;
+        `
+    }
+)
+
+export const canvasStyle = derived(
+    [imageStyle, overlayOpacity],
+    ([$imageStyle, $overlayOpacity]) => {
+        return $imageStyle + `opacity: ${$overlayOpacity};`
     }
 )
 

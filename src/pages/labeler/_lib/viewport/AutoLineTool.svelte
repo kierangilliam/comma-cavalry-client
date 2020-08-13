@@ -1,9 +1,9 @@
 <script lang='ts'>
     import { onMount } from 'svelte'
     import * as jsfeat from 'jsfeat'
-    import { isTouching, cursor, paths, toolMode, brushSize } from '../state'
+    import { isTouching, cursor, paths, toolMode, brushSize, canvasStyle } from '../state'
     import type { Point } from '@lib/types'
-import { renderImageData, copyImageData } from './canvas-helpers';
+    import { renderImageData, copyImageData } from './canvas-helpers'
 
     export let image: CanvasImageSource
 
@@ -12,12 +12,14 @@ import { renderImageData, copyImageData } from './canvas-helpers';
     
     $: $toolMode == 'autoLine' 
         && $isTouching 
+        && $cursor
         && generateAutoLine()
 
     onMount(() => {
         ctx = canvas.getContext('2d')
     })
 
+    // TODO: Probably should've just gone with tensorflow
     const generateAutoLine = () => {
         const cannySearchSpace = 250       
         const start = {
@@ -29,10 +31,13 @@ import { renderImageData, copyImageData } from './canvas-helpers';
         const img_u8 = cannyProcessImage(imageData, cannySearchSpace)        
         const points = getCannyPointsAndRender(imageData, img_u8, cannySearchSpace, $cursor)
         const currentPath = $paths.pop()
+
+        console.log('currentPath', currentPath.points.length)
         
         renderImageData({ ...start, ctx, canvas, imageData })
-
+        
         currentPath.points = [...currentPath.points, ...points]
+        console.log('currentPath2', currentPath.points.length)
         $paths = [...$paths, currentPath]
         // (TODO collapse overlapping points?)
     }
@@ -44,7 +49,7 @@ import { renderImageData, copyImageData } from './canvas-helpers';
         const r = blurRadius|0
         const kernel_size = (r + 1) << 1
         let img_u8 = new jsfeat.matrix_t(size, size, jsfeat.U8C1_t)
-        
+
         jsfeat.imgproc.grayscale(imageData.data, size, size, img_u8);
         jsfeat.imgproc.gaussian_blur(img_u8, img_u8, kernel_size, 0);
         jsfeat.imgproc.canny(img_u8, img_u8, lowThreshold|0, highThreshold|0);
@@ -98,7 +103,10 @@ import { renderImageData, copyImageData } from './canvas-helpers';
     }
 </script>
 
-<canvas bind:this={canvas}></canvas>
+<canvas 
+    bind:this={canvas}
+    style={$canvasStyle}
+></canvas>
 
 <style>
     canvas {

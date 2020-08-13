@@ -4,11 +4,13 @@
         paths, 
         toolMode, 
         brushType, 
-        overlayOpacity,
         brushSize, 
         canvasPosition,
         isTouching,
         cursor,
+        origin,
+        canvasStyle,
+        imageStyle,
     } from '../state'
     import type { Path, Point } from '@lib/types'
     import { getColor, undo, setMode } from '../utils'
@@ -22,8 +24,7 @@
     
     const WIDTH = 1164
     const HEIGHT = 874    
-
-    let origin: Point = { x: -(WIDTH / 2), y: 0 }
+    
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement
     let imageData: string // base64
@@ -33,13 +34,6 @@
     $: drawPaths($paths)
     $: setMask(maskUrl)
     $: image && setImage(imageUrl)
-    $: imageStyle = `
-        transform-origin: ${origin.x}px ${origin.y}px;
-        transform: scale(${$zoom});
-        top: ${$canvasPosition.y}px;
-        left: ${$canvasPosition.x}px;
-    `
-    $: canvasStyle = imageStyle + `opacity: ${$overlayOpacity};`
 
     onMount(() => {        
         image.width = canvas.width = WIDTH
@@ -118,12 +112,12 @@
     }
 
     const onPanStart = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
-        $isTouching = false
+        $isTouching = true
         $cursor = pointFromCanvasPosition(canvasX, canvasY)
 
-        if ($toolMode === 'brush') {
+        // if ($toolMode === 'brush') {
             startNewPath($cursor)
-        }
+        // }
     }
 
     const onPanMove = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
@@ -182,7 +176,7 @@
                 y: $canvasPosition.y + ((delta.y - lastDelta.y) * SPEED),
             }
 
-            origin = { x, y }
+            $origin = { x, y }
             lastDelta = delta
             lastScale = scale
         }    
@@ -202,11 +196,11 @@
     <div class='inner'>
         <img 
             bind:this={image}            
-            style={imageStyle}
+            style={$imageStyle}
             alt='Source'
         >
         <canvas 
-            style={canvasStyle}
+            style={$canvasStyle}
             bind:this={canvas} 
         />        
         {#if imageData}
@@ -246,11 +240,5 @@
     .inner {
         width: 100%;
         position: relative;
-    }
-
-    img, canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
     }
 </style>
