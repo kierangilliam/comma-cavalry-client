@@ -18,15 +18,12 @@
     import { urlToImageData } from './canvas-helpers'
     import GestureEmitter from './GestureEmitter.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
+    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
 
     export let imageUrl: string 
     export let maskUrl: string = null
     
-    const WIDTH = 1164
-    const HEIGHT = 874    
-    
     let canvas: HTMLCanvasElement
-    let autoLineCanvas: HTMLCanvasElement
     let image: HTMLImageElement
     let imageData: string // base64
     let ctx: CanvasRenderingContext2D
@@ -37,8 +34,8 @@
     $: image && setImage(imageUrl)
 
     onMount(() => {        
-        image.width = canvas.width = WIDTH
-        image.height = canvas.height = HEIGHT
+        image.width = canvas.width = IMAGE_WIDTH
+        image.height = canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
     
         drawPaths($paths)
@@ -202,15 +199,9 @@
     <canvas 
         style={$canvasStyle}
         bind:this={canvas} 
-    />
-    <canvas 
-        style={$canvasStyle + 'opacity: 1;'}
-        bind:this={autoLineCanvas} 
-        width={WIDTH}
-        height={HEIGHT}
-    />
-    {#if imageData && autoLineCanvas}
-        <AutoLineTool canvas={autoLineCanvas} {image}/>
+    />    
+    {#if imageData}
+        <AutoLineTool {image} />
     {/if}
 </div>
 

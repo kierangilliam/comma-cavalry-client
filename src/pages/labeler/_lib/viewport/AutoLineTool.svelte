@@ -4,10 +4,11 @@
     import { isTouching, cursor, paths, toolMode, brushSize, canvasStyle } from '../state'
     import type { Point } from '@lib/types'
     import { renderImageData, copyImageData } from './canvas-helpers'
+    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
 
     export let image: CanvasImageSource
-    export let canvas: HTMLCanvasElement
-
+    
+    let canvas: HTMLCanvasElement
     let ctx: CanvasRenderingContext2D
     let imageData
     let img_u8
@@ -114,13 +115,9 @@
     }
 </script>
 
-<!-- <canvas 
-    bind:this={canvas}
-    style={$canvasStyle}
-></canvas> -->
-
-<style>
-    canvas {
-        position: absolute;
-    }
-</style>
+<canvas 
+    style={$canvasStyle + 'opacity: 1;'}
+    bind:this={canvas} 
+    width={IMAGE_WIDTH}
+    height={IMAGE_HEIGHT}
+/>

@@ -17,3 +17,6 @@ export const PATH_COLORS: Record<ClassType, string> = {
     'lane markings': COLORS.red,
     movable: COLORS.green,
 }
+
+export const IMAGE_WIDTH = 1164
+export const IMAGE_HEIGHT = 874   
