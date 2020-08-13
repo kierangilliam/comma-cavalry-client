@@ -2,7 +2,6 @@ interface CopyImageDataOpts {
     ctx: CanvasRenderingContext2D
     x: number
     y: number
-    size: number
     image: CanvasImageSource
 }
 
@@ -14,12 +13,13 @@ interface RenderImageDataOpts {
     imageData: ImageData
 }
 
-export const copyImageData = ({ ctx, x, y, image, size }: CopyImageDataOpts): ImageData => {
-    ctx.drawImage(image, x, y, size, size)
-    return ctx.getImageData(x, y, size, size)
+export const copyImageData = ({ ctx, x, y, image }: CopyImageDataOpts): ImageData => {
+    ctx.drawImage(image, x, y, image.width as number, image.height as number)
+    return ctx.getImageData(x, y, image.width as number, image.height as number)
 }
 
 export const renderImageData = ({ imageData, canvas, ctx, x, y }: RenderImageDataOpts) => {
+    // console.log(canvas.width, canvas.height)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.putImageData(imageData, x, y)
 }

@@ -26,6 +26,7 @@
     const HEIGHT = 874    
     
     let canvas: HTMLCanvasElement
+    let autoLineCanvas: HTMLCanvasElement
     let image: HTMLImageElement
     let imageData: string // base64
     let ctx: CanvasRenderingContext2D
@@ -201,9 +202,15 @@
     <canvas 
         style={$canvasStyle}
         bind:this={canvas} 
-    />        
-    {#if imageData}
-        <AutoLineTool {image}/>
+    />
+    <canvas 
+        style={$canvasStyle + 'opacity: 1;'}
+        bind:this={autoLineCanvas} 
+        width={WIDTH}
+        height={HEIGHT}
+    />
+    {#if imageData && autoLineCanvas}
+        <AutoLineTool canvas={autoLineCanvas} {image}/>
     {/if}
 </div>
 
