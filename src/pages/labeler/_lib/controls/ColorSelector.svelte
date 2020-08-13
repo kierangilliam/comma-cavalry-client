@@ -1,6 +1,7 @@
 <script lang='ts'>
     import { PATH_COLORS } from '@lib/constants'
     import type { ClassType } from '@lib/types'
+    import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
 
     export let showLabels: boolean = false
@@ -8,6 +9,7 @@
     const updateTool = (type: string) => 
         (_: Event) => {
             console.log('Changed to brush', type)
+            Haptics.select()
             $brushType = (type as ClassType)
             $toolMode = 'brush'
         }

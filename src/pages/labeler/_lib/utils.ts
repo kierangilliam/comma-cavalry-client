@@ -1,3 +1,4 @@
+import { Haptics } from '@lib/capacitor'
 import { PATH_COLORS } from '@lib/constants'
 import { getSaved, LOCAL_STORAGE_SAVED } from '@lib/storage'
 import type { ClassType } from '@lib/types'
@@ -30,6 +31,8 @@ export const save = () => {
     }
 
     localStorage.setItem(LOCAL_STORAGE_SAVED, JSON.stringify(saved))
+
+    Haptics.success()
 
     // Trigger state refresh so that derived 'dirty' updates
     paths.set(get(paths))
