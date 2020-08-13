@@ -21,7 +21,7 @@
     }
 </script>
 
-<Fade visible={$open} delay={150}>
+<Fade visible={$open}>
     <H3>Image {imageID}</H3>
     <Spacer s={12} />
 </Fade>
