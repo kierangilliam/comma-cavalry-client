@@ -1,5 +1,5 @@
 <script>
-    export let visible
+    export let visible = false
     export let duration = 300
 
     let style = `
