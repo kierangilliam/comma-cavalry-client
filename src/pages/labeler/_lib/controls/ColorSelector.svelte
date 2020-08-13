@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { PATH_COLORS } from '@lib/constants'
     import type { ClassType } from '@lib/types'
-    import { brushType } from '../state'
+    import { brushType, toolMode } from '../state'
 
     export let showLabels: boolean = false
 
@@ -9,6 +9,7 @@
         (_: Event) => {
             console.log('Changed to brush', type)
             $brushType = (type as ClassType)
+            $toolMode = 'brush'
         }
 </script>
             
