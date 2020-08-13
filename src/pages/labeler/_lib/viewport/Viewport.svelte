@@ -15,23 +15,21 @@
     import type { Path, Point } from '@lib/types'
     import { getColor, undo, setMode } from '../utils'
     import { onMount } from 'svelte'
-    import { urlToImageData } from './canvas-helpers'
     import GestureEmitter from './GestureEmitter.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
-
-    export let imageUrl: string 
+    
+    export let imageData: string // base64
     export let maskUrl: string = null
     
     let canvas: HTMLCanvasElement
-    let image: HTMLImageElement
-    let imageData: string // base64
+    let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
     let mask: CanvasImageSource
     
     $: drawPaths($paths)
     $: setMask(maskUrl)
-    $: image && setImage(imageUrl)
+    $: image && (image.src = imageData)
 
     onMount(() => {        
         image.width = canvas.width = IMAGE_WIDTH
@@ -91,11 +89,6 @@
         mask.src = maskUrl
         mask.onload = drawPaths
         mask.onerror = () => mask = null
-    }
-
-    const setImage = async (_) => {
-        imageData = await urlToImageData(imageUrl)
-        image.src = imageData
     }
 
     interface GestureEvent {
@@ -200,7 +193,7 @@
         style={$canvasStyle}
         bind:this={canvas} 
     />    
-    {#if imageData}
+    {#if image}
         <AutoLineTool {image} />
     {/if}
 </div>
