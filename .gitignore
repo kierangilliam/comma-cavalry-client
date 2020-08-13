@@ -6,3 +6,8 @@
 .routify
 .netlify
 todo.txt
+
+scripts/resources/android/icon
+scripts/resources/android/splash
+scripts/resources/ios/icon
+scripts/resources/ios/splash
