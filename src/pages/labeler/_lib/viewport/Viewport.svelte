@@ -192,21 +192,19 @@
 </script>
 
 <div class='background'></div>
-<div class='outer'>    
-    <div class='inner'>
-        <img 
-            bind:this={image}            
-            style={$imageStyle}
-            alt='Source'
-        >
-        <canvas 
-            style={$canvasStyle}
-            bind:this={canvas} 
-        />        
-        {#if imageData}
-            <AutoLineTool {image}/>
-        {/if}
-    </div>
+<div class='outer'>
+    <img 
+        bind:this={image}            
+        style={$imageStyle}
+        alt='Source'
+    >
+    <canvas 
+        style={$canvasStyle}
+        bind:this={canvas} 
+    />        
+    {#if imageData}
+        <AutoLineTool {image}/>
+    {/if}
 </div>
 
 <GestureEmitter 
@@ -230,15 +228,10 @@
         background: var(--background);
         filter: brightness(225%);
     }
-
+    
     .outer {
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
-    }
-
-    .inner {
-        width: 100%;
         position: relative;
     }
 </style>
