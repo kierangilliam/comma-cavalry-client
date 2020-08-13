@@ -3,6 +3,7 @@
     import type { ClassType } from '@lib/types'
     import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
+    import { Spacer } from '@ollopa/cedar'
 
     export let showLabels: boolean = false
 
@@ -28,6 +29,7 @@
             ></div>
 
             {#if showLabels}
+                <Spacer s={2} />
                 <label for=''>
                     {id === 'lane markings' ? 'lanes' : id }
                 </label>
