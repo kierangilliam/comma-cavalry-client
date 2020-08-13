@@ -12,20 +12,20 @@
     let imageData
     let img_u8
 
-    let timer, debounced = false
+    // let timer, debounced = false
 
-    const debounce = () => {
-        debounced = true
-        console.log('set debounce')
-        clearTimeout(timer)
-        timer = setTimeout(() => {
-            debounced = false
-            console.log('debounce over')
-        }, 5000)
-    }
+    // const debounce = () => {
+    //     debounced = true
+    //     console.log('set debounce')
+    //     clearTimeout(timer)
+    //     timer = setTimeout(() => {
+    //         debounced = false
+    //         console.log('debounce over')
+    //     }, 1)
+    // }
     
     $: $toolMode == 'autoLine' 
-        && !debounced
+        // && !debounced
         && img_u8
         && $isTouching 
         && $cursor
@@ -39,9 +39,7 @@
 
     // TODO: Probably should've just gone with tensorflow
     const generateAutoLine = () => {
-        debounce()
-
-        console.count('here')
+        // debounce()
 
         const points = getCannyPointsAndRender(
             imageData, 
@@ -53,12 +51,9 @@
 
         const currentPath = $paths.pop()
 
-        console.log('currentPath', currentPath.points.length)
-        
         renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
         
         currentPath.points = [...currentPath.points, ...points]
-        console.log('currentPath2', currentPath.points.length)
         $paths = [...$paths, currentPath]
         // (TODO collapse overlapping points?)
     }
@@ -101,23 +96,28 @@
         let pixel: number 
         
         // Only search within this space
-        const minY = Math.floor(width * Math.max((cursor.y - (RENDER_RADIUS / 2)), 0))
-        const maxY = Math.floor(width * Math.min((cursor.y + (RENDER_RADIUS / 2)), height))
-        const minX = Math.floor(width - cursor.x - (RENDER_RADIUS / 2))
-        const maxX = Math.floor(width - cursor.x + (RENDER_RADIUS / 2))
-        let i = maxY + minX
+        const minY = Math.max((cursor.y - (RENDER_RADIUS / 2)), 0)
+        const maxY = Math.min((cursor.y + (RENDER_RADIUS / 2)), height)
+        const minX = Math.max((cursor.x - (RENDER_RADIUS / 2)), 0)
+        const maxX = Math.min((cursor.x + (RENDER_RADIUS / 2)), width)
 
-        while(--i >= minY) {
-            if (i % width < minX || i % width > maxX) {
+        // const maxI = Math.ceil(maxY * maxX)
+        // const minI = Math.floor(minY * minX)
+        let i = width * height
+
+        // TODO Try minI
+        while(--i >= 0) {
+            const x = Math.floor(i % width)
+            const y = Math.floor((i - x) / height)            
+
+            if (
+                x < minX 
+                || x > maxX
+                || y < minY
+                || y > maxY
+                ) {
                 continue
             }
-
-            const col = Math.floor(i % width)
-            const row = (i - col) / height
-            const x = (cursor.x) + (col - (width / 2))
-            const y = (cursor.y) + (row - (height / 2)) 
-
-            console.count('here')
 
             if (!withinRenderRadius(x, y)) {
                 continue
@@ -133,12 +133,27 @@
             }
         }
 
-        console.log('x, y')
-        console.log(cursor.x, cursor.y)
-        console.log('minX, maxX')
-        console.log(minX, maxX)
-        console.log('minY, maxY')
-        console.log(minY, maxY)
+        // console.log('x, y')
+        // console.log(cursor.x, cursor.y)
+        // console.log('minX, maxX')
+        // console.log(minX, maxX)
+        // console.log('minY, maxY')
+        // console.log(minY, maxY)
+
+        // console.log('maxnI', 'maxICol','maxIrow', 'maxImouseX')
+        // const maxIcol = Math.floor(maxI % width)
+        // const maxIrow = Math.floor((maxI - maxIcol) / height)            
+        // console.log(maxI, maxIcol, maxIrow, (cursor.x) + (maxIcol - (width / 2)))
+
+        // console.log('minI', 'minICol','minIrow', 'minImouseX')
+        // const minIcol = Math.floor(minI % width)
+        // const minIrow = Math.floor((minI - minIcol) / height)            
+        // console.log(minI, minIcol, minIrow, (cursor.x) + (minIcol - (width / 2)))
+
+        // console.log('width')
+        // console.log(width)
+        // console.log('i')
+        // console.log(height*width)
 
         return result
     }
