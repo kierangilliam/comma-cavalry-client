@@ -90,29 +90,13 @@
         const data_u32 = new Uint32Array(imageData.data.buffer)
         const result: Point[] = []
         let pixel: number 
-        
-        // Only search within this space
-        const minY = Math.max((cursor.y - (RENDER_RADIUS / 2)), 0)
-        const maxY = Math.min((cursor.y + (RENDER_RADIUS / 2)), height)
-        const minX = Math.max((cursor.x - (RENDER_RADIUS / 2)), 0)
-        const maxX = Math.min((cursor.x + (RENDER_RADIUS / 2)), width)
-
-        // const maxI = Math.ceil(maxY * maxX)
-        // const minI = Math.floor(minY * minX)
         let i = width * height
 
-        // TODO Try minI
         while(--i >= 0) {
             const x = Math.floor(i % width)
             const y = Math.floor((i - x) / height)            
 
-            if (
-                x < minX 
-                || x > maxX
-                || y < minY
-                || y > maxY
-                || !withinRenderRadius(x, y)
-            ) {
+            if (!withinRenderRadius(x, y)) {
                 continue
             }
 
