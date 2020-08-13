@@ -6,7 +6,7 @@ import { derived, get, writable } from 'svelte/store'
 
 export const paths = writable<Path[]>([])
 
-export const toolMode = writable<'fill' | 'brush' | 'move'>('brush')
+export const toolMode = writable<'autoLine' | 'fill' | 'brush' | 'move'>('brush')
 
 export const brushSize = writable<number>(10)
 
@@ -18,6 +18,11 @@ export const zoom = tweened<number>(1, {
 })
 
 export const overlayOpacity = writable<number>(.5)
+
+export const isTouching = writable<boolean>(false)
+
+// TODO can i replace canvasPosition using cursor instead?
+export const cursor = writable<Point>(null)
 
 export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, {
     duration: 500,

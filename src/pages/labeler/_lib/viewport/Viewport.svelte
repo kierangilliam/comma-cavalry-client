@@ -7,27 +7,32 @@
         overlayOpacity,
         brushSize, 
         canvasPosition,
+        isTouching,
+        cursor,
     } from '../state'
     import type { Path, Point } from '@lib/types'
     import { getColor, undo, setMode } from '../utils'
     import { onMount } from 'svelte'
+    import { urlToImageData } from './canvas-helpers'
     import GestureEmitter from './GestureEmitter.svelte'
+    import AutoLineTool from './AutoLineTool.svelte'
 
     export let imageUrl: string 
     export let maskUrl: string = null
     
     const WIDTH = 1164
-    const HEIGHT = 874
-    const CURSOR_OFFSET = 40
+    const HEIGHT = 874    
 
     let origin: Point = { x: -(WIDTH / 2), y: 0 }
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement
+    let imageData: string // base64
     let ctx: CanvasRenderingContext2D
     let mask: CanvasImageSource
     
     $: drawPaths($paths)
     $: setMask(maskUrl)
+    $: image && setImage(imageUrl)
     $: imageStyle = `
         transform-origin: ${origin.x}px ${origin.y}px;
         transform: scale(${$zoom});
@@ -36,10 +41,10 @@
     `
     $: canvasStyle = imageStyle + `opacity: ${$overlayOpacity};`
 
-    onMount(() => {
-        ctx = canvas.getContext('2d')
+    onMount(() => {        
         image.width = canvas.width = WIDTH
         image.height = canvas.height = HEIGHT
+        ctx = canvas.getContext('2d')
     
         drawPaths($paths)
     })
@@ -49,10 +54,12 @@
      * a consistent height above finger, despite the 
      * zoom level
      */  
-    const yWithOffset = (y: number): number => {
+    const pointFromCanvasPosition = (canvasX: number, canvasY: number): Point => {
+        const CURSOR_OFFSET = 40
         // TODO Make more even
-        console.log((CURSOR_OFFSET / $zoom * .75))
-        return y - (CURSOR_OFFSET / $zoom * .75)
+        const offset = (CURSOR_OFFSET / $zoom * .75)
+        console.log(offset)
+        return { x: canvasX, y: canvasY - offset }
     }
 
     const drawPaths = (_) => {
@@ -94,6 +101,11 @@
         mask.onerror = () => mask = null
     }
 
+    const setImage = async (_) => {
+        imageData = await urlToImageData(imageUrl)
+        image.src = imageData
+    }
+
     interface GestureEvent {
         detail: { 
             x?: number, 
@@ -105,32 +117,40 @@
         }
     }
 
-    const startNewPath = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
-        if ($toolMode !== 'brush') {
-            return
-        }
+    const onPanStart = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
+        $isTouching = false
+        $cursor = pointFromCanvasPosition(canvasX, canvasY)
 
+        if ($toolMode === 'brush') {
+            startNewPath($cursor)
+        }
+    }
+
+    const onPanMove = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
+        $cursor = pointFromCanvasPosition(canvasX, canvasY)
+
+        if ($toolMode === 'brush' && $paths.length > 0) {
+            addPointToLastPath($cursor)
+        }        
+    }
+
+    // TODO Maybe move this stuff to brush tool component? 
+    const startNewPath = ({ x, y }: Point) => {
         console.debug('Start new path')
 
         const path: Path = {
             type: $brushType,
             size: $brushSize,
-            points: [{ x: canvasX, y: yWithOffset(canvasY) }],
+            points: [{ x, y }],
         }
 
         $paths = [...$paths, path]
     }
 
-    const addPointToLastPath = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
-        if ($paths.length < 1) {
-            return
-        }        
-
-        $paths[$paths.length - 1].points.push({ 
-            x: canvasX, y: yWithOffset(canvasY) 
-        })
+    const addPointToLastPath = ({ x, y }: Point) => {
+        $paths[$paths.length - 1].points.push({ x, y })
         
-        ctx.lineTo(canvasX, yWithOffset(canvasY))
+        ctx.lineTo(x, y)
         ctx.lineWidth = $brushSize
         ctx.stroke()
     }
@@ -139,6 +159,7 @@
         console.debug('end')
         // Remove paths with 1 point
         $paths = $paths.filter(({ points }) => points.length > 1)
+        $isTouching = false
         setMode('last')
     }
 
@@ -180,22 +201,24 @@
 <div class='outer'>    
     <div class='inner'>
         <img 
-            bind:this={image}
-            src={imageUrl} 
+            bind:this={image}            
             style={imageStyle}
             alt='Source'
         >
         <canvas 
             style={canvasStyle}
             bind:this={canvas} 
-        />
+        />        
+        {#if imageData}
+            <!-- <AutoLineTool {image}/> -->
+        {/if}
     </div>
 </div>
 
 <GestureEmitter 
     {canvas} 
-    on:panstart={startNewPath}
-    on:panmove={addPointToLastPath}
+    on:panstart={onPanStart}
+    on:panmove={onPanMove}
     on:end={onEnd}
     on:doubletap={undo}
     on:pinchstart={() => setMode('move')} 
