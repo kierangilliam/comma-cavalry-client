@@ -210,7 +210,7 @@
             bind:this={canvas} 
         />        
         {#if imageData}
-            <!-- <AutoLineTool {image}/> -->
+            <AutoLineTool {image}/>
         {/if}
     </div>
 </div>

@@ -35,26 +35,24 @@
 	}
 
     function renderLines() {
+        const searchRadius = 20 /* brushSize */ / 2 // get points in this radius
         // The larger the more accurate the line detection but slower
         const size = searchSpace
         const start = {
             x: Math.floor(m.x - (size/2)),
             y: Math.floor(m.y - (size/2))
         }
-        const searchRadius = 20 /* brushSize */ / 2 // get points in this radius
-
-        let img_u8 = new jsfeat.matrix_t(size, size, jsfeat.U8C1_t)
-
+        
         cannyCtx.drawImage(image, 0, 0, WIDTH, HEIGHT)
         const imageData = cannyCtx.getImageData(start.x, start.y, size, size)
-        cannyCtx.clearRect(0, 0, WIDTH, HEIGHT)
+        
         const r = blurRadius|0;
         const kernel_size = (r + 1) << 1;
-        
+        let img_u8 = new jsfeat.matrix_t(size, size, jsfeat.U8C1_t)
         jsfeat.imgproc.grayscale(imageData.data, size, size, img_u8);
         jsfeat.imgproc.gaussian_blur(img_u8, img_u8, kernel_size, 0);
         jsfeat.imgproc.canny(img_u8, img_u8, lowThreshold|0, highThreshold|0);
-
+                
         // render result back to canvas
         const data_u32 = new Uint32Array(imageData.data.buffer);
         const alpha = (0xff << 24);
@@ -68,6 +66,8 @@
             pix = img_u8.data[i]
             const color = alpha | (pix << 16) | (pix << 8) | pix // -1 for white
             data_u32[i] = color
+
+            // console.log(img_u8.data[i])
 
             if (color == -1) {
                 const col = Math.floor(i % size)
@@ -92,6 +92,7 @@
             })
         }
 
+        cannyCtx.clearRect(0, 0, WIDTH, HEIGHT)
         cannyCtx.putImageData(imageData, start.x, start.y)
 
         function withinSearchRadius(x, y) {

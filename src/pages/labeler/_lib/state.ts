@@ -6,7 +6,7 @@ import { derived, get, writable } from 'svelte/store'
 
 export const paths = writable<Path[]>([])
 
-export const toolMode = writable<'autoLine' | 'fill' | 'brush' | 'move'>('brush')
+export const toolMode = writable<'autoLine' | 'fill' | 'brush' | 'move'>('autoLine')
 
 export const brushSize = writable<number>(10)
 
