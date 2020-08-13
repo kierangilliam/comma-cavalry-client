@@ -38,13 +38,11 @@
         && $cursor
         && generateAutoLine()
 
-    $: imageData && (
-        img_u8 = cannyProcessImage(
-            imageData,
-            $highThreshold,
-            $lowThreshold,
-            $blurRadius,
-        )
+    $: img_u8 = cannyProcessImage(
+        imageData,
+        $highThreshold,
+        $lowThreshold,
+        $blurRadius,
     )
 
     onMount(() => {
@@ -79,6 +77,10 @@
         lowThreshold: number, 
         highThreshold: number, 
     ): jsfeat.matrix_t => {
+        if (!imageData) {
+            return
+        }
+
         const r = blurRadius|0
         const kernel_size = (r + 1) << 1
         let img_u8 = new jsfeat.matrix_t(imageData.width, imageData.height, jsfeat.U8C1_t)
