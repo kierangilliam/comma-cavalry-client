@@ -10,10 +10,10 @@
     
     let canvas: HTMLCanvasElement
     let ctx: CanvasRenderingContext2D
-    let imageData
-    let img_u8
-
-    let debounceTimer, debounced = false
+    let imageData: ImageData
+    let img_u8: jsfeat.matrix_t
+    let debounceTimer: any
+    let debounced: boolean = false
 
     const debounce = () => {
         debounced = true
