@@ -9,7 +9,7 @@
 
     const { open, positionLocked } = getContext('bottomSheet')
 
-    export let imageID = -1
+    export let imageID: string
 
     const exit = () => {
         if ($dirty && window.confirm('Save changes before exiting?')) {
@@ -21,7 +21,7 @@
     }
 </script>
 
-<Fade visible={$open}>
+<Fade visible={$open} delay={150}>
     <H3>Image {imageID}</H3>
     <Spacer s={12} />
 </Fade>

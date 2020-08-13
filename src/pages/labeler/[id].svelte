@@ -28,7 +28,7 @@
     <Viewport imageUrl={image.url} />
     <StatusIndicator />
     <BottomSheet>
-        <Controls />
+        <Controls imageID={image.id} />
     </BottomSheet>
 {:catch error}
     Error { error }
