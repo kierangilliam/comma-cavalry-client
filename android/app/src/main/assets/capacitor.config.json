@@ -1,0 +1,19 @@
+{
+  "appId": "com.kierangill.commacavalry",
+  "appName": "cavalry",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "dist",
+  "server": {
+    "url": "http://192.168.1.70:5000"
+  },
+  "plugins": {
+    "Keyboard": {
+      "resize": "none"
+    },
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}
