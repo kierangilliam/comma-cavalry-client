@@ -69,6 +69,12 @@
         align-items: center;
     }
 
+    :global(a) {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: bolder;
+    }
+
     :global(.stretch) {
         width: 100%;
     }
