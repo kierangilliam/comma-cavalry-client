@@ -16,7 +16,7 @@
         }
 </script>
             
-<div class='row'>
+<div class='color-row'>
     {#each Object.entries(PATH_COLORS) as [id, color]}
         <div 
             class='item'            
@@ -39,7 +39,7 @@
 </div>
 
 <style>
-    .row {
+    .color-row {
         display: flex;
         justify-content: space-between;
     }
