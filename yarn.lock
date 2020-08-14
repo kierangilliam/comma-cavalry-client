@@ -1309,10 +1309,10 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@ollopa/cedar@^0.1.0":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@ollopa/cedar/-/cedar-0.1.8.tgz#78a553727006e0ca104242bb42e5208b6535f56c"
-  integrity sha512-OXC3jcIv9BKQgx0YDryDPUW9WzdtOZPWvRx7v1QO3mNau2EENHET9hRqcQ2r/s+Q/iqgcnOFm0eQuuXRD0hboQ==
+"@ollopa/cedar@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@ollopa/cedar/-/cedar-0.1.9.tgz#e23180f0d51eeaa441466e70c22b04c6d12dc07f"
+  integrity sha512-WhWlk9suVhNJoExamrlvUt49C8tpyKFu1dUPtksIEbhnGn+pVUfN5ad1aH7cKMpqXKuZ8Hw3XCPHPmTgiDK8eA==
   dependencies:
     "@smui/common" "^1.0.0-beta.21"
     svelte-feather-icons "^3.2.2"
