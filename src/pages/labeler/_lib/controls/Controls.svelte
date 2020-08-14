@@ -1,15 +1,17 @@
 <script lang='ts'>
-    import { overlayOpacity, dirty, brushSize, reset } from '../state'
+    import { overlayOpacity, dirty, brushSize, reset, paths } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
     import { undo, save } from '../utils'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
     import { getContext } from 'svelte'
     import { goto } from '@sveltech/routify'
-
-    const { open, positionLocked } = getContext('bottomSheet')
-
+    import Slider from './Slider.svelte'
+    
     export let id: string
+    
+    const { open, positionLocked } = getContext('bottomSheet')
+    const GUTTER_SPACING = 8
 
     const exit = () => {
         if ($dirty && window.confirm('Save changes before exiting?')) {
@@ -19,69 +21,66 @@
         reset()
         $goto('/')
     }
+
+    const clearAll = () => {
+        if (window.confirm('Are you sure?')) {
+            $paths = []
+        }
+    }
 </script>
 
 <Fade visible={$open}>
     <H3>Image {id}</H3>
-    <Spacer s={6} />
+    <Spacer s={GUTTER_SPACING} />
 </Fade>
 
 <ColorSelector showLabels={$open} />
 
 <Fade visible={$open}>
-    <Spacer s={12} />
+    <Spacer s={GUTTER_SPACING} />
 
-    <Flex>
+    <Flex justify='around'>
         <Button on:click={exit} outline warn stretch>
             exit
         </Button>
 
-        <Spacer s={12} />
+        <Spacer s={16} />
 
         <Button on:click={save} disabled={!$dirty} stretch>
             save
         </Button>
     </Flex>
 
-    <Spacer s={12} />
+    <Spacer s={GUTTER_SPACING} />
 
-    <Flex justify='between' stretch>
-        <Flex column justify='between'>
-            <Flex column>
+    <Flex justify='around'>
+        <Flex flex={1} column justify='between'>
+            <Flex stretch column>
                 <Button on:click={undo} stretch>undo</Button>
+                <Spacer s={2} />
                 <label>Or, double tap to undo</label>
             </Flex>
-            <Button stretch warn>clear all</Button>
+            <Spacer s={6} />
+            <Button on:click={clearAll} stretch warn>clear all</Button>
         </Flex>
+        
+        <Spacer s={8} />
 
         <div
+            style="flex: 1;"
             on:touchstart={() => { $positionLocked = true }}
             on:touchend={() => { $positionLocked = false }}
         >
-            <Flex justify='between'>
-                <label for='brush-size'>Brush size</label>
-                <strong>{$brushSize}</strong>
-            </Flex>
-            <input 
-                for='brush-size'
-                type='range' 
-                bind:value={$brushSize}
-                min='1' 
-                max='20' 
-                step='1' 
+            <Slider 
+                label="brush size" 
+                store={brushSize} 
+                options={[1, 20, 1]}
             />
-
-            <Flex justify='between'>
-                <label for='overlay-opacity'>Overlay Opacity</label>
-                <strong>{$overlayOpacity}</strong>
-            </Flex>
-            <input 
-                id='overlay-opacity'
-                type='range' 
-                bind:value={$overlayOpacity}
-                min='0' 
-                max='1' 
-                step='.1' 
+            <Spacer s={6} />
+            <Slider 
+                label="overlay opacity" 
+                store={overlayOpacity} 
+                options={[0, 1, .1]}
             />
         </div>
     </Flex>
