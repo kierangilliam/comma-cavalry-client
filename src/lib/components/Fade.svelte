@@ -15,10 +15,12 @@
     div {
         opacity: 0;
         height: 0;        
+        pointer-events: none;
     }
 
     .visible {
         height: auto;
         opacity: 1;
+        pointer-events: initial;
     }
 </style>
