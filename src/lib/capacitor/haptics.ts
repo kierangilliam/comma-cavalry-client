@@ -6,7 +6,9 @@ import { isNative } from './state'
 
 const { Haptics: CapacitorHaptics } = Plugins
 
-CapacitorHaptics.selectionStart()
+if (isNative) {
+    CapacitorHaptics.selectionStart()
+}
 
 function notify(type: HapticsNotificationType) {
     if (!isNative) {
