@@ -39,7 +39,7 @@ export const save = () => {
 }
 
 export const setMode = (() => {
-    let lastPaintTool: 'brush' | 'fill' | 'autoLine' = 'autoLine'
+    let lastPaintTool: 'brush' | 'fill' | 'autoLine' = 'brush'
 
     return (mode: 'brush' | 'move' | 'fill' | 'last') => {
         const tmp = get(toolMode)
