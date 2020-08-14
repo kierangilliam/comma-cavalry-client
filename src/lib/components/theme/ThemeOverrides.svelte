@@ -120,7 +120,7 @@
         }
         to { 
             opacity: 1; 
-            filter: drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.4));
+            filter: drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.4)) !important;
         }
     }
 </style>
