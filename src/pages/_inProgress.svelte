@@ -4,33 +4,38 @@
     import { goto } from '@sveltech/routify'
     import { Flex } from '@ollopa/cedar'
     import { fly } from 'svelte/transition'
+    
+    const saved = getSaved()
 
-    const inProgress = () => {
-        const saved = getSaved()
-        
+    $: inProgress = getInProgress(saved)
+
+    const getInProgress = () => {
         return Object.entries(saved).map(([id]) => ({ id }))
     }
 </script>
 
-<p>in progress</p>
-<div class='container hide-scrollbar'>
-    {#each inProgress() as { id }, i}
-        <!-- TODO Cache image and load that too -->
-        <div class='item' on:click={() => $goto(`/labeler/${id}`)}>
-            {#await getImage(id)}
-                <div class='loading-placeholder'></div>
-            {:then { url }} 
-                <img 
-                    in:fly={{ x: -50, duration: 750, delay: 100 * i }} 
-                    src={url} 
-                    alt={id}
-                >
-            {:catch error} 
-                Error {error}
-            {/await}
-        </div>
-    {/each}
-</div>
+<!-- TODO remove, hacky, should subscribe to saved, or just bubble this up -->
+{#if inProgress.length > 0}
+    <p>in progress</p>
+    <div class='container hide-scrollbar'>
+        {#each inProgress as { id }, i}
+            <!-- TODO Cache image and load that too -->
+            <div class='item' on:click={() => $goto(`/labeler/${id}`)}>
+                {#await getImage(id)}
+                    <div class='loading-placeholder'></div>
+                {:then { url }} 
+                    <img 
+                        in:fly={{ x: -50, duration: 750, delay: 100 * i }} 
+                        src={url} 
+                        alt={id}
+                    >
+                {:catch error} 
+                    Error {error}
+                {/await}
+            </div>
+        {/each}
+    </div>
+{/if}
 
 <style>
     .container {
