@@ -1,12 +1,10 @@
 <script lang='ts'>
     import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
-    import { getSaved } from '@lib/storage'
     import { Button, Flex, H1, Spacer } from '@ollopa/cedar'
     import InProgress from './_inProgress.svelte'
 
     let disabled = false
-
 
     const labelNewImage = async () => {
         disabled = true
