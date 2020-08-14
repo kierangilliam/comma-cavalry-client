@@ -58,27 +58,7 @@
         src: url('/Averta-Black.otf');
         font-weight: bolder;
     }
-
-    :global(h1, h2, h3, h4, h5, h6) {
-        font-weight: bolder;
-    }
-
-    :global(.center) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    :global(a) {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: bolder;
-    }
-
-    :global(.stretch) {
-        width: 100%;
-    }
-
+    
     :global(*) {
         -webkit-user-select: none;
         -khtml-user-select: none;
@@ -86,6 +66,20 @@
         -ms-user-select: none;
         user-select: none;
     }
+
+    :global(body) {
+        margin: 0;
+    }
+
+    :global(h1, h2, h3, h4, h5, h6) {
+        font-weight: bolder;
+    }
+
+    :global(a) {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: bolder;
+    }    
 
     /* TODO: select? */
     :global(input, textarea) {
@@ -98,5 +92,15 @@
 
     :global(label) {
         font-weight: lighter;
+    }
+
+    :global(.center) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    :global(.stretch) {
+        width: 100%;
     }
 </style>
