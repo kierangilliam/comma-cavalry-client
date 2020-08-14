@@ -24,9 +24,7 @@
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
-    let mask: CanvasImageSource
-    // TODO maybe move this & movement into another component
-    let lastDelta: Point = { x: 0, y: 0 }
+    let mask: CanvasImageSource    
     
     $: drawPaths($paths)
     $: setMask(maskUrl)
@@ -46,10 +44,13 @@
      * zoom level
      */  
     const pointFromCanvasPosition = (canvasX: number, canvasY: number): Point => {
-        const CURSOR_OFFSET = 40
-        // TODO Make more even
-        const offset = (CURSOR_OFFSET / $zoom * .75)
-        console.log(offset)
+        const CURSOR_OFFSET = 55
+        const { innerHeight } = window
+        const { height: canvasHeight } = canvas.getBoundingClientRect()        
+        const yDiff = (innerHeight - canvasHeight) / 2
+        const scale = innerHeight / canvasHeight
+        const offset = (CURSOR_OFFSET * scale) + ((scale / Math.abs(yDiff)) * CURSOR_OFFSET)
+        
         return { x: canvasX, y: canvasY - offset }
     }
 
@@ -107,24 +108,7 @@
         if ($toolMode === 'brush' || $toolMode === 'autoLine') {
             startNewPath($cursor)
         }
-    }
-
-    const onPanMove = ({ detail: { canvasX, canvasY, deltaX, deltaY } }: GestureEvent) => {
-        $cursor = pointFromCanvasPosition(canvasX, canvasY)
-
-        if ($toolMode === 'brush' && $paths.length > 0) {
-            addPointToLastPath($cursor)
-        } else if ($toolMode === 'move') {
-            console.log('MOVING')
-            const SPEED = 5
-            $canvasPosition = {
-                x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
-                y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
-            }
-        }
-
-        lastDelta = { x: deltaX, y: deltaY }
-    }
+    }    
 
     // TODO Maybe move this stuff to brush tool component? 
     const startNewPath = ({ x, y }: Point) => {
@@ -145,43 +129,53 @@
         ctx.lineTo(x, y)
         ctx.lineWidth = $brushSize
         ctx.stroke()
-    }
+    }    
 
-    const onEnd = () => {
-        // Remove paths with 1 point
-        $paths = $paths.filter(({ points }) => points.length > 1)
-        $isTouching = false
-        lastDelta = { x: 0, y: 0 }        
-    }
-
-    const { onPinch, onPinchEnd } = (() => {
+    // TODO maybe move this & movement into another component
+    const { onPinch, onEnd, onPanMove } = (() => {
         const MIN_ZOOM = .2
         const MAX_ZOOM = 6
+        const SPEED = 5 
         let lastScale = $zoom        
+        let lastDelta: Point = { x: 0, y: 0 }
         
-        const onPinch = ({ detail: { scale, deltaX, deltaY, canvasX, canvasY }}: GestureEvent) => {
-            const SPEED = 5
+        const onPanMove = ({ detail: { canvasX, canvasY, deltaX, deltaY } }: GestureEvent) => {
+            $cursor = pointFromCanvasPosition(canvasX, canvasY)
+
+            if ($toolMode === 'brush' && $paths.length > 0) {
+                addPointToLastPath($cursor)
+            } else if ($toolMode === 'move') {
+                console.log('MOVING')
+                const positionFromDelta = {
+                    x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
+                    y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
+                }
+
+                $canvasPosition = positionFromDelta
+            }        
+
+            lastDelta = { x: deltaX, y: deltaY }
+        }
+
+        const onEnd = () => {
+            // Remove paths with 1 point
+            $paths = $paths.filter(({ points }) => points.length > 1)
+            $isTouching = false
+            lastDelta = { x: 0, y: 0 }
+            lastScale = 1
+        }
+        
+        const onPinch = ({ detail: { scale }}: GestureEvent) => {            
             const newZoom = $zoom + ((scale - lastScale) * SPEED)
             
             $zoom = newZoom < MIN_ZOOM 
                 ? $zoom
                 : Math.min(MAX_ZOOM, newZoom)
 
-            $canvasPosition = {
-                x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
-                y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
-            }
-
-            lastDelta = { x: deltaX, y: deltaY }
             lastScale = scale
-        }    
-    
-        const onPinchEnd = () => {
-            lastScale = 1            
-            setMode('last')
-        }
+        }            
 
-        return { onPinchEnd, onPinch }
+        return { onPinch, onEnd, onPanMove }
     })()
 </script>
 
@@ -209,7 +203,6 @@
     on:doubletap={undo}
     on:pinchstart={() => setMode('move')} 
     on:pinch={onPinch}
-    on:pinchend={onPinchEnd}
     on:longpress={onLongPress}
 />
 

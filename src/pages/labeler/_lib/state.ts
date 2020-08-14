@@ -11,12 +11,10 @@ export const brushSize = writable<number>(10)
 export const brushType = writable<ClassType>('road')
 
 const tweenMotionParams = { duration: 500, easing: quintOut }
-export const origin = writable<Point>({ x: -400, y: 0 })
 export const overlayOpacity = writable<number>(.5)
 export const zoom = tweened<number>(1, tweenMotionParams)
 export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, tweenMotionParams)
 
-// TODO can i replace canvasPosition using cursor instead?
 export const cursor = writable<Point>(null)
 export const isTouching = writable<boolean>(false)
 
@@ -43,11 +41,13 @@ export const dirty = derived(
 )
 
 export const imageStyle = derived(
-    [origin, zoom, canvasPosition],
-    ([$origin, $zoom, $canvasPosition]) => {
+    [zoom, canvasPosition],
+    ([$zoom, $canvasPosition]) => {
+        const originX = (window.innerWidth / 2) - $canvasPosition.x
+        const originY = (window.innerHeight / 2) - $canvasPosition.y
         return `
             position: absolute;
-            transform-origin: ${$origin.x}px ${$origin.y}px;
+            transform-origin: ${originX}px ${originY}px;
             transform: scale(${$zoom});
             top: ${$canvasPosition.y}px;
             left: ${$canvasPosition.x}px;
