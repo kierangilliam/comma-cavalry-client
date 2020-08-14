@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { setContext, onMount } from 'svelte'
+    import { setContext, onMount, tick } from 'svelte'
     import { writable } from 'svelte/store'
     import { tweened } from 'svelte/motion'
     import { cubicOut } from 'svelte/easing'
@@ -7,18 +7,17 @@
 
     const open = writable(false)
     const positionLocked = writable(false)
-
-    setContext('bottomSheet', { 
-        open,
-        positionLocked,
-    })
-    
     const top = tweened(0, {
 		duration: 400,
 		easing: cubicOut
 	})
 
-    let sheet: HTMLDivElement       
+    let sheet: HTMLDivElement   
+    
+    setContext('bottomSheet', { 
+        open,
+        positionLocked,
+    })
 
     onMount(() => {
         const velocityThreshold = 1.25
@@ -26,43 +25,54 @@
         const gestures = new Hammer(sheet)
         const sheetStartTop = sheet.getBoundingClientRect().top
         let touchStartY = 0   
+        let isFirst = true
     
         $top = sheetStartTop
 
         gestures
             .get('pan')
-            .set({ direction: Hammer.DIRECTION_ALL })
+            .set({ direction: Hammer.DIRECTION_ALL })        
+            
+        // Hammerjs isn't great at giving the correct value for 'isFirst'
+        sheet.addEventListener('touchstart mousedown', () => {
+            isFirst = true
+        })
 
-        gestures.on('panup pandown', ({ velocityY, isFirst, center, deltaY }) => {
+        gestures.on('panup pandown', ({ type, center, velocityY, deltaY }) => {
             if ($positionLocked) {
                 return
-            }
+            }         
 
+            if (isFirst) {
+                // touch start relative to sheet
+                touchStartY = center.y - $top 
+                isFirst = false
+                console.debug('center.y', center.y)
+            } 
+
+            $top = center.y - touchStartY 
+            
             if (
-                velocityY > 0 && velocityY > velocityThreshold
+                type === 'pandown'
+                && velocityY > velocityThreshold
                 || deltaY > deltaThreshold
             ) {
                 $open = false                
             } else if (
-                velocityY < 0 && (velocityY * -1) > velocityThreshold
+                type === 'panup'
+                && (velocityY * -1) > velocityThreshold
                 || -deltaY > deltaThreshold
             ) {
                 $open = true                
             }        
-
-            if (isFirst) {
-                touchStartY = center.y - $top 
-            } else {
-                const deltaY = touchStartY - center.y
-                
-                $top = deltaY * -1
-            }
         })
 
-        sheet.addEventListener('touchend', () => {
+        gestures.on('panend pancancel', async _ => {
+            // Wait for DOM to render children's height
+            await tick()
             $top = $open 
-                    ? sheetStartTop - getChildrenHeight()
-                    : sheetStartTop
+                ? sheetStartTop - getChildrenHeight()
+                : sheetStartTop
         })
 
         function getChildrenHeight(): number {
@@ -94,5 +104,10 @@
         margin-left: 4px;
         margin-right: 4px;
         padding: var(--viewPadding);
+
+        /* Needed for hammerjs */
+        /* TODO Add to other hammerjs elements? */
+        -ms-touch-action: none;
+        touch-action: none;
     }
 </style>
