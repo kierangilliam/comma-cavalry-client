@@ -107,7 +107,6 @@
 
         /* Needed for hammerjs */
         /* TODO Add to other hammerjs elements? */
-        -ms-touch-action: none;
         touch-action: none;
     }
 </style>
