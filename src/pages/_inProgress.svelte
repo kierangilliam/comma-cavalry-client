@@ -40,7 +40,9 @@
     }
 
     .item {
-        padding: 3px 0;
+        --shadowOffset: 3px;
+        padding-top: var(--shadowOffset);
+        padding-left: var(--shadowOffset);
         display: inline-block;
         vertical-align: top;
         margin-right: 20px;
@@ -48,12 +50,13 @@
     }
 
     img, .loading-placeholder {
+        --shadow: calc(-1 * var(--shadowOffset));
         --displayHeight: calc(874px * .15);
         --displayWidth: calc(1164px * .15);
         object-fit: cover;
         height: var(--displayHeight);
         width: var(--displayWidth);
-        filter: drop-shadow(-3px -3px 0px rgba(247, 247, 247, 0.25));
+        filter: drop-shadow(var(--shadow) var(--shadow) 0px rgba(247, 247, 247, 0.25));
     }
     .loading-placeholder {
         background: var(--white);
