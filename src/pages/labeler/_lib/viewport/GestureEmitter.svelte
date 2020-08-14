@@ -12,11 +12,18 @@
     const dispatch = createEventDispatcher()    
     
     onMount(() => {
-        const gestures = new Hammer(target)
+        const gestures = new Hammer.Manager(target)
 
-        gestures
-            .get('pinch')
-            .set({ enable: true })
+        const pan = new Hammer.Pan({ direction: Hammer.DIRECTION_ALL })
+        const pinch = new Hammer.Pinch({ enable:true })
+        const doubletap = new Hammer.Tap({ 
+            event: 'doubletap', 
+            taps: 2,
+            posThreshold: 30,
+            interval: 400,
+        })
+
+        gestures.add([ doubletap, pinch, pan ])
 
         gestures.on('pinch pinchstart pinchend', (e) => {
             const { scale, type, deltaX, deltaY } = e
@@ -28,18 +35,10 @@
             })
         })
         
-        gestures.get('tap').set({
-            event: 'doubletap',
-            taps: 2,
-        })
-
-        // TODO Fix: fires twice (use hammer manager?)
         gestures.on('doubletap', (e) => {
             console.debug('doubletap',e)
             dispatch('doubletap')
         })
-
-        gestures.get('pan').set({ direction: Hammer.DIRECTION_ALL})
 
         gestures.on('panstart', (e) => {
             console.log('pan start')
@@ -47,12 +46,11 @@
         })
         
         gestures.on('panmove', (e) => {
-            console.log('pan move')
             dispatch('panmove', { ...canvasPointFromEvent(e), ...e }) 
         })
 
         gestures.on('panend pinchend pancancel pinchcancel', () => {
-            console.log('END')
+            console.log('touch end')
             dispatch('end')
         })
     })
