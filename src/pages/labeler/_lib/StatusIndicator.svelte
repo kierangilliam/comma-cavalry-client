@@ -3,18 +3,27 @@
 </script>
 
 <div>
-    {$brushType} • {$toolMode} 
-    • {$paths.length} {$dirty ? ' • dirty' : ''}
+    <span>{$brushType} • {$toolMode}</span>
+    <!-- • {$paths.length} {$dirty ? ' • dirty' : ''} -->
 </div>
 
 <style>
-    div {
+    div {        
         position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         /* TODO Change to s-16 or use view padding */
-        top: 20px;
-        left: 20px;
-        background: var(--background);
+        /* top: var(--statusBarHeight); */
+        top: 20px;   
+        left: 0;     
+        right: 0;  
+        pointer-events: none; 
+    }
+
+    span {
         padding: var(--s-2) var(--s-4);
         border-radius: var(--borderRadiusFull);
+        background: var(--background);
     }
 </style>
