@@ -49,6 +49,7 @@
         --bubbleInnerShadow: inset -3px -3px 0px rgba(0, 0, 0, 0.12);
 
         display: flex;
+        flex: 1;
         flex-direction: column;
         justify-content: center;
         align-items: center;
