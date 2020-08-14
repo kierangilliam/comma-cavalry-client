@@ -13,9 +13,9 @@
     
     onMount(() => {
         const gestures = new Hammer.Manager(target)
-
         const pan = new Hammer.Pan({ direction: Hammer.DIRECTION_ALL })
         const pinch = new Hammer.Pinch({ enable:true })
+        const longpress = new Hammer.Press({ event: 'longpress', time: 500 })
         const doubletap = new Hammer.Tap({ 
             event: 'doubletap', 
             taps: 2,
@@ -23,39 +23,42 @@
             interval: 400,
         })
 
-        gestures.add([ doubletap, pinch, pan ])
+        gestures.add([ doubletap, pinch, pan, longpress ])
 
-        gestures.on('pinch pinchstart pinchend', (e) => {
-            const { scale, type, deltaX, deltaY } = e
+        gestures.on('longpress', e => {
+            console.info('longpress')
+            dispatch('longpress', createEvent(e))
+        })
 
-            dispatch(type, { 
-                scale, 
-                delta: { x: deltaX, y: deltaY },
-                ...e,
-            })
+        gestures.on('pinch pinchstart pinchend', e => {
+            dispatch(e.type, createEvent(e))
         })
         
-        gestures.on('doubletap', (e) => {
-            console.debug('doubletap',e)
-            dispatch('doubletap')
+        gestures.on('doubletap', e => {
+            console.info('doubletap')
+            dispatch('doubletap', createEvent(e))
         })
 
-        gestures.on('panstart', (e) => {
-            console.log('pan start')
-            dispatch('panstart', { ...canvasPointFromEvent(e), ...e })
+        gestures.on('panstart', e => {
+            console.info('pan start')
+            dispatch('panstart', createEvent(e))
         })
         
         gestures.on('panmove', (e) => {
-            dispatch('panmove', { ...canvasPointFromEvent(e), ...e }) 
+            dispatch('panmove', createEvent(e)) 
         })
 
-        gestures.on('panend pinchend pancancel pinchcancel', () => {
-            console.log('touch end')
-            dispatch('end')
+        gestures.on('panend pinchend pancancel pinchcancel', e => {
+            console.info('touch end')
+            dispatch('end', createEvent(e))
         })
     })
 
     // TODO Shortpress to enable making the brush size bigger and smaller
+
+    function createEvent(e: HammerInput): HammerInput | { canvasX: number, canvasY: number } {
+        return { ...e, ...canvasPointFromEvent(e) }
+    }
 
     function canvasPointFromEvent(e: HammerInput) {
         const rect = canvas.getBoundingClientRect()        
