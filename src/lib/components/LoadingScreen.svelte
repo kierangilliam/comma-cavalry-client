@@ -1,6 +1,6 @@
 
 <script>
-    import { expoOut, quartOut } from 'svelte/easing'
+    import { quartOut } from 'svelte/easing'
     import { tweened } from 'svelte/motion'
     import Fade from './Fade.svelte'
 
@@ -71,20 +71,9 @@
         flex: 1;
         width: 50px;
         margin-bottom: var(--s-4);
-        animation: fade 2s ease-in-out alternate infinite;        
+        animation: var(--glowAnimation);
     }
     img.error {
         animation: none;
     }
-
-    @keyframes fade {
-        from { 
-            opacity: 0; 
-            filter: drop-shadow(0px 3px 0px rgba(255, 255, 255, 0.2));
-        }
-        to { 
-            opacity: 1; 
-            filter: drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.4));
-        }
-    }       
 </style>

@@ -38,6 +38,8 @@
         --headingFont: "Avenir";
 
         --viewPadding: var(--s-8) var(--s-4);
+
+        --glowAnimation: glow 2s ease-in-out alternate infinite;        
     }
 
     /* TODO Register */
@@ -73,6 +75,8 @@
 
     :global(h1, h2, h3, h4, h5, h6) {
         font-weight: bolder;
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     :global(a) {
@@ -102,5 +106,21 @@
 
     :global(.stretch) {
         width: 100%;
+    }
+
+    :global(.hide-scrollbar::-webkit-scrollbar) {
+        display: none;
+    }
+
+    /* Animations */
+    @keyframes -global-glow {
+        from { 
+            opacity: 0; 
+            filter: drop-shadow(0px 3px 0px rgba(255, 255, 255, 0.2));
+        }
+        to { 
+            opacity: 1; 
+            filter: drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.4));
+        }
     }
 </style>

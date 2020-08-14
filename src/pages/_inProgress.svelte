@@ -3,6 +3,7 @@
     import { getSaved } from '@lib/storage'
     import { goto } from '@sveltech/routify'
     import { Flex } from '@ollopa/cedar'
+    import { fly } from 'svelte/transition'
 
     const inProgress = () => {
         const saved = getSaved()
@@ -11,14 +12,19 @@
     }
 </script>
 
-<div>
-    {#each inProgress() as { id }}
+<p>in progress</p>
+<div class='container hide-scrollbar'>
+    {#each inProgress() as { id }, i}
         <!-- TODO Cache image and load that too -->
-        <div class='entry' on:click={() => $goto(`/labeler/${id}`)}>
+        <div class='item' on:click={() => $goto(`/labeler/${id}`)}>
             {#await getImage(id)}
-                Loading...
+                <div class='loading-placeholder'></div>
             {:then { url }} 
-                <img src={url} alt={id}>
+                <img 
+                    in:fly={{ x: -50, duration: 750, delay: 100 * i }} 
+                    src={url} 
+                    alt={id}
+                >
             {:catch error} 
                 Error {error}
             {/await}
@@ -27,17 +33,30 @@
 </div>
 
 <style>
-    div {
-        display: flex;
-        overflow-x: scroll;
+    .container {
+        overflow: auto;
+        white-space: nowrap;
+        width: 100%;        
     }
-    /* Fixes hidden overflow issue https://stackoverflow.com/questions/33485841/top-gets-cut-off-when-using-flexbox */
-    div::before { margin-left: auto; }
-    div::after { margin-right: auto; }
 
-    img {
-        max-width: 50vw;
-        margin-left: var(--s-6);
+    .item {
+        padding: 3px 0;
+        display: inline-block;
+        vertical-align: top;
+        margin-right: 20px;
+        white-space: normal;
+    }
+
+    img, .loading-placeholder {
+        --displayHeight: calc(874px * .15);
+        --displayWidth: calc(1164px * .15);
+        object-fit: cover;
+        height: var(--displayHeight);
+        width: var(--displayWidth);
         filter: drop-shadow(-3px -3px 0px rgba(247, 247, 247, 0.25));
     }
+    .loading-placeholder {
+        background: var(--white);
+        animation: var(--glowAnimation);
+    }    
 </style>

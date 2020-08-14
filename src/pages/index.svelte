@@ -2,7 +2,7 @@
     import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
     import { getSaved } from '@lib/storage'
-    import { Button, Flex, H4, Spacer } from '@ollopa/cedar'
+    import { Button, Flex, H1, Spacer } from '@ollopa/cedar'
     import InProgress from './_inProgress.svelte'
 
     let disabled = false
@@ -24,14 +24,15 @@
     }
 </script>
 
-<Flex justify='between' span column>
-    <H4>comma cavalry</H4>
+<Flex justify='between' align='start' span column>
+    <Flex>
+        <img id="logo" src="/comma.svg" alt="logo">
+        <H1>cavalry</H1>
+    </Flex>
 
-    <Spacer s={12} />
+    <Spacer s={6} />
     
     <InProgress />
-
-    <Spacer s={12} />
 
     <div class='footer'>
         <Button on:click={labelNewImage} {disabled}>
@@ -41,8 +42,15 @@
 </Flex>
 
 <style>
+    #logo {
+        height: var(--s-8);
+        margin-right: var(--s-2);
+    }
     .footer {
-        position: absolute;
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        position: fixed;
         bottom: var(--s-8);
     }
 </style>
