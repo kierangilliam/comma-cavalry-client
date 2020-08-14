@@ -69,9 +69,12 @@
     
     img {
         flex: 1;
-        width: 50px;
+        width: 70px;
         margin-bottom: var(--s-4);
         animation: var(--glowAnimation);
+        /* Add padding to where the dropshadow does not get cut off */
+        padding-left: 14px;
+        padding-right: 14px;
     }
     img.error {
         animation: none;
