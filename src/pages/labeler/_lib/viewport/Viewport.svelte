@@ -8,11 +8,10 @@
         canvasPosition,
         isTouching,
         cursor,
-        origin,
         canvasStyle,
         imageStyle,
     } from '../state'
-    import type { Path, Point } from '@lib/types'
+    import type { Path, GestureEvent, Point } from '@lib/types'
     import { getColor, undo, setMode } from '../utils'
     import { onMount } from 'svelte'
     import GestureEmitter from './GestureEmitter.svelte'
@@ -26,6 +25,8 @@
     let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
     let mask: CanvasImageSource
+    // TODO maybe move this & movement into another component
+    let lastDelta: Point = { x: 0, y: 0 }
     
     $: drawPaths($paths)
     $: setMask(maskUrl)
@@ -91,32 +92,38 @@
         mask.onerror = () => mask = null
     }
 
-    interface GestureEvent {
-        detail: { 
-            x?: number, 
-            y?: number, 
-            canvasX?: number, 
-            canvasY?: number, 
-            scale?: number, 
-            delta?: Point, 
+    const onLongPress = () => {
+        if ($toolMode === 'move') {
+            setMode('last')
+        } else {
+            setMode('move')
         }
     }
 
     const onPanStart = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
         $isTouching = true
         $cursor = pointFromCanvasPosition(canvasX, canvasY)
-
-        // if ($toolMode === 'brush') {
+        
+        if ($toolMode === 'brush' || $toolMode === 'autoLine') {
             startNewPath($cursor)
-        // }
+        }
     }
 
-    const onPanMove = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
+    const onPanMove = ({ detail: { canvasX, canvasY, deltaX, deltaY } }: GestureEvent) => {
         $cursor = pointFromCanvasPosition(canvasX, canvasY)
 
         if ($toolMode === 'brush' && $paths.length > 0) {
             addPointToLastPath($cursor)
-        }        
+        } else if ($toolMode === 'move') {
+            console.log('MOVING')
+            const SPEED = 5
+            $canvasPosition = {
+                x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
+                y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
+            }
+        }
+
+        lastDelta = { x: deltaX, y: deltaY }
     }
 
     // TODO Maybe move this stuff to brush tool component? 
@@ -141,20 +148,18 @@
     }
 
     const onEnd = () => {
-        console.debug('end')
         // Remove paths with 1 point
         $paths = $paths.filter(({ points }) => points.length > 1)
         $isTouching = false
-        setMode('last')
+        lastDelta = { x: 0, y: 0 }        
     }
 
     const { onPinch, onPinchEnd } = (() => {
         const MIN_ZOOM = .2
         const MAX_ZOOM = 6
-        let lastScale = $zoom
-        let lastDelta: Point = { x: 0, y: 0 }
+        let lastScale = $zoom        
         
-        const onPinch = ({ detail: { scale, delta, x, y }}: GestureEvent) => {
+        const onPinch = ({ detail: { scale, deltaX, deltaY, canvasX, canvasY }}: GestureEvent) => {
             const SPEED = 5
             const newZoom = $zoom + ((scale - lastScale) * SPEED)
             
@@ -163,18 +168,16 @@
                 : Math.min(MAX_ZOOM, newZoom)
 
             $canvasPosition = {
-                x: $canvasPosition.x + ((delta.x - lastDelta.x) * SPEED),
-                y: $canvasPosition.y + ((delta.y - lastDelta.y) * SPEED),
+                x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
+                y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
             }
 
-            $origin = { x, y }
-            lastDelta = delta
+            lastDelta = { x: deltaX, y: deltaY }
             lastScale = scale
         }    
     
         const onPinchEnd = () => {
-            lastScale = 1
-            lastDelta = { x: 0, y: 0 }
+            lastScale = 1            
             setMode('last')
         }
 
@@ -207,6 +210,7 @@
     on:pinchstart={() => setMode('move')} 
     on:pinch={onPinch}
     on:pinchend={onPinchEnd}
+    on:longpress={onLongPress}
 />
 
 <style>

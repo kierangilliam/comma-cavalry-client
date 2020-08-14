@@ -3,6 +3,7 @@
 <script lang='ts'>
     import { createEventDispatcher, onMount } from 'svelte'
     import Hammer from 'hammerjs'
+    import type { GestureEvent } from '@lib/types'
     import { zoom } from '../state'
 
     export let canvas: HTMLCanvasElement
@@ -56,7 +57,7 @@
 
     // TODO Shortpress to enable making the brush size bigger and smaller
 
-    function createEvent(e: HammerInput): HammerInput | { canvasX: number, canvasY: number } {
+    function createEvent(e: HammerInput): GestureEvent['detail'] {
         return { ...e, ...canvasPointFromEvent(e) }
     }
 
