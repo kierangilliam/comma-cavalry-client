@@ -14,6 +14,7 @@
     :global(:root) {
         --black: #181818;
         --lightGray: #D9D7E0;
+        --darkGray: #373737;
 
         /* These colors are defined using js */        
         --white: magenta;
