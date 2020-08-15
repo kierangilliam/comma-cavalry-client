@@ -1,5 +1,12 @@
 <script lang='ts'>
-    import { overlayOpacity, dirty, brushSize, reset, paths } from '../state'
+    import { 
+        overlayOpacity, 
+        dirty, 
+        brushSize, 
+        reset, 
+        paths, 
+        showTutorial 
+    } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
     import { undo, save } from '../utils'
@@ -27,10 +34,16 @@
             $paths = []
         }
     }
+
+    const toggleTutorial = () => {
+        $showTutorial = true
+        $open = false
+    }
 </script>
 
 <Fade visible={$open}>
     <H3>Image {id}</H3>
+    <div class='tutorial' on:click={toggleTutorial}>show tutorial</div>
     <Spacer s={GUTTER_SPACING} />
 </Fade>
 
@@ -85,3 +98,9 @@
         </div>
     </Flex>
 </Fade>
+
+<style>
+    .tutorial {
+        color: var(--primary);
+    }
+</style>
