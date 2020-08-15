@@ -26,7 +26,7 @@ export const saveEntry = (id: string, { paths }: Omit<Entry, 'version'>) => {
 
     saved[id] = {
         version: VIEWPORT_VERSION,
-        paths: get(paths),
+        paths,
     }
 
     savedEntries.set(saved)
