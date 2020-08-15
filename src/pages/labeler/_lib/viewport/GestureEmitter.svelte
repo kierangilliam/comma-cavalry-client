@@ -72,10 +72,13 @@
     }
 </script>
 
-<div bind:this={target}></div>
+<div 
+    id='editor-gesture-target'
+    bind:this={target}
+></div>
 
 <style>
-    div {
+    #editor-gesture-target {
         position: fixed;
         top: 0;
         left: 0;
