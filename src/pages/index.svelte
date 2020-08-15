@@ -30,7 +30,7 @@
 
     <Spacer s={6} />
     
-    <InProgress on:select={e => selectedImageID = e?.detail?.id} />
+    <InProgress on:select={({ detail: { id } }) => selectedImageID = id} />
 
     <div class='footer'>
         <Button on:click={labelNewImage} {disabled}>
