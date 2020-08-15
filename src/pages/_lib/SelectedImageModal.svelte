@@ -52,8 +52,8 @@
     .img-container {
         position: relative;
         height: var(--selectedImageHeight);        
-        width: 120%;
-        margin-left: -10%;
+        width: 140%;
+        margin-left: -25%;        
     }
 
     img {
@@ -61,7 +61,8 @@
         --offset: calc(var(--selectedImageHeight) / 2 * -1);
         bottom: 0;
         width: 100%;
-        object-fit: cover;
+        object-fit: none;
+        object-position: top;
     }
 
     /* .details {
