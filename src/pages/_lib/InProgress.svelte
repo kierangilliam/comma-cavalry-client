@@ -1,26 +1,26 @@
 <script>
     import { getImage } from '@gql'
-    import { getSaved } from '@lib/storage'
-    import { goto } from '@sveltech/routify'
-    import { Flex } from '@ollopa/cedar'
+    import { savedEntries } from '@lib/storage'
     import { fly } from 'svelte/transition'
+    import { Spacer } from '@ollopa/cedar'
+    import { createEventDispatcher } from 'svelte'
     
-    const saved = getSaved()
+    const dispatch = createEventDispatcher()
 
-    $: inProgress = getInProgress(saved)
+    $: inProgress = getInProgress($savedEntries)
 
-    const getInProgress = () => {
-        return Object.entries(saved).map(([id]) => ({ id }))
-    }
+    const getInProgress = (saved) => 
+        Object.entries(saved).map(([id]) => ({ id }))
 </script>
 
 <!-- TODO remove, hacky, should subscribe to saved, or just bubble this up -->
 {#if inProgress.length > 0}
     <p>in progress</p>
+    <Spacer />
     <div class='container hide-scrollbar'>
         {#each inProgress as { id }, i}
             <!-- TODO Cache image and load that too -->
-            <div class='item' on:click={() => $goto(`/labeler/${id}`)}>
+            <div class='item' on:click={() => dispatch('select', { id })}>
                 {#await getImage(id)}
                     <div class='loading-placeholder'></div>
                 {:then { url }} 
@@ -35,6 +35,9 @@
             </div>
         {/each}
     </div>
+{:else}
+    <!-- TODO an image or something pretty lookin -->
+    No items in progress. Label a new image below.
 {/if}
 
 <style>

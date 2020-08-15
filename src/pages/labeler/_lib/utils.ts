@@ -1,12 +1,10 @@
 import { Haptics } from '@lib/capacitor'
 import { PATH_COLORS } from '@lib/constants'
-import { getSaved, LOCAL_STORAGE_SAVED } from '@lib/storage'
+import { saveEntry } from '@lib/storage'
 import type { ClassType } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { get } from 'svelte/store'
 import { paths, toolMode } from './state'
-
-const VIEWPORT_VERSION = 0
 
 export const getColor = (type: ClassType): string => {
     return PATH_COLORS[type]
@@ -21,17 +19,9 @@ export const undo = () => {
 }
 
 export const save = () => {
-    console.debug('Save')
     const { id } = get(params)
-    const saved = getSaved()
 
-    saved[id] = {
-        version: VIEWPORT_VERSION,
-        paths: get(paths),
-    }
-
-    localStorage.setItem(LOCAL_STORAGE_SAVED, JSON.stringify(saved))
-
+    saveEntry(id, { paths: get(paths) })
     Haptics.success()
 
     // Trigger state refresh so that derived 'dirty' updates
