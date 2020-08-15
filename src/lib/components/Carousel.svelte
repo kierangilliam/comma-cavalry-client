@@ -49,7 +49,7 @@
     }
 
     onMount(async () => {
-        const VELOCITY_THRESHOLD = 1.25
+        const VELOCITY_THRESHOLD = 1
         let xStart = $xPos
         let isFirstTouch = true
         gestures = new Hammer(container)
@@ -64,7 +64,7 @@
             isFirstTouch = true
         })        
 
-        gestures.on('panleft panright', ({ deltaX, velocityX }) => {            
+        gestures.on('panleft panright', ({ type, deltaX, velocityX }) => {            
             if (isFirstTouch) {
                 xStart = $xPos
                 isFirstTouch = false                
@@ -77,14 +77,9 @@
             const gotoPrevious = $xPos < minPan
             
             $xPos = -deltaX + xStart
-
-            if (!exceedsVelocityThreshold) {
-                return
-            }
-
-            // Next
-            if (gotoNext || gotoPrevious) {
-                sectionIndex = gotoNext
+            
+            if (exceedsVelocityThreshold || gotoNext || gotoPrevious) {
+                sectionIndex = type === 'panleft'
                     ? Math.min(++sectionIndex, sections.length - 1)
                     : Math.max(--sectionIndex, 0)
                 
