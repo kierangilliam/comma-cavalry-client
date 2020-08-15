@@ -32,7 +32,7 @@
         --buttonWarnTextColor: var(--white);
         --lineColor: var(--white);
 
-        --borderRadius: 12px;
+        --borderRadius: 22px;
         --buttonBorderRadius: var(--borderRadiusFull);
 
         --bodyFont: "Avenir";
