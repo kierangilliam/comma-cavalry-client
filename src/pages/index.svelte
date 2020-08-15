@@ -4,8 +4,10 @@
     import { Header } from '@lib/components'
     import { Button, Flex, Spacer } from '@ollopa/cedar'
     import InProgress from './_lib/InProgress.svelte'
+    import SelectedImageModal from './_lib/SelectedImageModal.svelte'
 
     let disabled = false
+    let selectedImageID: string = null
 
     const labelNewImage = async () => {
         disabled = true
@@ -28,7 +30,7 @@
 
     <Spacer s={6} />
     
-    <InProgress />
+    <InProgress on:select={e => selectedImageID = e?.detail?.id} />
 
     <div class='footer'>
         <Button on:click={labelNewImage} {disabled}>
@@ -36,6 +38,8 @@
         </Button>
     </div>
 </Flex>
+
+<SelectedImageModal bind:id={selectedImageID} />
 
 <style>    
     .footer {
