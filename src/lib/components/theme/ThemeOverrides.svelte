@@ -70,14 +70,17 @@
         user-select: none;
     }
 
+    /* TODO move to ollopa */
     :global(body) {
         margin: 0;
+    }
+    :global(p, h1, h2, h3, h4, h5, h6) {
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     :global(h1, h2, h3, h4, h5, h6) {
         font-weight: bolder;
-        margin-top: 0;
-        margin-bottom: 0;
     }
 
     :global(a) {
