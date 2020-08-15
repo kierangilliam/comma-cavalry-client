@@ -1,15 +1,16 @@
 <script lang='ts'>
     import { params, url } from '@sveltech/routify'
-    import { Flex, H4 } from '@ollopa/cedar'
+    import { H4 } from '@ollopa/cedar'
     import { getImage } from '@gql'
-    import { BottomSheet, LoadingScreen } from '@lib/components'
+    import type { Image } from '@lib/types'
+    import { BottomSheet, LoadingScreen, Modal } from '@lib/components'
     import { getEntry } from '@lib/storage'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
     import { paths } from './_lib/state'
-    import type { Image } from '@lib/types'
     import { urlToImageData } from './_lib/viewport/canvas-helpers'
+    import Tutorial from './_lib/tutorial/Tutorial.svelte'
 
     let loading = true
     let error = null
@@ -60,5 +61,11 @@
         <BottomSheet>
             <Controls {id} />
         </BottomSheet>
+
+        {#if true}
+            <Modal>
+                <Tutorial />
+            </Modal>
+        {/if}
     {/await}
 {/if}

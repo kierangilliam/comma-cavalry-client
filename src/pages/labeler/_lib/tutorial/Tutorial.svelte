@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import Carousel from './Carousel.svelte'    
+    import { Carousel } from '@lib/components'    
     import TutorialSection from './TutorialSection.svelte'    
 
     const spacer = '<div style=\'height: var(--s-6);\'></div>'
