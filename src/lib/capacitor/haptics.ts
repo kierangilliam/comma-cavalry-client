@@ -12,7 +12,7 @@ if (isNative) {
 
 function notify(type: HapticsNotificationType) {
     if (!isNative) {
-        console.debug('Buzz!', type)
+        console.debug(`Buzz! [${type}]`)
         return
     }
 
@@ -21,7 +21,7 @@ function notify(type: HapticsNotificationType) {
 
 function vibrate(style: HapticsImpactStyle) {
     if (!isNative) {
-        console.debug('Buzz!', style)
+        console.debug(`Buzz! [${style}]`)
         return
     }
 
@@ -43,6 +43,11 @@ export module Haptics {
     }
 
     export function select() {
+        if (!isNative) {
+            console.debug('Buzz! [select]')
+            return
+        }
+
         CapacitorHaptics.selectionChanged()
     }
 
