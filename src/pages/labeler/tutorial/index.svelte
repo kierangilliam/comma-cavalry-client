@@ -1,12 +1,9 @@
 <script lang='ts'>
-    import { H4, Flex } from '@ollopa/cedar'
-    import Hammer from 'hammerjs'
-    import { onMount } from 'svelte'
-    import { tweened } from 'svelte/motion'
-    import { elasticOut } from 'svelte/easing'
+    import Carousel from './Carousel.svelte'    
+    import TutorialSection from './TutorialSection.svelte'    
 
     const spacer = '<div style=\'height: var(--s-6);\'></div>'
-    const sections = [
+    const tutorials = [
         {
             title: 'what to do',
             body: `
@@ -49,101 +46,10 @@
         },
     ]
 
-    const xPos = tweened(0, {
-        duration: 3000,
-        easing: elasticOut,
-    })
-
-    let surpassedThreshold = false
-    let width = null
-    let sectionIndex = 0
-    let gestures: HammerManager
-    let container: HTMLElement
-
-    $: sectionStyle = `width: ${width}px;`
-    $: containerStyle = width && `
-        width: ${width * sections.length}px;
-        transform: translateX(${-$xPos}px); 
-    `
-
-    $: gestures && (
-        // Disable pan if we surpassed a threshold
-        gestures.get('pan').set({ enable: !surpassedThreshold })
-    )
-
-    onMount(() => {
-        const VELOCITY_THRESHOLD = 1.25
-        let xStart = $xPos
-        let isFirstTouch = true
-        gestures = new Hammer(container)
-        width = container.clientWidth
-
-        container.addEventListener('touchstart', () => {
-            isFirstTouch = true
-        })
-
-        gestures.on('panleft panright', ({ deltaX, velocityX }) => {            
-            if (isFirstTouch) {
-                xStart = $xPos
-                isFirstTouch = false                
-            }
-
-            const MAX_PAN = xStart + (width/2)
-            const MIN_PAN = xStart - (width/2)
-            $xPos = -deltaX + xStart
-
-            // Next
-            if (
-                -1 * velocityX > VELOCITY_THRESHOLD
-                || $xPos > MAX_PAN
-            ) {
-                sectionIndex = Math.min(sections.length - 1, ++sectionIndex)
-                surpassedThreshold = true
-            } 
-            
-            // Previous
-            else if (
-                velocityX > VELOCITY_THRESHOLD
-                || $xPos < MIN_PAN
-            ) {
-                sectionIndex = Math.max(0, --sectionIndex)
-                surpassedThreshold = true
-            }            
-        })
-
-        container.addEventListener('touchend', () => {
-            $xPos = sectionIndex * width      
-            surpassedThreshold = false      
-        })
-    })
+    const sections = tutorials.map(({ title, body }) => ({
+        component: TutorialSection as SvelteComponent,
+        props: { title, body },
+    }))
 </script>
 
-<div 
-    class='container' 
-    style={containerStyle} 
-    bind:this={container}
->
-    {#each sections as { title, body }, i}
-        <div class='section' style={sectionStyle}>
-            <Flex>
-                <H4>{title}</H4>
-            </Flex>
-    
-            <p>{@html body}</p>
-        </div>
-    {/each}
-</div>
-
-{sectionIndex}
-
-<style>
-    .container {
-        display: flex;
-        overflow-x: hidden;
-        touch-action: none;
-    }
-
-    div.section {        
-        flex-shrink: 0; /* do not shrink */
-    }
-</style>
+<Carousel {sections} />
