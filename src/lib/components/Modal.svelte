@@ -1,8 +1,8 @@
-<script>
+<script lang='ts'>
     import { fly, fade } from 'svelte/transition'
     import { quintOut } from 'svelte/easing'
 
-    export let active = false
+    export let active: any = false
 </script>
 
 {#if active}
