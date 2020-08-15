@@ -12,7 +12,7 @@
         // Svelte's elastic out is far too aggressive for this use-case
         easing: (t: number) => {
             const passiveness = 2.5
-            const backAndForthAmount = -18.0
+            const backAndForthAmount = -25.0
             return (
                 Math.sin( (-13.0 * (t + 1.0) * Math.PI) / 2) 
                 * Math.pow(passiveness, backAndForthAmount * t) 
@@ -123,8 +123,6 @@
         touch-action: none;
         transition: height 250ms ease-out;
     }
-
-    div.section { /* flex-shrink: 0; do not shrink */ }
 
     .bubble {
         --bubbleSize: 16px;
