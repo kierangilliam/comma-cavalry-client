@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { Flex } from '@ollopa/cedar'
     import Hammer from 'hammerjs'
-    import { onMount } from 'svelte'
+    import { onMount, tick } from 'svelte'
     import { tweened } from 'svelte/motion'
 
     export let sections: { component: SvelteComponent, props: any }[]
@@ -10,7 +10,7 @@
         duration: 2000,
         // Svelte's elastic out is far too aggressive for this use-case
         easing: (t: number) => {
-            const passiveness = 2.5 // 2 is
+            const passiveness = 2.5
             const backAndForthAmount = -18.0
             return (
                 Math.sin( (-13.0 * (t + 1.0) * Math.PI) / 2) 
@@ -20,33 +20,49 @@
         },
     })
 
-    let surpassedThreshold = false
-    let width = null
+    let sectionWidth = null
+    let sectionHeights = null
     let sectionIndex = 0
     let gestures: HammerManager
     let container: HTMLElement
 
-    $: sectionStyle = `width: ${width}px;`
-    $: containerStyle = width && `
-        width: ${width * sections.length}px;
+    $: inFocusSectionHeight = sectionHeights && 
+        sectionHeights[sectionIndex]
+    // TODO 32 is an arbitrary margin
+    $: sectionStyle = `
+        width: ${sectionWidth}px; 
+        margin: 0 32px;
+    `
+    // TODO 40 is an arbitrary offset
+    $: containerStyle = sectionWidth && `
+        height: ${inFocusSectionHeight + 40}px;
+        width: ${sectionWidth * sections.length}px;
         transform: translateX(${-$xPos}px); 
     `
 
-    $: gestures && (
-        // Disable pan if we surpassed a threshold
-        gestures.get('pan').set({ enable: !surpassedThreshold })
-    )
+    const calculateSectionHeights = () => {        
+        sectionHeights = Array.from(container.children).map(c => 
+            Array.from(c.children).reduce((acc, e) => 
+                acc + e.getBoundingClientRect().height
+            , 0)
+        )
+    }
 
-    onMount(() => {
+    onMount(async () => {
         const VELOCITY_THRESHOLD = 1.25
         let xStart = $xPos
         let isFirstTouch = true
         gestures = new Hammer(container)
-        width = container.clientWidth
+        sectionWidth = container.clientWidth
+
+        // Wait to calculate heights until after pending state 
+        // changes have been applied to the DOM
+        await tick()
+        calculateSectionHeights()
 
         container.addEventListener('touchstart', () => {
             isFirstTouch = true
-        })
+        })        
 
         gestures.on('panleft panright', ({ deltaX, velocityX }) => {            
             if (isFirstTouch) {
@@ -54,33 +70,32 @@
                 isFirstTouch = false                
             }
 
-            const MAX_PAN = xStart + (width / 2)
-            const MIN_PAN = xStart - (width / 2)
+            const exceedsVelocityThreshold = Math.abs(velocityX) > VELOCITY_THRESHOLD
+            const maxPan = xStart + (sectionWidth / 2)
+            const minPan = xStart - (sectionWidth / 2)
+            const gotoNext = $xPos > maxPan
+            const gotoPrevious = $xPos < minPan
             
             $xPos = -deltaX + xStart
 
+            if (!exceedsVelocityThreshold) {
+                return
+            }
+
             // Next
-            if (
-                -1 * velocityX > VELOCITY_THRESHOLD
-                || $xPos > MAX_PAN
-            ) {
-                sectionIndex = Math.min(sections.length - 1, ++sectionIndex)
-                surpassedThreshold = true
-            } 
-            
-            // Previous
-            else if (
-                velocityX > VELOCITY_THRESHOLD
-                || $xPos < MIN_PAN
-            ) {
-                sectionIndex = Math.max(0, --sectionIndex)
-                surpassedThreshold = true
-            }            
+            if (gotoNext || gotoPrevious) {
+                sectionIndex = gotoNext
+                    ? Math.min(++sectionIndex, sections.length - 1)
+                    : Math.max(--sectionIndex, 0)
+                
+                // Disable pan if we surpassed a threshold
+                gestures.get('pan').set({ enable: false })
+            }             
         })
 
         container.addEventListener('touchend', () => {
-            $xPos = sectionIndex * width      
-            surpassedThreshold = false      
+            $xPos = sectionIndex * sectionWidth      
+            gestures.get('pan').set({ enable: true })
         })
     })
 </script>
@@ -111,11 +126,10 @@
         display: flex;
         overflow-x: hidden;
         touch-action: none;
+        transition: height 250ms ease-out;
     }
 
-    div.section {        
-        flex-shrink: 0; /* do not shrink */
-    }
+    div.section { /* flex-shrink: 0; do not shrink */ }
 
     .bubble {
         --bubbleSize: 16px;
