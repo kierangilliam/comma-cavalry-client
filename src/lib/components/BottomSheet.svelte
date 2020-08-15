@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { setContext, onMount, tick } from 'svelte'
-    import { writable } from 'svelte/store'
+    import { writable, derived } from 'svelte/store'
     import { tweened } from 'svelte/motion'
     import { cubicOut } from 'svelte/easing'
     import Hammer from 'hammerjs'
@@ -13,20 +13,44 @@
 	})
 
     let sheet: HTMLDivElement   
+    let sheetStartTop: number
     
-    setContext('bottomSheet', { 
-        open,
+    setContext('bottomSheet', {         
         positionLocked,
+        open: (() => {
+            const { subscribe } = derived(open, ($open) => $open)
+
+            return {
+                subscribe,
+                set: (value: boolean) => {
+                    $open = value
+                    setTopPosition()
+                },
+            }
+        })()
     })
+
+    const getChildrenHeight = (): number =>
+        Array.from(sheet.children).reduce((acc, curr) =>
+            curr.clientHeight + acc
+        , 0)
+
+    const setTopPosition = async () => {
+        // Wait for DOM to render children's height
+        await tick()
+        $top = $open 
+            ? sheetStartTop - getChildrenHeight()
+            : sheetStartTop
+    }
 
     onMount(() => {
         const velocityThreshold = 1.25
         const deltaThreshold = 250
         const gestures = new Hammer(sheet)
-        const sheetStartTop = sheet.getBoundingClientRect().top
         let touchStartY = 0   
         let isFirst = true
-    
+        
+        sheetStartTop = sheet.getBoundingClientRect().top
         $top = sheetStartTop
 
         gestures
@@ -47,7 +71,6 @@
                 // touch start relative to sheet
                 touchStartY = center.y - $top 
                 isFirst = false
-                console.debug('center.y', center.y)
             } 
 
             $top = center.y - touchStartY 
@@ -67,19 +90,7 @@
             }        
         })
 
-        gestures.on('panend pancancel', async _ => {
-            // Wait for DOM to render children's height
-            await tick()
-            $top = $open 
-                ? sheetStartTop - getChildrenHeight()
-                : sheetStartTop
-        })
-
-        function getChildrenHeight(): number {
-            return Array.from(sheet.children).reduce((acc, curr) =>
-                curr.clientHeight + acc
-            , 0)
-        }
+        gestures.on('panend pancancel', setTopPosition)
     })
 </script>
 
