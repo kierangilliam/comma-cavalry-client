@@ -55,5 +55,6 @@
         box-shadow: var(--modalShadow);
         padding: var(--modalPadding);
         width: 100%;
+        overflow: hidden;
     }
 </style>
