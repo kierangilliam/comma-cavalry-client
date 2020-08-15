@@ -1,8 +1,12 @@
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client/core'
+import { DEV } from '@lib/constants'
 import type { Image } from '@lib/types'
 
 const httpLink = createHttpLink({
-    uri: 'http://192.168.1.70:4000/',
+    uri: DEV
+        ? 'http://192.168.1.70:4001/'
+        : 'http://159.65.74.112:4001/'
+    ,
 })
 
 const client = new ApolloClient({

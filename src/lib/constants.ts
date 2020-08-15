@@ -19,4 +19,7 @@ export const PATH_COLORS: Record<ClassType, string> = {
 }
 
 export const IMAGE_WIDTH = 1164
-export const IMAGE_HEIGHT = 874   
+export const IMAGE_HEIGHT = 874
+
+// @ts-ignore
+export const DEV = __buildEnv__ === 'development'
