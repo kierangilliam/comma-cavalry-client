@@ -1,4 +1,5 @@
 import type { ClassType, Path, Point } from '@lib/types'
+import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
 import { quintOut } from 'svelte/easing'
 import { tweened } from 'svelte/motion'
@@ -17,6 +18,8 @@ export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, tweenMotionParam
 
 export const cursor = writable<Point>(null)
 export const isTouching = writable<boolean>(false)
+
+export const showTutorial = persistent('showEditorTutorial', true)
 
 // Canny parameters
 export const highThreshold = writable<number>(50)

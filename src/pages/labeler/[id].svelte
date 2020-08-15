@@ -8,7 +8,7 @@
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
-    import { paths } from './_lib/state'
+    import { paths, showTutorial } from './_lib/state'
     import { urlToImageData } from './_lib/viewport/canvas-helpers'
     import Tutorial from './_lib/tutorial/Tutorial.svelte'
 
@@ -62,10 +62,8 @@
             <Controls {id} />
         </BottomSheet>
 
-        {#if true}
-            <Modal>
-                <Tutorial />
-            </Modal>
-        {/if}
+        <Modal bind:active={$showTutorial}>
+            <Tutorial />
+        </Modal>
     {/await}
 {/if}
