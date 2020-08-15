@@ -1,9 +1,28 @@
-<div class='container'>
-    <div class='background'></div>
-    <div class='modal'>
-        <slot />
+<script>
+    import { fly, fade } from 'svelte/transition'
+    import { quintOut } from 'svelte/easing'
+
+    export let active = false
+</script>
+
+{#if active}
+    <div 
+        class='container'        
+        on:click={() => active = false}
+    >
+        <div 
+            class='background'
+            transition:fade
+        ></div>
+        <div 
+            class='modal'
+            in:fly={{ y: 200, easing: quintOut, duration: 1250 }}
+            out:fly={{ y: 200, easing: quintOut, duration: 500 }}
+        >
+            <slot />
+        </div>
     </div>
-</div>
+{/if}
 
 <style>
     .container, .background {        
@@ -23,8 +42,8 @@
 
     .background {
         z-index: 1;
-        opacity: .5;
-        background: var(--white);
+        background: rgba(0, 0, 0, .2);
+        backdrop-filter: blur(2px);
     }
 
     .modal {
