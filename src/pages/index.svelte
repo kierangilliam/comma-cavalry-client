@@ -1,8 +1,9 @@
 <script lang='ts'>
     import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
-    import { Button, Flex, H1, Spacer } from '@ollopa/cedar'
-    import InProgress from './_inProgress.svelte'
+    import { Header } from '@lib/components'
+    import { Button, Flex, Spacer } from '@ollopa/cedar'
+    import InProgress from './_lib/InProgress.svelte'
 
     let disabled = false
 
@@ -23,10 +24,7 @@
 </script>
 
 <Flex justify='between' align='start' span column>
-    <Flex>
-        <img id="logo" src="/comma.svg" alt="logo">
-        <H1>cavalry</H1>
-    </Flex>
+    <Header />
 
     <Spacer s={6} />
     
@@ -39,11 +37,7 @@
     </div>
 </Flex>
 
-<style>
-    #logo {
-        height: var(--s-8);
-        margin-right: var(--s-2);
-    }
+<style>    
     .footer {
         display: flex;
         width: 100%;

@@ -5,6 +5,7 @@
     import { tweened } from 'svelte/motion'
 
     export let sections: { component: SvelteComponent, props: any }[]
+    export let sectionIndex = 0
 
     const xPos = tweened(0, {
         duration: 2000,
@@ -22,7 +23,6 @@
 
     let sectionWidth = null
     let sectionHeights = null
-    let sectionIndex = 0
     let gestures: HammerManager
     let container: HTMLElement
 
