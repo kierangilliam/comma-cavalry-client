@@ -42,7 +42,7 @@
 
     .background {
         z-index: 1;
-        background: rgba(0, 0, 0, .35);
+        background: rgba(87, 87, 87, 0.35);
         -webkit-backdrop-filter: blur(1px);
         backdrop-filter: blur(1px);
     }
