@@ -10,7 +10,6 @@
     export let drift = 30
     export let source = 'https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png' 
     export let map = 'https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg' 
-    export let debug = true
     
     // 1 is max resolution and scale
     const SCALE = clamp(scale, 0, 1)
@@ -51,24 +50,7 @@
         mapImage.src = map         
         
         sourceImage.onload = initWaiter
-        mapImage.onload = initWaiter        
-
-        if (debug) {
-            (() => {
-                const script = document.createElement('script')
-                script.src = '//mrdoob.github.io/stats.js/build/stats.min.js'
-                script.onload = () => {
-                    const stats = new Stats()
-                    document.body.appendChild(stats.dom);
-                    const loop = () => { 
-                        stats.update()
-                        requestAnimationFrame(loop)
-                    }
-                    requestAnimationFrame(loop)
-                }                
-                document.head.appendChild(script)
-            })()
-        }
+        mapImage.onload = initWaiter                
     })
 
     function update() {
