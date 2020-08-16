@@ -1,7 +1,7 @@
 <!-- Largely taken from https://codepen.io/njmcode/pen/BNLKbK?editors=1010 -->
 
 <script>
-    import { onMount } from 'svelte'
+    import { onMount, onDestroy } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'    
     import { clamp } from '@lib/utils'
     
@@ -31,6 +31,7 @@
     let ctxOutput
     let cursor
     let target
+    let af
 
     onMount(() => {
         const sourceImage = new Image()
@@ -51,6 +52,10 @@
         
         sourceImage.onload = initWaiter
         mapImage.onload = initWaiter                
+    })
+
+    onDestroy(() => {
+        cancelAnimationFrame(af)
     })
 
     function update() {
@@ -103,7 +108,7 @@
         update()
         // Render
         ctxOutput.putImageData(outputData, 0, 0)
-        requestAnimationFrame(loop)
+        af = requestAnimationFrame(loop)
     }
 
     function init(sourceImg, mapImg) {
@@ -122,8 +127,8 @@
         let ctxMap = cMap.getContext('2d')
 
         // Ensure all canvases are the same size
-        cSource.width = cMap.width = cOutput.width = CW
-        cSource.height = cMap.height = cOutput.height = CH
+        cSource.width = cMap.width = target.width = CW
+        cSource.height = cMap.height = target.height = CH
 
         ctxSource.drawImage(sourceImg, 0, 0, CW, CH)
         ctxMap.drawImage(mapImg, 0, 0, CW, CH)
