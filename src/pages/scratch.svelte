@@ -1,39 +1,37 @@
 <!-- Largely taken from https://codepen.io/njmcode/pen/BNLKbK?editors=1010 -->
 
 <script>
-    import { onMount } from "svelte"
-    import { IMAGE_WIDTH, IMAGE_HEIGHT } from "@lib/constants"    
-
-    // 1 is max resolution
+    import { onMount } from 'svelte'
+    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'    
+    import { clamp } from '@lib/utils'
+    
     export let resolution = .25
     export let scale = .25
     export let drift = 30
-    export let source = "https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png" 
-    export let map = "https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg" 
+    export let source = 'https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png' 
+    export let map = 'https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg' 
     export let debug = true
     
-    const CW = IMAGE_WIDTH * resolution
-    const CH = IMAGE_HEIGHT * resolution
-    const DRIFT_RANGE = drift * resolution
-    const scaledHeight = IMAGE_HEIGHT * scale
-    const scaledWidth = IMAGE_WIDTH * scale
+    // 1 is max resolution and scale
+    const SCALE = clamp(scale, 0, 1)
+    const RESOLUTION = clamp(resolution, 0, 1)
+    const CW = IMAGE_WIDTH * RESOLUTION
+    const CH = IMAGE_HEIGHT * RESOLUTION
+    const DRIFT_RANGE = drift * RESOLUTION
+
+    const scaledHeight = IMAGE_HEIGHT * SCALE
+    const scaledWidth = IMAGE_WIDTH * SCALE
     const style = `
         width: ${scaledWidth}px;
         height: ${scaledHeight}px;
     `
 
-    let sourceData, 
-        depthData,
-        outputData,
-        ctxOutput
+    let sourceData
+    let depthData
+    let outputData
+    let ctxOutput
     let cursor
-
-    const setCursor = ({ clientX, clientY }) => {
-        cursor = {
-            x: clientX,
-            y: clientY,
-        }
-    }
+    let target
 
     onMount(() => {
         const sourceImage = new Image()
@@ -101,7 +99,7 @@
                 let ofs_y = Math.round(y + (dy * depth))
 
                 // Clamp the offset to the canvas dimensions
-                if (ofs_x < 0) ofs_x = 0
+                if (ofs_x < 0) 
                 if (ofs_x > CW - 1) ofs_x = CW - 1
                 if (ofs_y < 0) ofs_y = 0
                 if (ofs_y > CH - DRIFT_RANGE) ofs_y = CH - DRIFT_RANGE + y
@@ -129,8 +127,7 @@
     function init(sourceImg, mapImg) {
         // Create/cache canvases and contexts for source image, 
         // displacement map, and output
-        let cOutput = document.getElementById('output')
-        ctxOutput = cOutput.getContext('2d')
+        ctxOutput = target.getContext('2d')
 
         // Refs for the image data
         outputData = ctxOutput.createImageData(CW, CH);
@@ -139,7 +136,6 @@
         // canvases and cache the data (it never gets directly manipulated)
         let cSource = document.createElement('canvas')
         let ctxSource = cSource.getContext('2d')
-
         let cMap = document.createElement('canvas')
         let ctxMap = cMap.getContext('2d')
 
@@ -148,10 +144,9 @@
         cSource.height = cMap.height = cOutput.height = CH
 
         ctxSource.drawImage(sourceImg, 0, 0, CW, CH)
-        sourceData = ctxSource.getImageData(0, 0, CW, CH).data
-
         ctxMap.drawImage(mapImg, 0, 0, CW, CH)
-
+        
+        sourceData = ctxSource.getImageData(0, 0, CW, CH).data
         let mapData = ctxMap.getImageData(0, 0, CW, CH).data
 
         depthData = []
@@ -171,13 +166,19 @@
 
         loop()
     }
+
+    const setCursor = (e) => {
+        cursor = e 
+            ? { x: e.clientX, y: e.clientY }
+            : null
+    }
 </script>
 
 <canvas 
+    bind:this={target}
+    {style} 
     on:mousemove={e => setCursor(e)}
     on:touchmove={({ touches }) => setCursor(touches[0])}
-    on:touchend={() => cursor = null}
-    on:mouseout={() => cursor = null}
-    {style} 
-    id="output"
+    on:touchend={() => setCursor(null)}
+    on:mouseout={() => setCursor(null)}
 ></canvas>
