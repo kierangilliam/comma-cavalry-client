@@ -7,6 +7,8 @@ describe('e2e', () => {
         cy.visit('localhost:5000/')
     })
 
+    // TODO It should show the editor tutorial on first visit
+
     it('navigates to labeler, saves image, and navigates back to a visible in progress', () => {
         window.localStorage.setItem('showEditorTutorial', JSON.stringify(false))
         cy.reload()
@@ -24,4 +26,8 @@ describe('e2e', () => {
         cy.get('p').contains('in progress')
         cy.get('img').should('be.visible')
     })
+
+    // TODO
+    // it should navigate back to the editor
+    // it should have exactly 1 path
 })

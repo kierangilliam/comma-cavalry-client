@@ -5,6 +5,7 @@
     export let active: any = false
 </script>
 
+<!-- TODO Dont animate if changing page -->
 {#if active}
     <div 
         class='container'        
