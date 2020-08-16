@@ -1,5 +1,12 @@
 <script>
-    import { onMount } from "svelte"
+    import { onMount, onDestroy } from "svelte"
+
+    export let panel = 0
+
+    let af
+    let stats
+
+    $: stats && stats.showPanel(panel)
 
     onMount(() => {
         const script = document.createElement('script')
@@ -9,14 +16,19 @@
     })
 
     const createStats = () => {
-        const stats = new Stats()
+        stats = new Stats()
         document.body.appendChild(stats.dom)
 
         const loop = () => { 
             stats.update()
-            requestAnimationFrame(loop)
+            af = requestAnimationFrame(loop)
         }
 
         requestAnimationFrame(loop)
     }
+
+    onDestroy(() => {
+        document.body.removeChild(stats.dom)
+        cancelAnimationFrame(af)
+    })
 </script>

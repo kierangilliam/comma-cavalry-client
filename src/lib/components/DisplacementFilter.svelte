@@ -151,7 +151,7 @@
         
         cMap, ctxMap, mapData, cSource = null
 
-        loop()
+        af = requestAnimationFrame(loop)
     }
 
     const setCursor = (e) => {
