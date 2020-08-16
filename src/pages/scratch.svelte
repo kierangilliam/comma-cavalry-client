@@ -2,47 +2,31 @@
 
 <script>
     import { onMount } from "svelte"
-    import { IMAGE_WIDTH, IMAGE_HEIGHT } from "@lib/constants"
-
-    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+    import { IMAGE_WIDTH, IMAGE_HEIGHT } from "@lib/constants"    
 
     // 1 is max resolution
-    export let resolution = 1
+    export let resolution = .25
     export let scale = .25
     export let drift = 30
+    export let source = "https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png" 
+    export let map = "https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg" 
+    export let debug = true
     
-    const scaledHeight = IMAGE_HEIGHT * scale
-    const scaledWidth = IMAGE_WIDTH * scale
     const CW = IMAGE_WIDTH * resolution
     const CH = IMAGE_HEIGHT * resolution
     const DRIFT_RANGE = drift * resolution
-
-    // TODO Canvas element that loads the content in its slot after mounting
-    // setContext  (canvas, ctx)
-
-    let loaded = 0
-    $: loaded === 2 && (init())    
-
-    let sourceData, 
-        depthData,
-        outputData,
-        cOutput,
-        ctxOutput,    
-        images
-
-    let style = `
+    const scaledHeight = IMAGE_HEIGHT * scale
+    const scaledWidth = IMAGE_WIDTH * scale
+    const style = `
         width: ${scaledWidth}px;
         height: ${scaledHeight}px;
     `
 
+    let sourceData, 
+        depthData,
+        outputData,
+        ctxOutput
     let cursor
-
-    // Faster than Math.round 
-    // https://stackoverflow.com/questions/8483357/why-is-math-round-in-javascript-slower-than-a-custom-built-function
-    function round(a) {
-        var c = a % 1;
-        return a - c + (c / 1 + 1.5 >> 1) * 1
-    }
 
     const setCursor = ({ clientX, clientY }) => {
         cursor = {
@@ -52,15 +36,41 @@
     }
 
     onMount(() => {
-        // Create/cache canvases and contexts for source image, 
-        // displacement map, and output
-        cOutput = document.getElementById('output')
-        ctxOutput = cOutput.getContext('2d')
+        const sourceImage = new Image()
+        const mapImage = new Image()
+        const initWaiter = ((expected) => {
+            let loaded = 0
 
-        images = document.querySelectorAll('#images img')
+            // Wait until both images are loaded
+            return () => {
+                loaded++
+                if (loaded == expected) init(sourceImage, mapImage)
+            }
+        })(2)
 
-        // Refs for the image data
-        outputData = ctxOutput.createImageData(CW, CH);
+        sourceImage.crossOrigin = mapImage.crossOrigin = 'anonymous'
+        sourceImage.src = source 
+        mapImage.src = map         
+        
+        sourceImage.onload = initWaiter
+        mapImage.onload = initWaiter        
+
+        if (debug) {
+            (() => {
+                const script = document.createElement('script')
+                script.src = '//mrdoob.github.io/stats.js/build/stats.min.js'
+                script.onload = () => {
+                    const stats = new Stats()
+                    document.body.appendChild(stats.dom);
+                    const loop = () => { 
+                        stats.update()
+                        requestAnimationFrame(loop)
+                    }
+                    requestAnimationFrame(loop)
+                }                
+                document.head.appendChild(script)
+            })()
+        }
     })
 
     function update() {
@@ -78,13 +88,9 @@
             dy = (percentY - .5) * (DRIFT_RANGE * 2) * -1
         }
 
-        // Iterate the xy grid
         // TODO: optimize this!
         for (let y = 0; y < CH; y++) {
-            for (let x = 0; x < CW; x++) {
-                // Get the greyscale value from the displacement map as a value between 0 and 1
-                // 0 = black (closest), 1 = white (farthest)
-                // Higher values will be more displaced
+            for (let x = 0; x < CW; x++) {                
                 const pix = y * CW + x
                 const arrayPos = pix * 4
                 const depth = depthData[pix]
@@ -113,17 +119,22 @@
         }
     }
 
-    function render() {
-        ctxOutput.putImageData(outputData, 0, 0)
-    }
-
     function loop() {
         update()
-        render()
+        // Render
+        ctxOutput.putImageData(outputData, 0, 0)
         requestAnimationFrame(loop)
     }
 
-    function init() {
+    function init(sourceImg, mapImg) {
+        // Create/cache canvases and contexts for source image, 
+        // displacement map, and output
+        let cOutput = document.getElementById('output')
+        ctxOutput = cOutput.getContext('2d')
+
+        // Refs for the image data
+        outputData = ctxOutput.createImageData(CW, CH);
+
         // Write our source image and displacement map to in-memory
         // canvases and cache the data (it never gets directly manipulated)
         let cSource = document.createElement('canvas')
@@ -136,14 +147,12 @@
         cSource.width = cMap.width = cOutput.width = CW
         cSource.height = cMap.height = cOutput.height = CH
 
-        let sourceImg = images[0]
-        let mapImg = images[1]
+        ctxSource.drawImage(sourceImg, 0, 0, CW, CH)
+        sourceData = ctxSource.getImageData(0, 0, CW, CH).data
 
-        ctxSource.drawImage(sourceImg, 0, 0, CW, CH);
-        sourceData = ctxSource.getImageData(0, 0, CW, CH).data;
+        ctxMap.drawImage(mapImg, 0, 0, CW, CH)
 
-        ctxMap.drawImage(mapImg, 0, 0, CW, CH);
-        let mapData = ctxMap.getImageData(0, 0, CW, CH).data;
+        let mapData = ctxMap.getImageData(0, 0, CW, CH).data
 
         depthData = []
 
@@ -151,6 +160,9 @@
             for (let x = 0; x < CW; x++) {
                 let pix = y * CW + x
                 let arrayPos = pix * 4
+                // Get the greyscale value from the displacement map as a value between 0 and 1
+                // 0 = black (closest), 1 = white (farthest)
+                // Higher values will be more displaced
                 depthData.push(1 - (mapData[arrayPos] / 255))
             }
         }
@@ -169,22 +181,3 @@
     {style} 
     id="output"
 ></canvas>
-
-<div id="images">
-    <img 
-        on:load={() => loaded++}
-        id="source" 
-        {style}
-        alt=''
-        src="https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png" 
-        crossorigin="anonymous" 
-    />
-    <img 
-        on:load={() => loaded++}
-        {style}
-        id="map" 
-        alt=''
-        src="https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg" 
-        crossorigin="anonymous" 
-    />
-</div>
