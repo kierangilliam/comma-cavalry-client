@@ -104,7 +104,7 @@
                 if (ofs_x < 0) ofs_x = 0
                 if (ofs_x > CW - 1) ofs_x = CW - 1
                 if (ofs_y < 0) ofs_y = 0
-                if (ofs_y > CH - 1) ofs_y = CH - 1
+                if (ofs_y > CH - DRIFT_RANGE) ofs_y = CH - DRIFT_RANGE + y
 
                 // Get the color from the source image at the offset xy position,
                 // and transfer it to our output at the original xy position
@@ -162,7 +162,7 @@
                 let arrayPos = pix * 4
                 // Get the greyscale value from the displacement map as a value between 0 and 1
                 // 0 = black (closest), 1 = white (farthest)
-                // Higher values will be more displaced
+                // Lower values will be more displaced
                 depthData.push(1 - (mapData[arrayPos] / 255))
             }
         }
