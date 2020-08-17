@@ -18,6 +18,15 @@ export const PATH_COLORS: Record<ClassType, string> = {
     movable: COLORS.green,
 }
 
+export const TRUE_PATH_COLORS: Record<ClassType, string> = {
+    empty: '#ffffff',
+    road: '#402020',
+    undrivable: '#808060',
+    ego: '#cc00ff',
+    'lane markings': '#ff0000',
+    movable: '#00ff66',
+}
+
 export const IMAGE_WIDTH = 1164
 export const IMAGE_HEIGHT = 874
 
