@@ -1,13 +1,15 @@
 import { Haptics } from '@lib/capacitor'
-import { PATH_COLORS } from '@lib/constants'
+import { PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
 import { saveEntry } from '@lib/storage'
 import type { ClassType } from '@lib/types'
 import { params } from '@sveltech/routify'
 import { get } from 'svelte/store'
 import { paths, toolMode } from './state'
 
-export const getColor = (type: ClassType): string => {
-    return PATH_COLORS[type]
+export const getColor = (type: ClassType, truePathColor = false): string => {
+    return truePathColor
+        ? PATH_COLORS[type]
+        : TRUE_PATH_COLORS[type]
 }
 
 export const undo = () => {

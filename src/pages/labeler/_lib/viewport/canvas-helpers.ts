@@ -1,3 +1,6 @@
+import type { Path } from "@lib/types"
+import { getColor } from "../utils"
+
 interface CopyImageDataOpts {
     ctx: CanvasRenderingContext2D
     x: number
@@ -55,4 +58,37 @@ export const urlToImageData = async (url: string): Promise<string> => {
         console.log(err);
         return null;
     }
+}
+
+export const drawPaths = (
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    paths: Path[],
+    renderTruePathColors = false,
+) => {
+    if (!ctx) return
+
+    console.debug('Draw paths')
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.fillStyle = getColor('empty', renderTruePathColors)
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // TODO
+    // if (mask !== null){
+    //     ctx.drawImage(mask, 0, 0)
+    // }
+
+    paths.forEach(({ points, size, type }) => {
+        ctx.beginPath()
+        ctx.moveTo(points[0].x, points[0].y)
+
+        points.forEach(({ x, y }) => ctx.lineTo(x, y))
+
+        ctx.lineWidth = size
+        ctx.strokeStyle = getColor(type, renderTruePathColors)
+        ctx.fillStyle = getColor(type, renderTruePathColors)
+        ctx.stroke()
+        ctx.fill()
+    })
 }

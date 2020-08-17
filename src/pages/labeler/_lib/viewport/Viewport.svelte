@@ -17,17 +17,15 @@
     import GestureEmitter from './GestureEmitter.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
+    import { drawPaths } from './canvas-helpers'
     
     export let imageData: string // base64
-    export let maskUrl: string = null
     
     let canvas: HTMLCanvasElement
     let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
-    let mask: CanvasImageSource    
     
-    $: drawPaths($paths)
-    $: setMask(maskUrl)
+    $: ctx && drawPaths(canvas, ctx, $paths)
     $: image && (image.src = imageData)
 
     onMount(() => {        
@@ -35,7 +33,7 @@
         image.height = canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
     
-        drawPaths($paths)
+        drawPaths(canvas, ctx, $paths)
     })
 
     /**
@@ -52,45 +50,6 @@
         const offset = (CURSOR_OFFSET * scale) + ((scale / Math.abs(yDiff)) * CURSOR_OFFSET)
         
         return { x: canvasX, y: canvasY - offset }
-    }
-
-    const drawPaths = (_) => {
-        if (!ctx) return 
-
-        console.debug('Draw paths')
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.fillStyle = getColor('empty')
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-        if (mask !== null){
-            ctx.drawImage(mask, 0, 0)
-        }
-
-        $paths.forEach(({ points, size, type }) => {
-            ctx.beginPath()
-            ctx.moveTo(points[0].x, points[0].y)
-
-            points.forEach(({ x, y }) => ctx.lineTo(x, y))
-
-            ctx.lineWidth = size
-            ctx.strokeStyle = getColor(type)
-            ctx.fillStyle = getColor(type)
-            ctx.stroke()
-            ctx.fill()
-        })
-    }
-
-    const setMask = (_) => {
-        if (!maskUrl) { 
-            mask = null
-            return 
-        }
-
-        mask = new Image()
-        mask.src = maskUrl
-        mask.onload = drawPaths
-        mask.onerror = () => mask = null
     }
 
     const onLongPress = () => {
@@ -145,7 +104,6 @@
             if ($toolMode === 'brush' && $paths.length > 0) {
                 addPointToLastPath($cursor)
             } else if ($toolMode === 'move') {
-                console.log('MOVING')
                 const positionFromDelta = {
                     x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
                     y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
