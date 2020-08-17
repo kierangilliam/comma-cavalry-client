@@ -32,38 +32,33 @@
         drawPaths(canvas, ctx, $paths)
     })
 
-    const startNewPath = ({ x, y }: Point) => {
+    const startNewPath = () => {
         console.debug('Start new path')
 
         const path: Path = {
             type: $brushType,
             size: $brushSize,
-            points: [{ x, y }],
+            points: [{ ...$cursor }],
         }
 
         $paths = [...$paths, path]
     }
 
-    const addPointToLastPath = ({ x, y }: Point) => {
+    const addPointToLastPath = () => {
+        if ($paths.length == 0) {
+            return
+        }
+
+        const { x, y } = $cursor
+
         $paths[$paths.length - 1].points.push({ x, y })
         
         ctx.lineTo(x, y)
         ctx.lineWidth = $brushSize
         ctx.stroke()
-    }    
+    } 
 
-    const onDrawStart = () => {
-        startNewPath($cursor)
-    }
-
-    const onDrawMove = () => {
-        if ($paths.length > 0) {
-            addPointToLastPath($cursor)
-        }
-    }
-
-    const onDrawEnd = () => {
-        // Remove paths with 1 point
+    const removeSinglePointPaths = () => {
         $paths = $paths.filter(({ points }) => points.length > 1)
     }
 </script>
@@ -86,9 +81,9 @@
 
 <GestureHandler
     {canvas} 
-    on:drawstart={onDrawStart}
-    on:drawmove={onDrawMove}
-    on:drawend={onDrawEnd}
+    on:drawstart={startNewPath}
+    on:drawmove={addPointToLastPath}
+    on:drawend={removeSinglePointPaths}
     on:doubletap={undo}
 />
 
