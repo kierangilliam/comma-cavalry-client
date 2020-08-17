@@ -12,7 +12,7 @@ export const vert = `
 `
 
 // TODO test other devicePixelRatios
-export const frag = `
+export const frag = ({ easing }: { easing: boolean }) => `
     precision mediump float;
 
     uniform sampler2D source;
@@ -23,7 +23,8 @@ export const frag = `
     
     varying vec2 uv;
 
-    float pixelRatio = ${2 * window.devicePixelRatio}.;
+    const float EASING = ${easing ? -1 : 1}.;
+    const float PIXEL_RATIO = ${2 * window.devicePixelRatio}.;
 
     /**
      * Mirroring helps fake information around the edges
@@ -39,13 +40,16 @@ export const frag = `
     void main () {
         // TODO change 1.?
         vec4 resolution = vec4(size, 1., 1.);
-        vec2 uv = pixelRatio * gl_FragCoord.xy / resolution.xy;
+        vec2 uv = PIXEL_RATIO * gl_FragCoord.xy / resolution.xy;
         vec2 vUv = (uv - vec2(0.5)) * resolution.zw + vec2(0.5);
         
+        // Flip image upside down
         vUv.y = 1. - vUv.y;
 
-        vec4 depthTexture = texture2D(depthMap, mirrored(vUv));            
-        float depth = depthTexture.r / 255.;
+        vec4 depthTexture = texture2D(depthMap, mirrored(vUv)); 
+        
+        // The * -.1 eases it a bit
+        float depth = ((depthTexture.r * EASING) + 1.) / 255.;
 
         vec2 fake3d = vec2(
             // honestly not sure why dx and dy have
@@ -55,5 +59,8 @@ export const frag = `
         );
 
         gl_FragColor = texture2D(source, mirrored(fake3d));
+
+        // View debug
+        // gl_FragColor = texture2D(depthMap, mirrored(fake3d));
     }
 `
