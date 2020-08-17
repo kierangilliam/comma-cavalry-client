@@ -5,9 +5,7 @@
     import { DEV } from '@lib/constants'
 </script>
 
-{#if DEV}
-    <Stats />
-{/if}
+{#if DEV && false} <Stats /> {/if}
 
 <Theme>
     <Router {routes} />

@@ -20,7 +20,10 @@
     <div class='container hide-scrollbar'>
         {#each inProgress as { id }, i}
             <!-- TODO Cache image and load that too -->
-            <div class='item' on:click={() => dispatch('select', { id })}>
+            <div 
+                class='in-progress-item' 
+                on:click={() => dispatch('select', { id })}
+            >
                 {#await getImage(id)}
                     <div class='loading-placeholder'></div>
                 {:then { url }} 
@@ -47,7 +50,7 @@
         width: 100%;        
     }
 
-    .item {
+    .in-progress-item {
         --shadowOffset: 3px;
         padding-top: var(--shadowOffset);
         padding-left: var(--shadowOffset);

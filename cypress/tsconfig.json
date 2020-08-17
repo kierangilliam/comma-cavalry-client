@@ -14,7 +14,8 @@
         ],
         "types": [
             "cypress",
-            "cypress-image-snapshot"
+            "cypress-image-snapshot",
+            "cypress-localstorage-commands"
         ]
     }
 }
