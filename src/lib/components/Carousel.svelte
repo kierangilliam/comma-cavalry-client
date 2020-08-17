@@ -24,7 +24,7 @@
     let sectionWidth = null
     let sectionHeights = null
     let gestures: HammerManager
-    let container: HTMLElement
+    let carousel: HTMLElement
 
     $: inFocusSectionHeight = sectionHeights && 
         sectionHeights[sectionIndex]
@@ -34,14 +34,14 @@
         margin: 0 32px;
     `
     // TODO 40 is an arbitrary offset
-    $: containerStyle = sectionWidth && `
+    $: carouselStyle = sectionWidth && `
         height: ${inFocusSectionHeight + 40}px;
         width: ${sectionWidth * sections.length}px;
         transform: translateX(${-$xPos}px); 
     `
 
     const calculateSectionHeights = () => {        
-        sectionHeights = Array.from(container.children).map(c => 
+        sectionHeights = Array.from(carousel.children).map(c => 
             Array.from(c.children).reduce((acc, e) => 
                 acc + e.getBoundingClientRect().height
             , 0)
@@ -52,15 +52,15 @@
         const VELOCITY_THRESHOLD = 1
         let xStart = $xPos
         let isFirstTouch = true
-        gestures = new Hammer(container)
-        sectionWidth = container.clientWidth
+        gestures = new Hammer(carousel)
+        sectionWidth = carousel.clientWidth
 
         // Wait to calculate heights until after pending state 
         // changes have been applied to the DOM
         await tick()
         calculateSectionHeights()
 
-        container.addEventListener('touchstart', () => {
+        carousel.addEventListener('touchstart', () => {
             isFirstTouch = true
         })        
 
@@ -88,7 +88,7 @@
             }             
         })
 
-        container.addEventListener('touchend', () => {
+        carousel.addEventListener('touchend', () => {
             $xPos = sectionIndex * sectionWidth      
             gestures.get('pan').set({ enable: true })
         })
@@ -96,9 +96,9 @@
 </script>
 
 <div 
-    class='container' 
-    style={containerStyle} 
-    bind:this={container}
+    class='carousel' 
+    style={carouselStyle} 
+    bind:this={carousel}
 >
     {#each sections as { component, props }}
         <div class='section' style={sectionStyle}>            
@@ -117,7 +117,7 @@
 </Flex>
 
 <style>
-    .container {
+    .carousel {
         display: flex;
         overflow-x: hidden;
         touch-action: none;
