@@ -64,10 +64,14 @@
     <Spacer s={8} />
 
     <Flex justify='around' stretch>
-        <Button on:click={deleteImage} small outline warn>delete</Button>
-        <Button on:click={submitForReview} outline small>submit for review</Button>
-        <Button on:click={gotoEditor} small>edit</Button>
+        <Button on:click={deleteImage} stretch outline warn>delete</Button>
+        <Spacer s={4} />
+        <Button on:click={gotoEditor} stretch small>edit</Button>
     </Flex>
+
+    <Spacer s={4} />
+
+    <Button on:click={submitForReview} outline stretch>submit for review</Button>
 </Modal>
 
 <style>
