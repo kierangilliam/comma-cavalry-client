@@ -1,20 +1,16 @@
 <script lang='ts'>
     import { 
-        zoom, 
         paths, 
-        toolMode, 
         brushType, 
         brushSize, 
-        canvasPosition,
-        isTouching,
         cursor,
         canvasStyle,
         imageStyle,
     } from '../state'
-    import type { Path, GestureEvent, Point } from '@lib/types'
-    import { getColor, undo, setMode } from '../utils'
+    import type { Path, Point } from '@lib/types'
+    import { undo } from '../utils'
     import { onMount } from 'svelte'
-    import GestureEmitter from './GestureEmitter.svelte'
+    import GestureHandler from './GestureHandler.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import { drawPaths } from './canvas-helpers'
@@ -36,7 +32,6 @@
         drawPaths(canvas, ctx, $paths)
     })
 
-    // TODO Maybe move this stuff to brush tool component? 
     const startNewPath = ({ x, y }: Point) => {
         console.debug('Start new path')
 
@@ -74,7 +69,7 @@
 </script>
 
 <div class='background'></div>
-<div class='outer'>
+<div class='container'>
     <img 
         bind:this={image}            
         style={$imageStyle}
@@ -89,7 +84,7 @@
     {/if}
 </div>
 
-<GestureEmitter 
+<GestureHandler
     {canvas} 
     on:drawstart={onDrawStart}
     on:drawmove={onDrawMove}
@@ -108,9 +103,16 @@
         filter: brightness(225%);
     }
     
-    .outer {
+    .container {
         width: 100vw;
         height: 100vh;
         position: relative;
+    }
+
+    img {
+        box-shadow: 
+            0px 0px 10px rgba(25, 25, 25, 0.5),
+            0px 0px 100px rgba(45, 45, 45, .2)
+        ;
     }
 </style>
