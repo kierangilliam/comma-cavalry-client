@@ -20,6 +20,7 @@ const IMAGE_FRAGMENT = `
     status
     github
     url
+    depthMapUrl
 `
 
 const UNCLAIMED_QUERY = gql`

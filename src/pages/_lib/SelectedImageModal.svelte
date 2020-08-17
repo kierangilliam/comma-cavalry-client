@@ -43,10 +43,15 @@
 <Modal bind:active={id}>
     {#await getImage(id)}
         ...
-    {:then { url }}
+    {:then { url, depthMapUrl }}
         <div class='img-container'>
             <div class="img">
-                <DisplacementFilter scale={imageScale} />
+                <DisplacementFilter 
+                    scale={imageScale}
+                    drift={15}
+                    source={url}
+                    map={depthMapUrl}
+                />
             </div>
         </div>        
     {/await}

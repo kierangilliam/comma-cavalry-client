@@ -32,10 +32,12 @@ export type Image = {
   /** Comment / Issue / PR link */
   github?: Maybe<Scalars['String']>;
   url: Scalars['String'];
+  depthMapUrl?: Maybe<Scalars['String']>;
 };
 
 export enum Status {
   Merged = 'Merged',
   InProgress = 'InProgress',
+  PrSubmitted = 'PRSubmitted',
   Unclaimed = 'Unclaimed'
 }
