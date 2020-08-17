@@ -16,10 +16,7 @@
     $: imageScale = setImageScale(innerWidth)
 
     const setImageScale = (_) => {
-        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)        
-        // TODO .9 is modal viewport width
-        const MODAL_VW = .9
-        const scale = (innerWidth * MODAL_VW + (rem * 2.2)) / IMAGE_WIDTH
+        const scale = innerWidth / IMAGE_WIDTH
         
         setCSSVar(['selectedImageScale', `${scale}`])
 
@@ -40,57 +37,51 @@
     }
 </script>
 
-<Modal bind:active={id}>
+<Modal bind:active={id} padding={{ x: '0', y: '0' }}>
     {#await getImage(id)}
         ...
     {:then { url, depthMapUrl }}
         <div class='img-container'>
-            <div class="img">
-                <DisplacementFilter 
-                    scale={imageScale}
-                    drift={15}
-                    source={url}
-                    map={depthMapUrl}
-                />
-            </div>
+            <DisplacementFilter 
+                scale={imageScale}
+                drift={15}
+                source={url}
+                map={depthMapUrl}
+            />
         </div>        
     {/await}
 
-    <Spacer s={8} />
+    <div class='details'>
+        <H4>image {id}</H4>
+        <p>Some text</p>
 
-    <H4>image {id}</H4>
-    <p>Some text</p>
+        <Spacer s={8} />
 
-    <Spacer s={8} />
+        <Flex justify='around' stretch>
+            <Button on:click={deleteImage} stretch outline warn>delete</Button>
+            <Spacer s={4} />
+            <Button on:click={gotoEditor} stretch small>edit</Button>
+        </Flex>
 
-    <Flex justify='around' stretch>
-        <Button on:click={deleteImage} stretch outline warn>delete</Button>
         <Spacer s={4} />
-        <Button on:click={gotoEditor} stretch small>edit</Button>
-    </Flex>
 
-    <Spacer s={4} />
-
-    <Button on:click={submitForReview} outline stretch>submit for review</Button>
+        <Button on:click={submitForReview} outline stretch>
+            submit for review
+        </Button>
+    </div>
 </Modal>
 
 <style>
-    :root {        
-        --selectedImageHeight: calc(874px * var(--selectedImageScale));                
-        --selectedImageWidth: calc(1164px * var(--selectedImageScale));                
-    }
-
     .img-container {
+        --selectedImageHeight: calc(874px * var(--selectedImageScale));                
         position: relative;
-        height: var(--selectedImageHeight);        
-        width: 100vw;
-        margin-left: -2.2rem;
-        margin-top: -4.4rem;
+        width: 100%;
         overflow: hidden;  
+        /* multipy by .9 to cut off some of the bottom y values */
+        height: calc(.9 * var(--selectedImageHeight));        
     }
-
-    .img {
-        position: absolute;
-        top: 2.2rem;
+    
+    .details {
+        padding: var(--modalPaddingY) var(--modalPaddingX);
     }
 </style>
