@@ -3,14 +3,14 @@
     import { H4 } from '@ollopa/cedar'
     import { getImage } from '@gql'
     import type { Image } from '@lib/types'
-    import { BottomSheet, LoadingScreen, Modal } from '@lib/components'
+    import { BottomSheet, LoadingScreen } from '@lib/components'
     import { getEntry } from '@lib/storage'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
-    import { paths, showTutorial } from './_lib/state'
+    import { paths } from './_lib/state'
     import { urlToImageData } from './_lib/viewport/canvas-helpers'
-    import Tutorial from './_lib/tutorial/Tutorial.svelte'
+    import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
 
     let loading = true
     let error = null
@@ -61,9 +61,6 @@
         <BottomSheet>
             <Controls {id} />
         </BottomSheet>
-
-        <Modal bind:active={$showTutorial}>
-            <Tutorial />
-        </Modal>
+        <TutorialModal />            
     {/await}
 {/if}
