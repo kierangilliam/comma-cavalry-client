@@ -1,4 +1,7 @@
-<!-- Largely taken from https://codepen.io/njmcode/pen/BNLKbK?editors=1010 -->
+<!-- 
+    Largely taken from https://codepen.io/njmcode/pen/BNLKbK?editors=1010 
+    But ended up being way to slow so this could be a fallback if webgl isn't enabled
+-->
 
 <script>
     import { onMount, onDestroy } from 'svelte'
@@ -12,18 +15,10 @@
     export let map = 'https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg' 
     
     // 1 is max resolution and scale
-    const SCALE = clamp(scale, 0, 1)
     const RESOLUTION = clamp(resolution, 0, 1)
     const CW = IMAGE_WIDTH * RESOLUTION
     const CH = IMAGE_HEIGHT * RESOLUTION
-    const DRIFT_RANGE = drift * RESOLUTION
-
-    const scaledHeight = IMAGE_HEIGHT * SCALE
-    const scaledWidth = IMAGE_WIDTH * SCALE
-    const style = `
-        width: ${scaledWidth}px;
-        height: ${scaledHeight}px;
-    `
+    const DRIFT_RANGE = drift * RESOLUTION    
 
     let sourceData
     let depthData
@@ -32,6 +27,13 @@
     let cursor
     let target
     let af
+
+    $: scaledHeight = IMAGE_HEIGHT * scale
+    $: scaledWidth = IMAGE_WIDTH * scale
+    $: style = `
+        width: ${scaledWidth}px;
+        height: ${scaledHeight}px;
+    `
 
     onMount(() => {
         const sourceImage = new Image()
@@ -86,7 +88,7 @@
                 let ofs_y = Math.round(y + (dy * depth))
 
                 // Clamp the offset to the canvas dimensions
-                if (ofs_x < 0) 
+                if (ofs_x < 0) ofs_x = 0
                 if (ofs_x > CW - 1) ofs_x = CW - 1
                 if (ofs_y < 0) ofs_y = 0
                 if (ofs_y > CH - DRIFT_RANGE) ofs_y = CH - DRIFT_RANGE + y

@@ -1,11 +1,30 @@
+<svelte:window bind:innerWidth />
+
 <script lang='ts'>
-    import { Modal } from '@lib/components'
+    import { Modal, DisplacementFilter, Stats } from '@lib/components'
     import { Button, Flex, H4, Spacer } from '@ollopa/cedar'
     import { goto } from '@sveltech/routify'
     import { getImage } from '@gql'
     import { deleteEntry } from '@lib/storage'
+    import { IMAGE_WIDTH } from '@lib/constants'
+    import { setCSSVar } from '@lib/utils'
 
     export let id: string
+
+    let innerWidth: number
+
+    $: imageScale = setImageScale(innerWidth)
+
+    const setImageScale = (_) => {
+        const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)        
+        // TODO .9 is modal viewport width
+        const MODAL_VW = .9
+        const scale = (innerWidth * MODAL_VW + (rem * 2.2)) / IMAGE_WIDTH
+        
+        setCSSVar(['selectedImageScale', `${scale}`])
+
+        return scale
+    }
 
     const gotoEditor = () => $goto(`/labeler/${id}`)  
 
@@ -26,8 +45,10 @@
         ...
     {:then { url }}
         <div class='img-container'>
-            <img src={url} alt={id}>
-        </div>
+            <div class="img">
+                <DisplacementFilter scale={imageScale} />
+            </div>
+        </div>        
     {/await}
 
     <Spacer s={8} />
@@ -45,27 +66,22 @@
 </Modal>
 
 <style>
-    :root {
-        --selectedImageHeight: 200px;                
+    :root {        
+        --selectedImageHeight: calc(874px * var(--selectedImageScale));                
+        --selectedImageWidth: calc(1164px * var(--selectedImageScale));                
     }
 
     .img-container {
         position: relative;
         height: var(--selectedImageHeight);        
-        width: 140%;
-        margin-left: -25%;        
+        width: 100vw;
+        margin-left: -2.2rem;
+        margin-top: -4.4rem;
+        overflow: hidden;  
     }
 
-    img {
+    .img {
         position: absolute;
-        --offset: calc(var(--selectedImageHeight) / 2 * -1);
-        bottom: 0;
-        width: 100%;
-        object-fit: none;
-        object-position: top;
+        top: 2.2rem;
     }
-
-    /* .details {
-        padding: var(--s-4) 0;
-    } */
 </style>

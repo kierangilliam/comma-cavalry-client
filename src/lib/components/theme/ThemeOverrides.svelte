@@ -1,11 +1,8 @@
 <script lang='ts'>
     import { COLORS } from '@lib/constants'
+    import { setCSSVar } from '@lib/utils'    
 
-    const setCSSVariable = ([name, value]: [string, string]) => {
-        document.documentElement.style.setProperty(`--${name}`, value)
-    }
-
-    Object.entries(COLORS).forEach(setCSSVariable)
+    Object.entries(COLORS).forEach(setCSSVar)
 </script>
 
 <slot></slot>

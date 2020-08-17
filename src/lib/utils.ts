@@ -32,3 +32,9 @@ export const persistent = <T>(key: string, initialValue: T): Writable<T> => {
 
     return state
 }
+
+export const setCSSVar = ([name, value]: [string, string]) =>
+    document.documentElement.style.setProperty(`--${name}`, value)
+
+export const getCSSVar = (name: string) =>
+    document.documentElement.style.getPropertyValue(`--${name}`)
