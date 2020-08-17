@@ -1,4 +1,4 @@
-import type { ClassType, Path, Point } from '@lib/types'
+import type { ClassType, Path, Point, ToolMode } from '@lib/types'
 import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
 import { quintOut } from 'svelte/easing'
@@ -7,7 +7,7 @@ import { derived, get, writable } from 'svelte/store'
 
 export const paths = writable<Path[]>([])
 
-export const toolMode = writable<'autoLine' | 'fill' | 'brush' | 'move'>('brush')
+export const toolMode = writable<ToolMode>('brush')
 export const brushSize = writable<number>(10)
 export const brushType = writable<ClassType>('road')
 

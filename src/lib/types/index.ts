@@ -1,5 +1,3 @@
-// import Hammer from 'hammerjs'
-
 export * from './__generated__';
 
 export type Point = { x: number, y: number }
@@ -18,7 +16,4 @@ export interface Path {
     size: number
 }
 
-export type GestureEvent = {
-    // @ts-ignore
-    detail: Omit<HammerInput, 'destroy' | 'init' | 'handler'> & { canvasX: number, canvasY: number }
-}
+export type ToolMode = 'brush' | 'move' | 'fill' | 'autoLine'
