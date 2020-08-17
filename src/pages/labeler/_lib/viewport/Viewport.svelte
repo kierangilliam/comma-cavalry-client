@@ -36,39 +36,6 @@
         drawPaths(canvas, ctx, $paths)
     })
 
-    /**
-     * Calculate a y offset to lift returned value 
-     * a consistent height above finger, despite the 
-     * zoom level
-     */  
-    const pointFromCanvasPosition = (canvasX: number, canvasY: number): Point => {
-        const CURSOR_OFFSET = 55
-        const { innerHeight } = window
-        const { height: canvasHeight } = canvas.getBoundingClientRect()        
-        const yDiff = (innerHeight - canvasHeight) / 2
-        const scale = innerHeight / canvasHeight
-        const offset = (CURSOR_OFFSET * scale) + ((scale / Math.abs(yDiff)) * CURSOR_OFFSET)
-        
-        return { x: canvasX, y: canvasY - offset }
-    }
-
-    const onLongPress = () => {
-        if ($toolMode === 'move') {
-            setMode('last')
-        } else {
-            setMode('move')
-        }
-    }
-
-    const onPanStart = ({ detail: { canvasX, canvasY } }: GestureEvent) => {
-        $isTouching = true
-        $cursor = pointFromCanvasPosition(canvasX, canvasY)
-        
-        if ($toolMode === 'brush' || $toolMode === 'autoLine') {
-            startNewPath($cursor)
-        }
-    }    
-
     // TODO Maybe move this stuff to brush tool component? 
     const startNewPath = ({ x, y }: Point) => {
         console.debug('Start new path')
@@ -90,51 +57,20 @@
         ctx.stroke()
     }    
 
-    // TODO maybe move this & movement into another component
-    const { onPinch, onEnd, onPanMove } = (() => {
-        const MIN_ZOOM = .2
-        const MAX_ZOOM = 6
-        const SPEED = 5 
-        let lastScale = $zoom        
-        let lastDelta: Point = { x: 0, y: 0 }
-        
-        const onPanMove = ({ detail: { canvasX, canvasY, deltaX, deltaY } }: GestureEvent) => {
-            $cursor = pointFromCanvasPosition(canvasX, canvasY)
+    const onDrawStart = () => {
+        startNewPath($cursor)
+    }
 
-            if ($toolMode === 'brush' && $paths.length > 0) {
-                addPointToLastPath($cursor)
-            } else if ($toolMode === 'move') {
-                const positionFromDelta = {
-                    x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
-                    y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
-                }
-
-                $canvasPosition = positionFromDelta
-            }        
-
-            lastDelta = { x: deltaX, y: deltaY }
+    const onDrawMove = () => {
+        if ($paths.length > 0) {
+            addPointToLastPath($cursor)
         }
+    }
 
-        const onEnd = () => {
-            // Remove paths with 1 point
-            $paths = $paths.filter(({ points }) => points.length > 1)
-            $isTouching = false
-            lastDelta = { x: 0, y: 0 }
-            lastScale = 1
-        }
-        
-        const onPinch = ({ detail: { scale }}: GestureEvent) => {            
-            const newZoom = $zoom + ((scale - lastScale) * SPEED)
-            
-            $zoom = newZoom < MIN_ZOOM 
-                ? $zoom
-                : Math.min(MAX_ZOOM, newZoom)
-
-            lastScale = scale
-        }            
-
-        return { onPinch, onEnd, onPanMove }
-    })()
+    const onDrawEnd = () => {
+        // Remove paths with 1 point
+        $paths = $paths.filter(({ points }) => points.length > 1)
+    }
 </script>
 
 <div class='background'></div>
@@ -155,13 +91,10 @@
 
 <GestureEmitter 
     {canvas} 
-    on:panstart={onPanStart}
-    on:panmove={onPanMove}
-    on:end={onEnd}
+    on:drawstart={onDrawStart}
+    on:drawmove={onDrawMove}
+    on:drawend={onDrawEnd}
     on:doubletap={undo}
-    on:pinchstart={() => setMode('move')} 
-    on:pinch={onPinch}
-    on:longpress={onLongPress}
 />
 
 <style>
