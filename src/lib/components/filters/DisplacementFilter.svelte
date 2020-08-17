@@ -76,7 +76,7 @@
     }
 
     const draw = (source, depthMap) => regl({
-        frag,
+        frag: frag({ easing: true }),
         vert,
         attributes: {
             position: [
