@@ -35,7 +35,7 @@
     })
 
     onDestroy(() => {
-        animationFrame.cancel()
+        animationFrame && animationFrame.cancel()
     })
 
     const loadImages = async () => {
@@ -54,6 +54,8 @@
 
             return new Promise(resolve => {    
                 image.onload = () => resolve(image)
+                image.onerror = (e) => 
+                    console.error('Filter: Could not load ', url)
             })
         }
     }
@@ -104,10 +106,16 @@
                 depth: 1
             })
 
-            const dx = Math.sin(time * speed) * DRIFT
-            const dy = Math.cos(time * 0.5 * speed) * DRIFT
             const size = [IMAGE_WIDTH, IMAGE_HEIGHT]
-
+            let dx = Math.sin(time * speed) * DRIFT
+            let dy = Math.cos(time * 0.5 * speed) * DRIFT
+            
+            if (cursor) {
+                const percentX = cursor.x / scaledWidth
+                const percentY = cursor.y / scaledHeight
+                dx = (percentX - .5) * (DRIFT * 2) * -1
+                dy = (percentY - .5) * (DRIFT * 2) * -1
+            }
             draw({ dx, dy, size })
         })
     }
@@ -118,6 +126,11 @@
             : null
     }
 </script>
+
+<!-- Fallback -->
+{#if !map}
+    <img {style} src={source} alt=''>
+{/if}
 
 <canvas 
     bind:this={target}

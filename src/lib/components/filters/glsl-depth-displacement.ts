@@ -48,8 +48,10 @@ export const frag = `
         float depth = depthTexture.r / 255.;
 
         vec2 fake3d = vec2(
-            vUv.x + depth * dx, 
-            vUv.y + depth * dy
+            // honestly not sure why dx and dy have
+            // to be backwards
+            vUv.x + depth * dy, 
+            vUv.y + depth * dx
         );
 
         gl_FragColor = texture2D(source, mirrored(fake3d));
