@@ -2,6 +2,8 @@ export * from './__generated__';
 
 export type Point = { x: number, y: number }
 
+export type Cursor = Point & { windowX: number, windowY: number }
+
 export type PathType =
     'empty'
     | 'road'

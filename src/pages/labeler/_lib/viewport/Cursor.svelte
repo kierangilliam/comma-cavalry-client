@@ -1,15 +1,15 @@
 <script>
-    import { cursor, isTouching, canvasPosition, toolMode, brushType, brushSize } from '../state'
+    import { cursor, isTouching, canvasPosition, toolMode, brushType, brushSize, zoom } from '../state'
     import { isDrawingMode, getColor } from '../utils'
 
-    $: cursorSize = $brushSize + 5;
+    $: cursorSize = $brushSize + 5
     $: invisible = !$isTouching || !isDrawingMode($toolMode)
     $: style = $cursor && `
         background: ${getColor($brushType)};
         width: ${cursorSize}px;
         height: ${cursorSize}px;
-        top: ${$canvasPosition.y + $cursor.y - (cursorSize / 2)}px;
-        left: ${$canvasPosition.x + $cursor.x - (cursorSize / 2)}px;
+        top: ${$cursor.windowY - (cursorSize / 2)}px;
+        left: ${$cursor.windowX - (cursorSize / 2)}px;
     `
 </script>
 

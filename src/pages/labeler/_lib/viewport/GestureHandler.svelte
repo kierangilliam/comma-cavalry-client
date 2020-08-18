@@ -7,19 +7,20 @@
 <script lang='ts'>
     import { createEventDispatcher, onMount } from 'svelte'
     import Hammer from 'hammerjs'
-    import type { Point } from '@lib/types'
+    import type { Point, Cursor } from '@lib/types'
     import { zoom, cursor, toolMode, canvasPosition, isTouching } from '../state'
     import { setMode, isDrawingMode } from '../utils'
 
     export let canvas: HTMLCanvasElement
 
-    type GestureEvent = Omit<HammerInput, 'destroy' | 'init' | 'handler'> & { canvasX: number, canvasY: number }
+    type GestureEvent = Omit<HammerInput, 'destroy' | 'init' | 'handler'> 
+        & { canvasX: number, canvasY: number, windowX: number, windowY: number }
     
     const dispatch = createEventDispatcher()    
     const MIN_ZOOM = .2
     const MAX_ZOOM = 6
     const SPEED = 5 
-    const CURSOR_OFFSET = 55
+    const CURSOR_OFFSET = 75
     
     let target: HTMLElement
     let lastScale = $zoom        
@@ -35,17 +36,17 @@
         }
     }
 
-    const onPanStart = ({ canvasX, canvasY }: GestureEvent) => {
+    const onPanStart = ({ canvasX, canvasY, windowX, windowY }: GestureEvent) => {
         $isTouching = true
-        $cursor = pointFromCanvasPosition(canvasX, canvasY)
+        $cursor = cursorFromCanvasPosition(canvasX, canvasY, windowX, windowY)
         
         if (isDrawingMode($toolMode)) {
             dispatch('drawstart')
         }
     }        
     
-    const onPanMove = ({ canvasX, canvasY, deltaX, deltaY }: GestureEvent) => {
-        $cursor = pointFromCanvasPosition(canvasX, canvasY)
+    const onPanMove = ({ canvasX, canvasY, windowX, windowY, deltaX, deltaY }: GestureEvent) => {
+        $cursor = cursorFromCanvasPosition(canvasX, canvasY, windowX, windowY)
 
         if (isDrawingMode($toolMode)) {
             dispatch('drawmove')
@@ -94,14 +95,20 @@
      * a consistent height above finger, despite the 
      * zoom level
      */  
-     const pointFromCanvasPosition = (canvasX: number, canvasY: number): Point => {        
+     const cursorFromCanvasPosition = (canvasX: number, canvasY: number, windowX, windowY): Cursor => {        
         const { innerHeight } = window
-        const { height: canvasHeight } = canvas.getBoundingClientRect()        
+        const { height: canvasHeight, top } = canvas.getBoundingClientRect()        
         const yDiff = (innerHeight - canvasHeight) / 2
         const scale = innerHeight / canvasHeight
         const offset = (CURSOR_OFFSET * scale) + ((scale / Math.abs(yDiff)) * CURSOR_OFFSET)
-        
-        return { x: canvasX, y: canvasY - offset }
+        const canvasYWithOffset = canvasY - offset
+
+        return { 
+            x: canvasX, 
+            y: canvasYWithOffset,
+            windowX,
+            windowY: top + (canvasYWithOffset * $zoom),
+        }
     }
 
     onMount(() => {
@@ -159,6 +166,8 @@
                 ...e,
                 canvasX: (x - rect.left) / $zoom,
                 canvasY: (y - rect.top) / $zoom,
+                windowX: x,
+                windowY: y,
             }
         }
     })

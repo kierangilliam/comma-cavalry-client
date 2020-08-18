@@ -1,4 +1,4 @@
-import type { Path, PathType, Point, ToolMode } from '@lib/types'
+import type { Cursor, Path, PathType, Point, ToolMode } from '@lib/types'
 import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
 import { quintOut } from 'svelte/easing'
@@ -16,7 +16,7 @@ export const overlayOpacity = writable<number>(.5)
 export const zoom = tweened<number>(1, tweenMotionParams)
 export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, tweenMotionParams)
 
-export const cursor = writable<Point>(null)
+export const cursor = writable<Cursor>(null)
 export const isTouching = writable<boolean>(false)
 
 export const showTutorial = persistent('showEditorTutorial', true)
