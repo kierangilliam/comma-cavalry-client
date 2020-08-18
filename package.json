@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "NODE_ENV='development' run-p routify rollup",
+    "dev:prod": "NODE_ENV='production' run-p routify rollup",
     "test": "cypress open",
     "dev:nollup": "run-p routify nollup",
     "dev-dynamic": "cross-env BUNDLING=dynamic npm run dev",
