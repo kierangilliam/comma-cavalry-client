@@ -62,6 +62,7 @@
         width: 100%;
         justify-content: center;
         position: absolute;
+        left: 0;
         bottom: var(--s-8);
     }
 </style>
