@@ -18,7 +18,7 @@
     
     const dispatch = createEventDispatcher()    
     const MIN_ZOOM = .2
-    const MAX_ZOOM = 6
+    const MAX_ZOOM = 10
     const SPEED = 5 
     const CURSOR_OFFSET = 75
     
