@@ -12,6 +12,7 @@
     "export": "routify export",
     "gen:resources": "RES='./scripts/resources' && npx cordova-res ios --resources $RES --icon-source $RES/icon-ios.png && npx cordova-res android --resources $RES --icon-source $RES/icon-android.png && node scripts/resources/generate.js",
     "rollup": "rollup -cw",
+    "deploy:netlify": "yarn build && cd scripts/netlify && npm run deploy",
     "cg": "graphql-codegen",
     "nollup": "nollup -c",
     "routify": "routify"
