@@ -124,4 +124,18 @@
             filter: drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.4)) !important;
         }
     }
+   
+    @keyframes -global-glow-soft {
+        from { 
+            opacity: .75; 
+            filter: drop-shadow(0px 3px 5px rgba(255, 255, 255, 0.25));
+        }
+        to { 
+            opacity: 1; 
+            filter: 
+                drop-shadow(0px 3px 10px rgba(255, 255, 255, 0.2))
+                drop-shadow(0px 3px 5px rgba(255, 255, 255, 0.3))
+            ;
+        }
+    }
 </style>

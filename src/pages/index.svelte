@@ -2,12 +2,19 @@
     import { goto } from '@sveltech/routify'
     import { getUnclaimed } from '@gql'
     import { Header } from '@lib/components'
+    import { savedEntries } from '@lib/storage'
     import { Button, Flex, Spacer } from '@ollopa/cedar'
-    import InProgress from './_lib/InProgress.svelte'
+    import ImageRow from './_lib/ImageRow.svelte'
+    import Onboard from './_lib/Onboard.svelte'
     import SelectedImageModal from './_lib/SelectedImageModal.svelte'
 
     let disabled = false
     let selectedImageID: string = null
+
+    $: inProgress = getInProgress($savedEntries)
+
+    const getInProgress = (saved) => 
+        Object.entries(saved).map(([id]) => ({ id }))
 
     const labelNewImage = async () => {
         disabled = true
@@ -26,11 +33,18 @@
 </script>
 
 <Flex justify='between' align='start' span column>
-    <Header />
+    {#if inProgress.length > 0}
+        <Header />
 
-    <Spacer s={6} />
-    
-    <InProgress on:select={({ detail: { id } }) => selectedImageID = id} />
+        <Spacer s={6} />
+
+        <ImageRow 
+            label='in progress'
+            on:select={({ detail: { id } }) => selectedImageID = id} 
+        />
+    {:else}
+        <Onboard />
+    {/if}
 
     <div class='footer'>
         <Button on:click={labelNewImage} {disabled}>
