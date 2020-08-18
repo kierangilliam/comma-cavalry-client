@@ -14,11 +14,13 @@ export const savedEntries = persistent<Record<string, Entry>>(LOCAL_STORAGE_SAVE
 
 // TODO Add image and mask?
 // TODO Remove?
-export const getEntry = (id: string): [Path[]] => {
+export const getEntry = (id: string): { paths: Path[] } => {
     const saved = get(savedEntries)
     const entry = saved[id]
 
-    return [entry?.paths || []]
+    return {
+        paths: entry?.paths || []
+    }
 }
 
 export const saveEntry = (id: string, { paths }: Omit<Entry, 'version'>) => {
