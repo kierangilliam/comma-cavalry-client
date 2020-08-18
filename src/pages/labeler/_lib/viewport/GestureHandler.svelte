@@ -53,9 +53,12 @@
         } 
         
         else if ($toolMode === 'move') {
+            // Scale the speed with the zoom level
+            const speed = SPEED / $zoom
+
             const positionFromDelta = {
-                x: $canvasPosition.x + ((deltaX - lastDelta.x) * SPEED),
-                y: $canvasPosition.y + ((deltaY - lastDelta.y) * SPEED),
+                x: $canvasPosition.x + ((deltaX - lastDelta.x) * speed),
+                y: $canvasPosition.y + ((deltaY - lastDelta.y) * speed),
             }
 
             $canvasPosition = positionFromDelta
