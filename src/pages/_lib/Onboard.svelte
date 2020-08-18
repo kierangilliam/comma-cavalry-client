@@ -15,20 +15,24 @@
     </div>
 </div>
 
-<style>
-    img {
-        animation: glow-soft 2.5s ease-in-out alternate infinite;
-    }
-
+<style>    
     .container {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
         height: 60vh;
+        width: 100%;
     }
 
-    p {
+    img {
+        margin-top: 10vh;
+        animation: glow-soft 2.5s ease-in-out alternate infinite;
+    }
+
+    p {        
+        width: 80vw;
+        max-width: 28rem;
         line-height: 2rem;
     }
 </style>
