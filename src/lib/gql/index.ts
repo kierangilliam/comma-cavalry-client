@@ -5,7 +5,7 @@ import type { Image } from '@lib/types'
 const httpLink = createHttpLink({
     uri: DEV
         ? 'http://192.168.1.70:4001/'
-        : 'http://159.65.74.112:4001/'
+        : 'https://chompsberg.com'
     ,
 })
 
