@@ -12,7 +12,7 @@ export type PathType =
 
 export interface Path {
     type: PathType
-    mode: Omit<ToolMode, 'move'>
+    mode: 'brush' | 'fill' | 'autoLine'
     points: Point[]
     size: number
 }

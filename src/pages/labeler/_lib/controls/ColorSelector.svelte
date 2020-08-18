@@ -1,26 +1,41 @@
 <script lang='ts'>
     import { PATH_COLORS } from '@lib/constants'
-    import type { PathType } from '@lib/types'
+    import type { PathType, ToolMode } from '@lib/types'
     import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
     import { Spacer } from '@ollopa/cedar'
+    import { setMode } from '../utils'
 
     export let showLabels: boolean = false
 
-    const updateTool = (type: string) => 
-        (_: Event) => {
-            console.log('Changed to brush', type)
+    const updateTool = (_ => {
+        let drawingTools: ToolMode[] = ['brush'] //, 'fill']
+        let lastType = $brushType
+
+        return (type: string) => {
             Haptics.select()
-            $brushType = (type as PathType)
-            $toolMode = 'brush'
+
+            if ($toolMode === 'move') {
+                setMode('last')
+            } else if (lastType === type) {
+                // Cycle through to the next mode
+                let i = drawingTools.indexOf($toolMode)
+                let newMode = drawingTools[(i + 1) % drawingTools.length]
+
+                setMode(newMode)
+            }
+            
+            lastType = (type as PathType)
+            $brushType = (type as PathType)            
         }
+    })()
 </script>
             
 <div class='color-row'>
     {#each Object.entries(PATH_COLORS) as [id, color]}
         <div 
             class='item'            
-            on:click={updateTool(id)}
+            on:click={() => updateTool(id)}
         >
             <div 
                 class='bubble' 
