@@ -1,5 +1,7 @@
 <!-- 
-    Handles move events and emits drawing events
+    Handles move events and emits 
+    drawing events (brush, autoLine)
+    and fill events
 -->
 
 <script lang='ts'>
@@ -80,6 +82,12 @@
             dispatch('drawend')            
         }
     } 
+
+    const onTap = ({ canvasX, canvasY }: GestureEvent) => {
+        if ($toolMode === 'fill') {
+            dispatch('fill', { x: canvasX, y: canvasY })
+        }
+    }
     
     /**
      * Calculate a y offset to lift returned value 
@@ -96,28 +104,52 @@
         return { x: canvasX, y: canvasY - offset }
     }
 
-
     onMount(() => {
+        const DOUBLE_TAP_INTERVAL = 350
         const gestures = new Hammer.Manager(target)
         const pan = new Hammer.Pan({ direction: Hammer.DIRECTION_ALL })
         const pinch = new Hammer.Pinch({ enable:true })
         const longpress = new Hammer.Press({ event: 'longpress', time: 500 })
+        const singletap = new Hammer.Tap({ event: 'tap', taps: 1 })
         const doubletap = new Hammer.Tap({ 
             event: 'doubletap', 
             taps: 2,
             posThreshold: 30,
-            interval: 400,
+            interval: DOUBLE_TAP_INTERVAL,
         })
 
-        gestures.add([ doubletap, pinch, pan, longpress ])
+        gestures.add([singletap, doubletap, pinch, pan, longpress])        
 
         gestures.on('longpress',  _ => onLongPress())
         gestures.on('pinchstart', _ => setMode('move'))
         gestures.on('pinch',      e => onPinch(createEvent(e)))
         gestures.on('panstart',   e => onPanStart(createEvent(e)))
         gestures.on('panmove',    e => onPanMove(createEvent(e)))
-        gestures.on('doubletap',  e => dispatch('doubletap', createEvent(e)))
         gestures.on('panend pinchend pancancel pinchcancel', _ => onEnd())
+        
+        // Require failure from a double tap for a single
+        // tap to register
+        let tapStart = Date.now()
+        let singletapTimeout = null
+
+        doubletap.recognizeWith(singletap)
+        
+        gestures.on('doubletap', e => {
+            clearTimeout(singletapTimeout)
+            dispatch('doubletap', createEvent(e))
+        })
+
+        gestures.on('tap', e => {
+            const now = Date.now()
+
+            if (now - tapStart > DOUBLE_TAP_INTERVAL) {
+                singletapTimeout = setTimeout(() => {
+                    onTap(createEvent(e))
+                }, DOUBLE_TAP_INTERVAL)
+            }
+
+            tapStart = now
+        })
 
         function createEvent(e: HammerInput): GestureEvent {
             const rect = canvas.getBoundingClientRect()        
