@@ -1,15 +1,15 @@
 <script lang='ts'>
     import { params, url } from '@sveltech/routify'
-    import { H4 } from '@ollopa/cedar'
+    import { H4, Spacer } from '@ollopa/cedar'
     import { getImage } from '@gql'
     import type { Image } from '@lib/types'
     import { BottomSheet, LoadingScreen } from '@lib/components'
     import { getEntry } from '@lib/storage'
+    import { paths } from './_lib/state'
+    import { urlToImageData } from './_lib/viewport/canvas-helpers'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
-    import { paths } from './_lib/state'
-    import { urlToImageData } from './_lib/viewport/canvas-helpers'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
 
     let loading = true
@@ -50,7 +50,9 @@
 
         <div slot='error'>
             <H4>Something went wrong.</H4>
+            <Spacer />
             <p>{error}</p>
+            <Spacer />
             <a href={$url('/')}>go back</a>
         </div>
     </LoadingScreen>
