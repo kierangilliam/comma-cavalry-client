@@ -1,14 +1,21 @@
 <script lang='ts'>
     import { fly, fade } from 'svelte/transition'
     import { quintOut } from 'svelte/easing'
+    import { createEventDispatcher } from 'svelte'
 
     export let active: any = false
     export let padding: { x?: string, y?: string}
 
+    const dispatch = createEventDispatcher()
     const paddingStyle = `
         ${padding?.y || 'var(--modalPaddingY)'} 
         ${padding?.x || 'var(--modalPaddingX)'}
     `
+
+    const setInactive = () => {
+        dispatch('inactive')
+        active = false
+    }
 </script>
 
 <!-- TODO Dont animate if changing page -->
@@ -19,7 +26,7 @@
         <div 
             class='background'
             transition:fade
-            on:click={() => active = false}
+            on:click={setInactive}
         ></div>
         <div 
             class='modal'

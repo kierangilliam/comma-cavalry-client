@@ -39,6 +39,12 @@ const IMAGE_QUERY = gql`
     }
 `
 
+const SUBMIT_MASK_MUTATION = gql`
+    mutation submitMask($id: ID!, $name: String!, $email: String!, $mask: String!) {
+        submitMask(name: $name, email: $email, mask: $mask, id: $id) 
+    }
+`
+
 export const getImage = async (id: string): Promise<Image> => {
     const { data, errors } = await client.query({ query: IMAGE_QUERY, variables: { id } })
 
@@ -52,4 +58,13 @@ export const getUnclaimed = async (): Promise<Image> => {
     })
 
     return data.unclaimed
+}
+
+export const submitMask = async (id: string, name: string, email: string, mask: string): Promise<String> => {
+    const { data } = await client.mutate({
+        mutation: SUBMIT_MASK_MUTATION,
+        variables: { name, email, mask, id }
+    })
+
+    return data.submitMask.message
 }

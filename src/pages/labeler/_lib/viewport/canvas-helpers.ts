@@ -60,12 +60,16 @@ export const urlToImageData = async (url: string): Promise<string> => {
     }
 }
 
-export const drawPaths = (
+interface DrawPathsOpts {
     canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
     paths: Path[],
-    renderTruePathColors = false,
-) => {
+    renderTruePathColors?: boolean,
+}
+
+export const drawPaths = ({
+    canvas, ctx, paths, renderTruePathColors = false
+}: DrawPathsOpts) => {
     if (!ctx) return
 
     console.debug('Draw paths')

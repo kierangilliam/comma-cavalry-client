@@ -16,4 +16,6 @@ export interface Path {
     size: number
 }
 
+export type User = { name: string, email: string }
+
 export type ToolMode = 'brush' | 'move' | 'fill' | 'autoLine'

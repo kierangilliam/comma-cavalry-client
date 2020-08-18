@@ -21,7 +21,7 @@
     let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
     
-    $: ctx && drawPaths(canvas, ctx, $paths)
+    $: ctx && drawPaths({ canvas, ctx, paths: $paths })
     $: image && (image.src = imageData)
 
     onMount(() => {        
@@ -29,7 +29,7 @@
         image.height = canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
     
-        drawPaths(canvas, ctx, $paths)
+        drawPaths({ canvas, ctx, paths: $paths })
     })
 
     const startNewPath = () => {

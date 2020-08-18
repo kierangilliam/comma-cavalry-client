@@ -41,3 +41,16 @@ export enum Status {
   PrSubmitted = 'PRSubmitted',
   Unclaimed = 'Unclaimed'
 }
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  submitMask: Scalars['String'];
+};
+
+
+export type MutationSubmitMaskArgs = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  mask: Scalars['String'];
+};

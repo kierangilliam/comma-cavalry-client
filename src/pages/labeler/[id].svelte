@@ -19,7 +19,7 @@
     $: image = loadImage($params.id)
     
     function loadSavedPaths(id: string) {
-        const [loadedPaths] = getEntry(id)
+        const { paths: loadedPaths } = getEntry(id)
 
         if (loadedPaths.length > 0) {
             console.log('Resuming progress from last session')
