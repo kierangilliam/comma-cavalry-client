@@ -24,7 +24,7 @@
     }
 </script>
 
-<Modal {active} on:inactive={() => dispatch('cancel', { message: 'user canceled operation' })}>
+<Modal {active} on:close={() => dispatch('cancel', { message: 'user canceled operation' })}>
     <H5>Before you submit, we need to know some details.</H5>
 
     <Form {...form}>
