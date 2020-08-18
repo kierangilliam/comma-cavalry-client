@@ -1,4 +1,4 @@
-<script>
+<script lang='ts'>
     import { getImage } from '@gql'    
     import { fly } from 'svelte/transition'
     import { Spacer } from '@ollopa/cedar'
@@ -6,8 +6,8 @@
     
     const dispatch = createEventDispatcher()
 
-    export let images
-    export let label = ''
+    export let images: { id: string }[]
+    export let label: string = ''
 </script>
 
 <p>{label}</p>
