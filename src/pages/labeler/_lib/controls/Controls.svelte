@@ -14,23 +14,29 @@
     import { getContext } from 'svelte'
     import { goto } from '@sveltech/routify'
     import Slider from './Slider.svelte'
+    import { notifications } from '@lib/notifications'
     
     export let id: string
     
     const { open, positionLocked } = getContext('bottomSheet')
     const GUTTER_SPACING = 8
 
-    const exit = () => {
-        if ($dirty && window.confirm('Save changes before exiting?')) {
+    const exit = async () => {
+        if (
+            $dirty 
+            && await notifications.confirm('Save changes before exiting?')
+        ) {
             save()
         }
+
+        debugger
         
         reset()
         $goto('/')
     }
 
-    const clearAll = () => {
-        if (window.confirm('Are you sure?')) {
+    const clearAll = async () => {
+        if (await notifications.confirm('Are you sure?')) {
             $paths = []
         }
     }

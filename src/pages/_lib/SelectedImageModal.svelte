@@ -6,6 +6,7 @@
     import { goto } from '@sveltech/routify'
     import { getImage, submitMask } from '@gql'
     import { deleteEntry, getEntry } from '@lib/storage'
+    import { notifications } from '@lib/notifications'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { User } from '@lib/types'
     import { setCSSVar, waitForEvent } from '@lib/utils'
@@ -29,8 +30,8 @@
 
     const gotoEditor = () => $goto(`/labeler/${id}`)  
 
-    const deleteImage = () => {
-        if (window.confirm('Are you sure?')) {
+    const deleteImage = async () => {
+        if (await notifications.confirm('Are you sure?')) {
             deleteEntry(id)
             id = null
         }

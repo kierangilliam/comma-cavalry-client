@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte'
-    import { H3, Flex, Button, Spacer } from '@ollopa/cedar'
+    import { H4, Flex, Button, Spacer } from '@ollopa/cedar'
     import Modal from '../Modal.svelte'
 
     export let question = ''
@@ -19,7 +19,7 @@
     {active} 
     closable={false}
 >
-    <H3>{question}</H3>   
+    <H4>{question}</H4>   
 
     <Spacer s={8} />
 
@@ -27,7 +27,7 @@
         <Button on:click={dispatcher('denied')} outline stretch>
             No
         </Button>
-        <Spacer />
+        <Spacer s={8} />
         <Button on:click={dispatcher('confirmed')} stretch>
             Yes
         </Button>
