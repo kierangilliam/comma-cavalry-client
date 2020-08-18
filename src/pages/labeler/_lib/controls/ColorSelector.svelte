@@ -1,6 +1,6 @@
 <script lang='ts'>
     import { PATH_COLORS } from '@lib/constants'
-    import type { ClassType } from '@lib/types'
+    import type { PathType } from '@lib/types'
     import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
     import { Spacer } from '@ollopa/cedar'
@@ -11,7 +11,7 @@
         (_: Event) => {
             console.log('Changed to brush', type)
             Haptics.select()
-            $brushType = (type as ClassType)
+            $brushType = (type as PathType)
             $toolMode = 'brush'
         }
 </script>

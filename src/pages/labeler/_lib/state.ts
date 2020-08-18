@@ -1,4 +1,4 @@
-import type { ClassType, Path, Point, ToolMode } from '@lib/types'
+import type { Path, PathType, Point, ToolMode } from '@lib/types'
 import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
 import { quintOut } from 'svelte/easing'
@@ -9,7 +9,7 @@ export const paths = writable<Path[]>([])
 
 export const toolMode = writable<ToolMode>('brush')
 export const brushSize = writable<number>(10)
-export const brushType = writable<ClassType>('road')
+export const brushType = writable<PathType>('road')
 
 const tweenMotionParams = { duration: 500, easing: quintOut }
 export const overlayOpacity = writable<number>(.5)

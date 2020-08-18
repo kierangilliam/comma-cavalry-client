@@ -6,13 +6,14 @@
         cursor,
         canvasStyle,
         imageStyle,
+        toolMode,
     } from '../state'
-    import type { Path, Point } from '@lib/types'
-    import { undo } from '../utils'
     import { onMount } from 'svelte'
+    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
+    import type { Path } from '@lib/types'
+    import { undo } from '../utils'
     import GestureHandler from './GestureHandler.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
-    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import { drawPaths } from './canvas-helpers'
     import Cursor from './Cursor.svelte'
     
@@ -39,6 +40,7 @@
         const path: Path = {
             type: $brushType,
             size: $brushSize,
+            mode: $toolMode,
             points: [{ ...$cursor }],
         }
 

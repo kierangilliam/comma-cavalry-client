@@ -2,7 +2,7 @@ export * from './__generated__';
 
 export type Point = { x: number, y: number }
 
-export type ClassType =
+export type PathType =
     'empty'
     | 'road'
     | 'lane markings'
@@ -11,7 +11,8 @@ export type ClassType =
     | 'ego'
 
 export interface Path {
-    type: ClassType
+    type: PathType
+    mode: Omit<ToolMode, 'move'>
     points: Point[]
     size: number
 }

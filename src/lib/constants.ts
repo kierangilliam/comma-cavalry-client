@@ -1,4 +1,4 @@
-import type { ClassType } from './types'
+import type { PathType } from './types'
 
 export const COLORS = {
     white: '#F7F7F7',
@@ -9,7 +9,7 @@ export const COLORS = {
     purple: '#C665DE',
 }
 
-export const PATH_COLORS: Record<ClassType, string> = {
+export const PATH_COLORS: Record<PathType, string> = {
     empty: COLORS.white,
     road: COLORS.brown,
     undrivable: COLORS.peach,
@@ -18,7 +18,7 @@ export const PATH_COLORS: Record<ClassType, string> = {
     movable: COLORS.green,
 }
 
-export const TRUE_PATH_COLORS: Record<ClassType, string> = {
+export const TRUE_PATH_COLORS: Record<PathType, string> = {
     empty: '#ffffff',
     road: '#402020',
     undrivable: '#808060',
