@@ -1,4 +1,4 @@
-<svelte:window bind:innerWidth />
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <script lang='ts'>
     import { setContext, onMount, tick } from 'svelte'
@@ -15,13 +15,18 @@
 		easing: cubicOut
 	})
 
+    let renderSheet = true
+    let renderingSheet = false 
     let sheet: HTMLDivElement   
     let sheetStartTop: number
     let innerWidth: number
+    let innerHeight: number
 
+    // Rerender and resize sheet on window height changes
+    $: rerenderSheet(innerHeight)
     $: style = sheet ? `
         max-width: ${maxWidth}px;
-        top: ${$top}px;
+        top: ${renderingSheet ? '' : `${$top}px`};
         margin: ${innerWidth < maxWidth ? '0 4px' : '0 auto'};
     ` : ''
     
@@ -40,6 +45,10 @@
         })()
     })
 
+    onMount(async () => {
+        await rerenderSheet()        
+    })
+
     const getChildrenHeight = (): number =>
         Array.from(sheet.children).reduce((acc, curr) =>
             curr.clientHeight + acc
@@ -53,16 +62,34 @@
             : sheetStartTop
     }
 
-    onMount(() => {
-        const velocityThreshold = 1.25
-        const deltaThreshold = 250
-        const gestures = new Hammer(sheet)
-        let touchStartY = 0   
-        let isFirst = true
+    const rerenderSheet = async (_?) => {
+        if (!sheet) return 
+
+        renderingSheet = true
+        $open = false
         
+        renderSheet = false
+        await tick()
+        renderSheet = true
+        await tick()
+
+        console.log(sheet.getBoundingClientRect().top)
+
         sheetStartTop = sheet.getBoundingClientRect().top
         $top = sheetStartTop
 
+        renderingSheet = false
+
+        attachGestures(sheet)
+    }
+
+    const attachGestures = (sheet) => {
+        const gestures = new Hammer(sheet)
+        const velocityThreshold = 1.25
+        const deltaThreshold = 250
+        let touchStartY = 0   
+        let isFirst = true
+        
         gestures
             .get('pan')
             .set({ direction: Hammer.DIRECTION_ALL })        
@@ -101,16 +128,18 @@
         })
 
         gestures.on('panend pancancel', setTopPosition)
-    })
+    }
 </script>
 
-<div 
-    bind:this={sheet}
-    class='sheet'
-    {style}
->
-    <slot />
-</div>
+{#if renderSheet}
+    <div 
+        bind:this={sheet}
+        class='sheet'
+        {style}
+    >
+        <slot />
+    </div>
+{/if}
 
 <style>
     .sheet {
