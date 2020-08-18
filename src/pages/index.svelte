@@ -40,6 +40,7 @@
 
         <ImageRow 
             label='in progress'
+            images={inProgress}
             on:select={({ detail: { id } }) => selectedImageID = id} 
         />
     {:else}
