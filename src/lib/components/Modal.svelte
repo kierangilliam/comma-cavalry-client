@@ -71,6 +71,7 @@
         border-radius: var(--borderRadius);
         box-shadow: var(--modalShadow);
         width: 100%;
+        max-width: 600px;
         overflow: hidden;
     }
 </style>

@@ -53,10 +53,10 @@
 <style>
     div {
         position: absolute;
-        top: 50vh;
+        top: 40vh;
         left: 0;
         width: 100vw;
-        height: 50vh;
+        height: 60vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -65,7 +65,7 @@
 
     div.logo-container {
         top: 0;
-        height: 100vh;
+        height: 60vh;
     }
     
     img {

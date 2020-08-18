@@ -1,3 +1,5 @@
+<svelte:window bind:innerWidth />
+
 <script lang='ts'>
     import { setContext, onMount, tick } from 'svelte'
     import { writable, derived } from 'svelte/store'
@@ -5,6 +7,7 @@
     import { cubicOut } from 'svelte/easing'
     import Hammer from 'hammerjs'
 
+    const maxWidth = 650
     const open = writable(false)
     const positionLocked = writable(false)
     const top = tweened(0, {
@@ -14,6 +17,13 @@
 
     let sheet: HTMLDivElement   
     let sheetStartTop: number
+    let innerWidth: number
+
+    $: style = sheet ? `
+        max-width: ${maxWidth}px;
+        top: ${$top}px;
+        margin: ${innerWidth < maxWidth ? '0 4px' : '0 auto'};
+    ` : ''
     
     setContext('bottomSheet', {         
         positionLocked,
@@ -97,8 +107,7 @@
 <div 
     bind:this={sheet}
     class='sheet'
-    style={sheet ? `top: ${$top}px;` : ''}
-    class:open={$open}
+    {style}
 >
     <slot />
 </div>
