@@ -60,7 +60,7 @@
         display: flex;
         width: 100%;
         justify-content: center;
-        position: fixed;
+        position: absolute;
         bottom: var(--s-8);
     }
 </style>

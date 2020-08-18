@@ -5,7 +5,9 @@
     Object.entries(COLORS).forEach(setCSSVar)
 </script>
 
-<slot></slot>
+<div class='wrapper'>
+    <slot></slot>
+</div>
 
 <style>
     :global(:root) {
@@ -93,6 +95,16 @@
         -moz-user-select: auto !important;
         -ms-user-select: auto !important;
         user-select: auto !important;
+    }
+
+    .wrapper {
+        margin: 0 auto;
+        position: relative;
+        max-width: 600px;
+        box-shadow: 
+            0px 0px 100px rgba(212, 212, 212, .1),
+            0px 0px 15px rgba(212, 212, 212, .2)
+        ;
     }
 
     :global(label) {

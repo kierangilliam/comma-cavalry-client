@@ -1,5 +1,5 @@
 <div class='container'>
-    <img src="/comma.svg" alt="logo">
+    <img src='/comma.svg' alt='logo'>
     
     <div>
         <p>

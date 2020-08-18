@@ -105,7 +105,7 @@
 
 <style>
     .sheet {
-        position: fixed;
+        position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
@@ -115,9 +115,6 @@
         margin-left: 4px;
         margin-right: 4px;
         padding: var(--viewPadding);
-
-        /* Needed for hammerjs */
-        /* TODO Add to other hammerjs elements? */
         touch-action: none;
     }
 </style>

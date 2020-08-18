@@ -53,10 +53,10 @@
 <style>
     div {
         position: absolute;
-        top: 50%;
+        top: 50vh;
         left: 0;
-        bottom: 0;
-        right: 0;
+        width: 100vw;
+        height: 50vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -65,6 +65,7 @@
 
     div.logo-container {
         top: 0;
+        height: 100vh;
     }
     
     img {
@@ -72,7 +73,7 @@
         width: 70px;
         margin-bottom: var(--s-4);
         animation: var(--glowAnimation);
-        /* Add padding to where the dropshadow does not get cut off */
+        /* Add padding so that the dropshadow does not get cut off */
         padding-left: 14px;
         padding-right: 14px;
     }
