@@ -28,8 +28,6 @@
         ) {
             save()
         }
-
-        debugger
         
         reset()
         $goto('/')

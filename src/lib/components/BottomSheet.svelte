@@ -123,7 +123,7 @@
         height: auto;
         margin-left: 4px;
         margin-right: 4px;
-        padding: var(--viewPadding);
+        padding: var(--s-8) var(--s-4);;
         touch-action: none;
     }
 </style>
