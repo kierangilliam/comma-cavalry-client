@@ -9,7 +9,7 @@
     export let showLabels: boolean = false
 
     const updateTool = (_ => {
-        let drawingTools: ToolMode[] = ['brush'] //, 'fill']
+        let drawingTools: ToolMode[] = ['brush', 'fill']
         let lastType = $brushType
 
         return (type: string) => {

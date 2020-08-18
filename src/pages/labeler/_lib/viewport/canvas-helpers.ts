@@ -1,4 +1,5 @@
 import type { Path } from "@lib/types"
+import FloodFill from 'q-floodfill'
 import { getColor } from "../utils"
 
 interface CopyImageDataOpts {
@@ -61,36 +62,55 @@ export const urlToImageData = async (url: string): Promise<string> => {
 }
 
 interface DrawPathsOpts {
-    canvas: HTMLCanvasElement,
     ctx: CanvasRenderingContext2D,
     paths: Path[],
     renderTruePathColors?: boolean,
 }
 
 export const drawPaths = ({
-    canvas, ctx, paths, renderTruePathColors = false
+    ctx, paths, renderTruePathColors = false
 }: DrawPathsOpts) => {
     if (!ctx) return
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     ctx.fillStyle = getColor('empty', renderTruePathColors)
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
     // TODO
     // if (mask !== null){
     //     ctx.drawImage(mask, 0, 0)
     // }
 
-    paths.forEach(({ points, size, type }) => {
+    paths.forEach(({ points, size, type, mode }, i) => {
+        const color = getColor(type, renderTruePathColors)
+
         ctx.beginPath()
         ctx.moveTo(points[0].x, points[0].y)
 
-        points.forEach(({ x, y }) => ctx.lineTo(x, y))
-
-        ctx.lineWidth = size
-        ctx.strokeStyle = getColor(type, renderTruePathColors)
-        ctx.fillStyle = getColor(type, renderTruePathColors)
-        ctx.stroke()
-        ctx.fill()
+        if (mode === 'fill') {
+            const { x, y } = points[0]
+            floodFill({ ctx, x, y, color })
+        } else {
+            ctx.strokeStyle = color
+            ctx.fillStyle = color
+            points.forEach(({ x, y }) => ctx.lineTo(x, y))
+            ctx.lineWidth = size
+            ctx.stroke()
+            ctx.fill()
+        }
     })
+}
+
+interface FloodFillOpts {
+    ctx: CanvasRenderingContext2D
+    color: string
+    x: number
+    y: number
+}
+
+export const floodFill = ({ ctx, x, y, color }: FloodFillOpts) => {
+    const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+    const floodFill = new FloodFill(imageData)
+    floodFill.fill(color, Math.round(x), Math.round(y), 10)
+    ctx.putImageData(floodFill.imageData, 0, 0)
 }

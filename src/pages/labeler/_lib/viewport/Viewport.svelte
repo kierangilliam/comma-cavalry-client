@@ -11,10 +11,10 @@
     import { onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { Path } from '@lib/types'
-    import { undo } from '../utils'
+    import { undo, getColor } from '../utils'
     import GestureHandler from './GestureHandler.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
-    import { drawPaths } from './canvas-helpers'
+    import { drawPaths, floodFill } from './canvas-helpers'
     import Cursor from './Cursor.svelte'
     
     export let imageData: string // base64
@@ -23,27 +23,46 @@
     let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
     
-    $: ctx && drawPaths({ canvas, ctx, paths: $paths })
     $: image && (image.src = imageData)
 
     onMount(() => {        
         image.width = canvas.width = IMAGE_WIDTH
         image.height = canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
-    
-        drawPaths({ canvas, ctx, paths: $paths })
+
+        paths.subscribe(paths => 
+            drawPaths({ ctx, paths })
+        )
     })
 
-    const startNewPath = () => {
+
+    const fill = ({ detail: { x, y } }) => {
+        console.log('fill')
+        createNewPath(x, y) //, false)
+        // floodFill({ ctx, x, y, color: getColor($brushType) })
+    }   
+
+    const startNewPathFromCursor = () => {
+        createNewPath($cursor.x, $cursor.y)
+    }
+
+    const createNewPath = (x: number, y: number, triggerStateRefresh = true) => {
         console.debug('Start new path')
+
+        if ($toolMode === 'move') {
+            throw Error('Cannot create a new path with mode "move"')
+        }
 
         const path: Path = {
             type: $brushType,
             size: $brushSize,
+            // @ts-ignore
             mode: $toolMode,
-            points: [{ ...$cursor }],
+            points: [{ x, y }],
         }
 
+        // Reassignment to a variable causes svelte to notify
+        // all subscribers of $paths
         $paths = [...$paths, path]
     }
 
@@ -62,7 +81,9 @@
     } 
 
     const removeSinglePointPaths = () => {
-        $paths = $paths.filter(({ points }) => points.length > 1)
+        $paths = $paths.filter(({ points, mode }) => 
+            points.length > 1 || mode === 'fill'
+        )
     }
 </script>
 
@@ -84,10 +105,11 @@
 
 <GestureHandler
     {canvas} 
-    on:drawstart={startNewPath}
+    on:drawstart={startNewPathFromCursor}
     on:drawmove={addPointToLastPath}
     on:drawend={removeSinglePointPaths}
     on:doubletap={undo}
+    on:fill={fill}
 />
 
 <Cursor />
