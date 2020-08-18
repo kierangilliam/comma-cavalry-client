@@ -14,6 +14,7 @@
     import AutoLineTool from './AutoLineTool.svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import { drawPaths } from './canvas-helpers'
+    import Cursor from './Cursor.svelte'
     
     export let imageData: string // base64
     
@@ -86,6 +87,8 @@
     on:drawend={removeSinglePointPaths}
     on:doubletap={undo}
 />
+
+<Cursor />
 
 <style>
     .background {

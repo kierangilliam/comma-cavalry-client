@@ -72,8 +72,6 @@ export const drawPaths = ({
 }: DrawPathsOpts) => {
     if (!ctx) return
 
-    console.debug('Draw paths')
-
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = getColor('empty', renderTruePathColors)
     ctx.fillRect(0, 0, canvas.width, canvas.height)
