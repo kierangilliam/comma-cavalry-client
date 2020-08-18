@@ -1,9 +1,15 @@
+<script context='module'>
+    let zIndex = 1
+</script>
+
 <script lang='ts'>
     import { fly, fade } from 'svelte/transition'
     import { quintOut } from 'svelte/easing'
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount } from 'svelte'
 
     export let active: any = false
+    export let closable: boolean = true
+    export let color: string = 'var(--background)'
     export let padding: { x?: string, y?: string}
 
     const dispatch = createEventDispatcher()
@@ -11,26 +17,38 @@
         ${padding?.y || 'var(--modalPaddingY)'} 
         ${padding?.x || 'var(--modalPaddingX)'}
     `
-
-    const setInactive = () => {
-        dispatch('inactive')
-        active = false
+    const backgroundStyle = `
+        z-index: ${zIndex + 1};
+    `
+    const modalStyle = `
+        padding: ${paddingStyle};
+        background: ${color};
+        z-index: ${zIndex + 1};
+    `
+    const close = () => {
+        if (closable) {
+            dispatch('close')
+            active = false
+        }
     }
+
+    onMount(() => {
+        zIndex += 1
+    })
 </script>
 
 <!-- TODO Dont animate if changing page -->
 {#if active}
-    <div 
-        class='container'                
-    >
+    <div class='container'>
         <div 
             class='background'
             transition:fade
-            on:click={setInactive}
+            style={backgroundStyle}
+            on:click={close}
         ></div>
         <div 
             class='modal'
-            style='padding: {paddingStyle};'
+            style={modalStyle}
             in:fly={{ y: 200, easing: quintOut, duration: 1250 }}
             out:fly={{ y: 200, easing: quintOut, duration: 500 }}
         >
@@ -56,18 +74,15 @@
     }
 
     .background {
-        z-index: 1;
         background: rgba(87, 87, 87, 0.35);
         -webkit-backdrop-filter: blur(1px);
         backdrop-filter: blur(1px);
     }
 
     .modal {
-        z-index: 2;
         --modalPaddingX: var(--s-8);
         --modalPaddingY: var(--s-6);
         --modalShadow: var(--level-2);
-        background: var(--background);
         border-radius: var(--borderRadius);
         box-shadow: var(--modalShadow);
         width: 100%;
