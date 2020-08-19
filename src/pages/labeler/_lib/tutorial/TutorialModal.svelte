@@ -82,11 +82,13 @@
             `,
         },
         {
-            title: 'zooming',
+            title: 'zooming and more',
             body: `
                 Pinch to zoom in and out. 
                 ${spacer}
                 This also automatically enables move mode after you release.
+                ${spacer}
+                Lastly, swipe the bottom drawer up to access more controls.
             `,
         },
     ]
