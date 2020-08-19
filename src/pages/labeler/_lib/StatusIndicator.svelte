@@ -13,8 +13,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        /* TODO Change to s-16 or use view padding */
-        /* top: var(--statusBarHeight); */
         top: calc(env(safe-area-inset-top) + 16px);
         left: 0;     
         right: 0;  
