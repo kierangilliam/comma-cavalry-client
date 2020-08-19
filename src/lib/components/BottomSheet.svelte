@@ -137,6 +137,7 @@
     <div 
         bind:this={sheet}
         class='sheet'
+        class:open={$open}
         {style}
     >
         <slot />
