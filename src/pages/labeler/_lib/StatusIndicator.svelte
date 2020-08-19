@@ -2,13 +2,13 @@
     import { toolMode, brushType, paths, dirty } from './state'
 </script>
 
-<div>
+<div id='status-indicator'>
     <span>{$brushType} • {$toolMode}</span>
     <!-- • {$paths.length} {$dirty ? ' • dirty' : ''} -->
 </div>
 
 <style>
-    div {        
+    #status-indicator {        
         position: absolute;
         display: flex;
         justify-content: center;
