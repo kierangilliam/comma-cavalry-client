@@ -103,6 +103,7 @@
         alt='Source'
     >
     <canvas 
+        id='viewport-canvas'
         style={$canvasStyle}
         bind:this={canvas} 
     />    
