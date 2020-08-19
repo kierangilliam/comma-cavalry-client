@@ -4,9 +4,10 @@ import type { Image } from '@lib/types'
 import { createUploadLink } from 'apollo-upload-client'
 
 const httpLink = createUploadLink({
+    credentials: 'include',
     uri: DEV
         ? 'http://192.168.1.70:4001/'
-        : 'https://chompsberg.com'
+        : 'https://chompsberg.com/'
     ,
 })
 
