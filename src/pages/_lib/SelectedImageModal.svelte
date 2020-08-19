@@ -67,7 +67,7 @@
 
             notifications.success(
                 'Success!', 
-                'Your mask was send to your email, check the spam folder if you do not see it.',
+                'Your mask was sent to your email. Check your spam folder if you do not see it.',
             )
         } catch (error) {
             notifications.error('Could not submit', error.message)
