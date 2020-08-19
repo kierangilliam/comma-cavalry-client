@@ -48,6 +48,10 @@
         )
     }
 
+    const setXPosition = () => {
+        $xPos = sectionIndex * sectionWidth
+    }
+
     onMount(async () => {
         const VELOCITY_THRESHOLD = 1
         let xStart = $xPos
@@ -89,7 +93,7 @@
         })
 
         carousel.addEventListener('touchend', () => {
-            $xPos = sectionIndex * sectionWidth      
+            setXPosition()
             gestures.get('pan').set({ enable: true })
         })
     })
@@ -112,6 +116,7 @@
         <div 
             class='bubble' 
             class:active={sectionIndex === i}
+            on:click={() => { sectionIndex = i; setXPosition() }}
         ></div>
     {/each}
 </Flex>
