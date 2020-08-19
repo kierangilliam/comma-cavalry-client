@@ -37,7 +37,10 @@ export const setCSSVar = ([name, value]: [string, string]) =>
     document.documentElement.style.setProperty(`--${name}`, value)
 
 export const getCSSVar = (name: string) =>
-    document.documentElement.style.getPropertyValue(`--${name}`)
+    getComputedStyle(document.body).getPropertyValue(`--${name}`)
+
+export const getCSSVarPx = (name: string) =>
+    parseInt(getCSSVar(name).split('px')[0])
 
 // TODO Terrible name
 export const waitForEvent = <S>(Constructor: any, props: any, successEvent: string, errorEvent: string): Promise<S> => {

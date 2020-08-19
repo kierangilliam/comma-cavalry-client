@@ -9,7 +9,7 @@
     import { notifications } from '@lib/notifications'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { User } from '@lib/types'
-    import { setCSSVar, waitForEvent } from '@lib/utils'
+    import { setCSSVar, waitForEvent, getCSSVarPx } from '@lib/utils'
     import { drawPaths } from '../labeler/_lib/viewport/canvas-helpers'
     import CreateUserModal from './CreateUserModal.svelte'
 
@@ -21,8 +21,9 @@
     $: imageScale = setImageScale(innerWidth)
 
     const setImageScale = (_) => {
-        const scale = innerWidth / IMAGE_WIDTH
-        
+        const maxModalWidth = getCSSVarPx('maxModalWidth')
+        const scale = Math.min(innerWidth, maxModalWidth) / IMAGE_WIDTH
+
         setCSSVar(['selectedImageScale', `${scale}`])
 
         return scale
@@ -54,7 +55,7 @@
             canvas.width = IMAGE_WIDTH
             canvas.height = IMAGE_HEIGHT
 
-            drawPaths({ canvas, ctx, paths, renderTruePathColors: true })
+            drawPaths({ ctx, paths, renderTruePathColors: true })
 
             const mask = canvas.toDataURL('image/png')
 

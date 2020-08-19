@@ -125,18 +125,27 @@
             ? { x: e.clientX, y: e.clientY }
             : null
     }
+
+    const hasWebglSupport = () => { 
+        try {
+            const canvas = document.createElement('canvas')
+            return !!window.WebGLRenderingContext && canvas.getContext('webgl')
+        } catch(e) {
+            return false
+        }
+    }
 </script>
 
-<!-- Fallback -->
-{#if !map}
+{#if map && hasWebglSupport()}
+    <canvas 
+        bind:this={target}
+        {style} 
+        on:mousemove={e => setCursor(e)}
+        on:touchmove={({ touches }) => setCursor(touches[0])}
+        on:touchend={() => setCursor(null)}
+        on:mouseout={() => setCursor(null)}
+    ></canvas>
+{:else}
+    <!-- Fallback -->
     <img {style} src={source} alt=''>
 {/if}
-
-<canvas 
-    bind:this={target}
-    {style} 
-    on:mousemove={e => setCursor(e)}
-    on:touchmove={({ touches }) => setCursor(touches[0])}
-    on:touchend={() => setCursor(null)}
-    on:mouseout={() => setCursor(null)}
-></canvas>
