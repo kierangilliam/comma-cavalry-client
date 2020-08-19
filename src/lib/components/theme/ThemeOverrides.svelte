@@ -45,6 +45,12 @@
 
         --glowAnimation: glow 2s ease-in-out alternate infinite;        
     }
+    
+    @media screen and (max-width: 325px) {
+        :global(body) {
+            font-size: 14px;
+        }
+    }   
 
     @supports(padding: max(0px)) {
         .post {
