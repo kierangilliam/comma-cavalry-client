@@ -19,7 +19,7 @@
     const style = `
         color: ${textColor};
         background: ${color};
-        z-index: ${zIndex + 1};
+        z-index: ${zIndex * 100};
     `
 
     let active = true
