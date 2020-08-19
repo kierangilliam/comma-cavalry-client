@@ -46,7 +46,8 @@ describe.only('home - with in progress', () => {
         cy.get('p').contains('in progress')
         cy.get('img').should('be.visible')
         cy.wait(1000)
-        cy.get('body').toMatchImageSnapshot()
+        // @ts-ignore
+        cy.get('body').toMatchImageSnapshot({ failureThreshold: 0.05, })
     })
 
     it('navigates to labeler from edit', () => {
@@ -71,6 +72,7 @@ describe.only('home - with in progress', () => {
 
             cy.get('.container').get('.item').first().should('be.visible').click()
             cy.get('button').contains('delete').click()
+            cy.get('button').contains('Yes').click()
 
             cy.getLocalStorage('saved').then((after: any) => {
                 after = JSON.parse(after)
