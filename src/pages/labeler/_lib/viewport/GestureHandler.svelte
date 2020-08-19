@@ -10,8 +10,8 @@
     import type { Point, Cursor } from '@lib/types'
     import { zoom, cursor, toolMode, canvasPosition, isTouching } from '../state'
     import { setMode, isDrawingMode } from '../utils'
-import { isDesktop } from '@lib/capacitor';
-import { clamp } from '@lib/utils';
+    import { isDesktop } from '@lib/capacitor'
+    import { clamp } from '@lib/utils'
 
     export let canvas: HTMLCanvasElement
 
@@ -25,7 +25,7 @@ import { clamp } from '@lib/utils';
     const CURSOR_OFFSET = 75
     
     let target: HTMLElement
-    let lastScale = $zoom        
+    let lastScale = $zoom + SPEED
     let lastDelta: Point = { x: 0, y: 0 }
 
     // TODO Longpress to enable making the brush size bigger and smaller
