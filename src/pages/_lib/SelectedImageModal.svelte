@@ -11,7 +11,7 @@
     import type { User } from '@lib/types'
     import { setCSSVar, waitForEvent, getCSSVarPx } from '@lib/utils'
     import { drawPaths } from '../labeler/_lib/viewport/canvas-helpers'
-    import CreateUserModal from './CreateUserModal.svelte'
+    import UserModal from './UserModal.svelte'
 
     export let id: string
 
@@ -39,8 +39,7 @@
     }
 
     const getUser = async (): Promise<User> => {    
-        // TODO Save user to localstorage
-        return waitForEvent<User>(CreateUserModal, { active: true }, 'submit', 'cancel')        
+        return waitForEvent<User>(UserModal, { active: true }, 'submit', 'cancel')        
     }
 
     const submitForReview = async () => {
@@ -57,9 +56,14 @@
 
             drawPaths({ ctx, paths, renderTruePathColors: true })
 
-            const mask = canvas.toDataURL('image/png')
+            const blob = await fetch(canvas.toDataURL('image/png')).then(r => r.blob())
+            // const mask = new Blob([blob], { type: `image/png` })
 
-            await submitMask(id, user.name, user.email, mask)
+            // let i = new Image()
+            // i.src = canvas.toDataURL('image/png')
+            // document.body.appendChild(i)
+
+            await submitMask(id, user.name, user.email, blob)
 
             notifications.success(
                 'Success!', 
@@ -102,7 +106,7 @@
         <Spacer s={4} />
 
         <Button on:click={submitForReview} outline disabled={loading} stretch>
-            submit for review
+            email me this mask
         </Button>
     </div>
 </Modal>
