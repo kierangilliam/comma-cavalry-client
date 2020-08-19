@@ -14,7 +14,7 @@
     import { undo, getColor } from '../utils'
     import GestureHandler from './GestureHandler.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
-    import { drawPaths, floodFill } from './canvas-helpers'
+    import { drawPaths, drawPoints, floodFill } from './canvas-helpers'
     import Cursor from './Cursor.svelte'
     
     export let imageData: string // base64
@@ -37,33 +37,36 @@
 
 
     const fill = ({ detail: { x, y } }) => {
-        console.log('fill')
-        createNewPath(x, y) //, false)
-        // floodFill({ ctx, x, y, color: getColor($brushType) })
+        const path = createNewPath(x, y)
+        const color = getColor($brushType)
+
+        floodFill({ ctx, color, x, y })
+        $paths.push(path)
     }   
 
     const startNewPathFromCursor = () => {
-        createNewPath($cursor.x, $cursor.y)
+        const path = createNewPath($cursor.x, $cursor.y)
+        const color = getColor($brushType)
+
+        drawPoints({ ctx, points: path.points, color, size: path.size })
+        $paths.push(path)
     }
 
-    const createNewPath = (x: number, y: number, triggerStateRefresh = true) => {
-        console.debug('Start new path')
-
+    const createNewPath = (x: number, y: number): Path => {
         if ($toolMode === 'move') {
             throw Error('Cannot create a new path with mode "move"')
         }
 
-        const path: Path = {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+
+        return {
             type: $brushType,
             size: $brushSize,
             // @ts-ignore
             mode: $toolMode,
             points: [{ x, y }],
         }
-
-        // Reassignment to a variable causes svelte to notify
-        // all subscribers of $paths
-        $paths = [...$paths, path]
     }
 
     const addPointToLastPath = () => {
@@ -79,6 +82,11 @@
         ctx.lineWidth = $brushSize
         ctx.stroke()
     } 
+
+    const handleDrawEnd = () => {
+        ctx.fill()
+        removeSinglePointPaths()
+    }
 
     const removeSinglePointPaths = () => {
         $paths = $paths.filter(({ points, mode }) => 
@@ -107,7 +115,7 @@
     {canvas} 
     on:drawstart={startNewPathFromCursor}
     on:drawmove={addPointToLastPath}
-    on:drawend={removeSinglePointPaths}
+    on:drawend={handleDrawEnd}
     on:doubletap={undo}
     on:fill={fill}
 />

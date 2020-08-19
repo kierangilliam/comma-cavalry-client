@@ -115,7 +115,7 @@
     }
 
     onMount(() => {
-        const DOUBLE_TAP_INTERVAL = 350
+        const DOUBLE_TAP_INTERVAL = 300
         const gestures = new Hammer.Manager(target)
         const pan = new Hammer.Pan({ direction: Hammer.DIRECTION_ALL })
         const pinch = new Hammer.Pinch({ enable:true })

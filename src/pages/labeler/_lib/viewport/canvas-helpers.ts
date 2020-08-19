@@ -1,4 +1,4 @@
-import type { Path } from "@lib/types"
+import type { Path, Point } from "@lib/types"
 import FloodFill from 'q-floodfill'
 import { getColor } from "../utils"
 
@@ -91,14 +91,25 @@ export const drawPaths = ({
             const { x, y } = points[0]
             floodFill({ ctx, x, y, color })
         } else {
-            ctx.strokeStyle = color
-            ctx.fillStyle = color
-            points.forEach(({ x, y }) => ctx.lineTo(x, y))
-            ctx.lineWidth = size
-            ctx.stroke()
-            ctx.fill()
+            drawPoints({ ctx, color, points, size })
         }
     })
+}
+
+interface DrawPointsOpts {
+    ctx: CanvasRenderingContext2D
+    color: string
+    points: Point[]
+    size: number
+}
+
+export const drawPoints = ({ ctx, size, points, color }: DrawPointsOpts) => {
+    ctx.strokeStyle = color
+    ctx.fillStyle = color
+    points.forEach(({ x, y }) => ctx.lineTo(x, y))
+    ctx.lineWidth = size
+    ctx.stroke()
+    ctx.fill()
 }
 
 interface FloodFillOpts {
