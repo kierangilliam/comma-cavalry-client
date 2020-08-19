@@ -1,3 +1,4 @@
+import { IMAGE_WIDTH } from '@lib/constants'
 import type { Cursor, Path, PathType, Point, ToolMode } from '@lib/types'
 import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
@@ -12,9 +13,14 @@ export const brushSize = writable<number>(10)
 export const brushType = writable<PathType>('road')
 
 const tweenMotionParams = { duration: 500, easing: quintOut }
+const zoomToFit = window.innerWidth / IMAGE_WIDTH
+export const zoom = tweened<number>(zoomToFit, tweenMotionParams)
 export const overlayOpacity = writable<number>(.5)
-export const zoom = tweened<number>(1, tweenMotionParams)
-export const canvasPosition = tweened<Point>({ x: -400, y: 0 }, tweenMotionParams)
+export const canvasPosition = tweened<Point>(
+    // Center x in screen
+    { x: (window.innerWidth / 2) - (IMAGE_WIDTH / 2), y: 0 },
+    tweenMotionParams
+)
 
 export const cursor = writable<Cursor>(null)
 export const isTouching = writable<boolean>(false)
