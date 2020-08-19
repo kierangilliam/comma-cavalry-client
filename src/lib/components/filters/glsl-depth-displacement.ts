@@ -24,7 +24,7 @@ export const frag = ({ easing }: { easing: boolean }) => `
     varying vec2 uv;
 
     const float EASING = ${easing ? -1 : 1}.;
-    const float PIXEL_RATIO = ${2 * window.devicePixelRatio}.;
+    const float PIXEL_RATIO = ${Math.floor(2 * window.devicePixelRatio)}.;
 
     /**
      * Mirroring helps fake information around the edges
