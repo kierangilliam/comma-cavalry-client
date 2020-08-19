@@ -12,7 +12,7 @@ export const toolMode = writable<ToolMode>('brush')
 export const brushSize = writable<number>(10)
 export const brushType = writable<PathType>('road')
 
-const tweenMotionParams = { duration: 500, easing: quintOut }
+const tweenMotionParams = { duration: 1000, easing: quintOut }
 const zoomToFit = window.innerWidth / IMAGE_WIDTH
 export const zoom = tweened<number>(zoomToFit, tweenMotionParams)
 export const overlayOpacity = writable<number>(.5)
