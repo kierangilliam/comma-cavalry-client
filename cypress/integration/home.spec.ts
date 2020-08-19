@@ -52,7 +52,7 @@ describe.only('home - with in progress', () => {
     it('navigates to labeler from edit', () => {
         setSaved()
 
-        cy.get('.in-progress-item').first().click()
+        cy.get('.container').get('.item').first().click()
 
         cy.get('.modal').contains(`image ${ID}`)
         cy.get('canvas').should('be.visible')
@@ -69,7 +69,7 @@ describe.only('home - with in progress', () => {
             // Sanity check
             expect(JSON.parse(before)[ID].version).eq(1)
 
-            cy.get('.in-progress-item').first().should('be.visible').click()
+            cy.get('.container').get('.item').first().should('be.visible').click()
             cy.get('button').contains('delete').click()
 
             cy.getLocalStorage('saved').then((after: any) => {

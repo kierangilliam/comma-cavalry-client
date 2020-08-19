@@ -120,18 +120,4 @@ describe('tutorial', () => {
             .contains(roadText)
             .should('be.visible')
     })
-
-    it.skip('can reach every page', () => {
-        dragCarousel(1)
-        cy.get('.modal').contains('color guide').should('be.visible')
-        dragCarousel(2)
-        cy.get('.modal').contains('color guide pt. 2').should('be.visible')
-        dragCarousel(3)
-        cy.get('.modal').contains('drawing').should('be.visible')
-        dragCarousel(4)
-        cy.get('.modal').contains('moving around').should('be.visible')
-        dragCarousel(5)
-        cy.get('.modal').contains('zooming').should('be.visible')
-        dragCarousel(6)
-    })
 })
