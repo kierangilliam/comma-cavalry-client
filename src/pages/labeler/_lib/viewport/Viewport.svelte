@@ -16,6 +16,7 @@
     import AutoLineTool from './AutoLineTool.svelte'
     import { drawPaths, drawPoints, floodFill } from './canvas-helpers'
     import Cursor from './Cursor.svelte'
+    import { mode, standardDeviation } from '@lib/utils'
     
     export let imageData: string // base64
     
@@ -34,7 +35,6 @@
             drawPaths({ ctx, paths })
         )
     })
-
 
     const fill = ({ detail: { x, y } }) => {
         const path = createNewPath(x, y)
@@ -89,6 +89,60 @@
     }
 
     const removeSinglePointPaths = () => {
+        if ($toolMode === 'autoLine') {
+            const lastPath = $paths[$paths.length - 1]
+            const { points } = lastPath
+            const lastPoint = points[points.length - 1]
+            const distX = lastPoint.x - points[0].x
+            const distY = lastPoint.y - points[0].y
+            const horizontal = Math.abs(distX) > Math.abs(distY)
+            const leftToRight = (lastPoint.x - points[0].x) > 0
+            const topToBottom = (lastPoint.y - points[0].y) > 0
+
+            let lastValidX = points[0].x
+            let lastValidY = points[0].y
+            let pointsToKeep = [points[0]]
+
+            for (let i = 1; i < points.length; i++) {
+                let keep = true
+                
+                if (
+                    horizontal
+                    && ((leftToRight && points[i].x < lastValidX)
+                    || (!leftToRight && points[i].x > lastValidX))
+                ) {
+                    keep = false                
+                }
+
+                if (
+                    !horizontal
+                    && ((topToBottom && points[i].y < lastValidY)
+                    || (!topToBottom && points[i].y > lastValidY))
+                ) { 
+                    keep = false
+                }   
+
+                if (keep) {
+                    lastValidX = points[i].x
+                    lastValidY = points[i].y
+                    pointsToKeep.push(points[i])
+                }
+            }
+
+            const orthoganalPoints = points.map(({ x, y }) => horizontal ? y : x)
+            const orthogonalMode = mode(orthoganalPoints)
+            const orthogonalDeviation = standardDeviation(orthoganalPoints)
+            const withinStdOfMode = (n: number) => 
+                n + orthogonalDeviation > orthogonalMode 
+                && n - orthogonalDeviation < orthogonalMode 
+
+            lastPath.points = pointsToKeep.filter(({ x, y }) =>
+                horizontal 
+                    ? withinStdOfMode(y)
+                    : withinStdOfMode(x)
+            )
+        }
+
         $paths = $paths.filter(({ points, mode }) => 
             points.length > 1 || mode === 'fill'
         )
