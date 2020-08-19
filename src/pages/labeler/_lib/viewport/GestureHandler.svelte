@@ -78,7 +78,7 @@
     
     // Desktop only
     const onScroll = (deltaY: number) => {            
-        const newZoom = $zoom + (deltaY / 10)
+        const newZoom = $zoom - (deltaY / 10)
         
         $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
     }  
