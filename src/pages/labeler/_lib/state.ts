@@ -71,7 +71,7 @@ export const canvasStyle = derived(
     }
 )
 
-export const reset = () => {
+export const resetState = () => {
     paths.set([])
     toolMode.set('brush')
     brushSize.set(10)

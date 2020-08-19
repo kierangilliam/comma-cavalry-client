@@ -3,7 +3,6 @@
         overlayOpacity, 
         dirty, 
         brushSize, 
-        reset, 
         paths, 
         showTutorial 
     } from '../state'
@@ -28,8 +27,7 @@
         ) {
             save()
         }
-        
-        reset()
+
         $goto('/')
     }
 

@@ -7,8 +7,9 @@
         canvasStyle,
         imageStyle,
         toolMode,
+        resetState,
     } from '../state'
-    import { onMount } from 'svelte'
+    import { onMount, onDestroy } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { Path } from '@lib/types'
     import { undo, getColor } from '../utils'
@@ -33,6 +34,10 @@
         paths.subscribe(paths => 
             drawPaths({ ctx, paths })
         )
+    })
+
+    onDestroy(() => {
+        resetState()
     })
 
     const fill = ({ detail: { x, y } }) => {
