@@ -12,7 +12,7 @@
         lowThreshold,
         blurRadius,
     } from '../state'
-    import type { Point } from '@lib/types'
+    import type { Point, Cursor } from '@lib/types'
     import { renderImageData, copyImageData } from './canvas-helpers'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
 
@@ -28,7 +28,7 @@
     const debounce = () => {
         debounced = true
         clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(() => { debounced = false }, 15)
+        debounceTimer = setTimeout(() => { debounced = false }, 50)
     }
     
     $: $toolMode === 'autoLine' 
@@ -48,6 +48,9 @@
         $lowThreshold,
         $highThreshold,
     )
+
+    // TODO Describe
+    let workingPath
 
     onMount(() => {
         ctx = canvas.getContext('2d')
@@ -75,7 +78,6 @@
         
         currentPath.points = [...currentPath.points, ...points]
         $paths = [...$paths, currentPath]
-        // (TODO collapse overlapping points?)        
     }
     
     const cannyProcessImage = (
@@ -99,7 +101,7 @@
         return img_u8
     }
 
-    const withinRadiusHelper = (cursor: Point, radius: number) => 
+    const withinRadiusHelper = (cursor: Cursor, radius: number) => 
         (x: number, y: number) => {
             const dist = Math.hypot(x - cursor.x, y - cursor.y)
             return dist < radius
@@ -110,7 +112,7 @@
         img_u8: jsfeat.matrix_t, 
         width: number, 
         height: number, 
-        cursor: Point
+        cursor: Cursor,
     ): Point[] => {
         const WHITE = 255
         const ALPHA = (0xff << 24)
@@ -123,8 +125,12 @@
         let i = width * height
 
         while(--i >= 0) {
-            const x = Math.floor(i % width)
-            const y = Math.floor((i - x) / height)            
+            const y = (i - (i % width)) / width
+            const x = (i % width)
+
+            if (i > (width * height) - 200) {
+                console.log(x, y)
+            }
 
             if (!withinRenderRadius(x, y)) {
                 data_u32[i] = 0x000000
@@ -135,14 +141,16 @@
             pixel = img_u8.data[i]
             data_u32[i] = ALPHA | (pixel << 16) | (pixel << 8) | pixel
 
-            // Get canny point
+            // Get canny point, make data within brush size red
             if (img_u8.data[i] == WHITE && withinSearchRadius(x, y)) {                
                 result.push({ x, y })
                 data_u32[i] = ALPHA | 0x0000ff
             }
         }
 
-        return result
+        return result.length > 5
+            ? result
+            : []
     }
 </script>
 
