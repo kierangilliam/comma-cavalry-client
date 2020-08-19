@@ -67,9 +67,9 @@
                 Additional taps will cycle through your drawing tools.
                 ${spacer}
                 Brush and fill work similar to all types of drawing apps.
+                ${spacer}
+                The auto line tries to detect lines in the image and draw them onto the mask. 
             `,
-                // ${spacer}
-                // The auto line tries to detect lines in the image and draw them onto the mask. Auto line sucks right now.
             },
         {
             title: 'moving around',
