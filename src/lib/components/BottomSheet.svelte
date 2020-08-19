@@ -60,6 +60,10 @@
         $top = $open 
             ? sheetStartTop - getChildrenHeight()
             : sheetStartTop
+        
+        if ($top < 0) {
+            $top = 16
+        }
     }
 
     const rerenderSheet = async (_?) => {
