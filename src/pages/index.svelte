@@ -7,6 +7,7 @@
     import ImageRow from './_lib/ImageRow.svelte'
     import Onboard from './_lib/Onboard.svelte'
     import SelectedImageModal from './_lib/SelectedImageModal.svelte'
+    import { notifications } from '@lib/notifications'
 
     let disabled = false
     let selectedImageID: string = null
@@ -24,9 +25,8 @@
     
             $goto(`/labeler/${id}`)
         } catch (error) {
-            window.alert(error)
+            notifications.error('Coud not get a new image', error)
             disabled = false
-
             console.error(error)
         }
     }

@@ -60,8 +60,13 @@
             const mask = canvas.toDataURL('image/png')
 
             await submitMask(id, user.name, user.email, mask)
+
+            notifications.success(
+                'Success!', 
+                'Your mask was send to your email, check the spam folder if you do not see it.',
+            )
         } catch (error) {
-            console.log(error.message)
+            notifications.error('Could not submit', error.message)
         } finally {
             loading = false
         }
