@@ -26,6 +26,7 @@
         border-radius: var(--borderRadiusFull);
         border: 2.5px solid var(--black);
         transition: opacity 150ms ease-in-out;
+        cursor: none;
     }
 
     .invisible {

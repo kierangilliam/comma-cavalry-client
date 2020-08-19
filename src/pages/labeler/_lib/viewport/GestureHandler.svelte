@@ -112,12 +112,14 @@
         const offset = (CURSOR_OFFSET * scale) + ((scale / Math.abs(yDiff)) * CURSOR_OFFSET)
         const canvasYWithOffset = canvasY - offset
 
-        return { 
-            x: canvasX, 
-            y: canvasYWithOffset,
-            windowX,
-            windowY: top + (canvasYWithOffset * $zoom),
-        }
+        return isDesktop 
+            ? { x: canvasX, y: canvasY, windowX, windowY }
+            : { 
+                x: canvasX, 
+                y: canvasYWithOffset,
+                windowX,
+                windowY: top + (canvasYWithOffset * $zoom),
+            }
     }
 
     onMount(() => {
