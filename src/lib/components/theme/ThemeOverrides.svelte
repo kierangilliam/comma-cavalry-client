@@ -35,12 +35,22 @@
         --bodyFont: "Avenir";
         --headingFont: "Avenir";
 
-        --viewPadding: max(env(safe-area-inset-top), var(--s-8))
-            max(env(safe-area-inset-right), var(--s-4)) 
-            max(env(safe-area-inset-bottom), var(--s-8))
-            max(env(safe-area-inset-left), var(--s-4));
+        --viewPadding: var(--s-8) var(--s-4);
 
         --glowAnimation: glow 2s ease-in-out alternate infinite;        
+    }
+
+    @supports(padding: max(0px)) {
+        .post {
+            padding-left: max(12px, env(safe-area-inset-left));
+            padding-right: max(12px, env(safe-area-inset-right));
+        }
+        :global(:root) {
+            --viewPadding: max(env(safe-area-inset-top), var(--s-8))
+                max(env(safe-area-inset-right), var(--s-4)) 
+                max(env(safe-area-inset-bottom), var(--s-8))
+                max(env(safe-area-inset-left), var(--s-4));
+        }
     }
 
     /* TODO Register */
