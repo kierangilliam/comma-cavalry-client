@@ -9,18 +9,16 @@
 
 <style>
     :global(:root) {
+        /* Colors */
         --black: #181818;
         --lightGray: #D9D7E0;
         --darkGray: #373737;
-
         /* These colors are defined using js */        
         --white: magenta;
         --brown: magenta;
         --red: magenta;
-        --red: magenta;
-        --red: magenta;
-        --red: magenta;
 
+        /* Color intetntions */
         --danger: var(--red);
         --background: var(--black);
         --textColor: var(--white);
@@ -29,13 +27,21 @@
         --buttonWarnTextColor: var(--white);
         --lineColor: var(--white);
 
+        /* Borders */
         --borderRadius: 22px;
         --buttonBorderRadius: var(--borderRadiusFull);
 
+        /* Fonts */
         --bodyFont: "Avenir";
         --headingFont: "Avenir";
 
         --viewPadding: var(--s-8) var(--s-4);
+
+        /* Modal */
+        --modalPaddingX: var(--s-8);
+        --modalPaddingY: var(--s-6);
+        --modalShadow: var(--level-2);
+        --maxModalWidth: 600px;
 
         --glowAnimation: glow 2s ease-in-out alternate infinite;        
     }

@@ -79,14 +79,11 @@
         backdrop-filter: blur(1px);
     }
 
-    .modal {
-        --modalPaddingX: var(--s-8);
-        --modalPaddingY: var(--s-6);
-        --modalShadow: var(--level-2);
+    .modal {        
         border-radius: var(--borderRadius);
         box-shadow: var(--modalShadow);
         width: 100%;
-        max-width: 600px;
+        max-width: var(--maxModalWidth);
         overflow: hidden;
     }
 </style>
