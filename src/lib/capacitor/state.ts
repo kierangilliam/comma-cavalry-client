@@ -7,6 +7,8 @@ type Platforms = 'android' | 'unknown' | 'ios' | 'electron' | 'web'
 
 export const isNative = Capacitor.isNative
 
+export const isDesktop = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) == false
+
 export const platform = readable<Platforms>('unknown', function start(set) {
     (async () => {
         const { platform } = await Device.getInfo()

@@ -77,8 +77,6 @@
         renderSheet = true
         await tick()
 
-        console.log(sheet.getBoundingClientRect().top)
-
         sheetStartTop = sheet.getBoundingClientRect().top
         $top = sheetStartTop
 

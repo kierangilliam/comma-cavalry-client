@@ -10,6 +10,8 @@
     import type { Point, Cursor } from '@lib/types'
     import { zoom, cursor, toolMode, canvasPosition, isTouching } from '../state'
     import { setMode, isDrawingMode } from '../utils'
+import { isDesktop } from '@lib/capacitor';
+import { clamp } from '@lib/utils';
 
     export let canvas: HTMLCanvasElement
 
@@ -70,11 +72,15 @@
     const onPinch = ({ scale }: GestureEvent) => {            
         const newZoom = $zoom + ((scale - lastScale) * SPEED)
         
-        $zoom = newZoom < MIN_ZOOM 
-            ? $zoom
-            : Math.min(MAX_ZOOM, newZoom)
-
+        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
         lastScale = scale
+    }  
+    
+    // Desktop only
+    const onScroll = (deltaY: number) => {            
+        const newZoom = $zoom + (deltaY / 10)
+        
+        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
     }  
 
     const onEnd = () => {                   
@@ -160,6 +166,12 @@
 
             tapStart = now
         })
+
+        if (isDesktop) {
+            target.addEventListener('mousewheel', ({ deltaY }: WheelEvent) => {
+                onScroll(deltaY)
+            })
+        }
 
         function createEvent(e: HammerInput): GestureEvent {
             const rect = canvas.getBoundingClientRect()        
