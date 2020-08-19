@@ -84,7 +84,6 @@
 
     <div class='details'>
         <H4>image {id}</H4>
-        <p>Some text</p>
 
         <Spacer s={8} />
 
