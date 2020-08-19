@@ -49,9 +49,6 @@
         $highThreshold,
     )
 
-    // TODO Describe
-    let workingPath
-
     onMount(() => {
         ctx = canvas.getContext('2d')
         imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
@@ -127,10 +124,6 @@
         while(--i >= 0) {
             const y = (i - (i % width)) / width
             const x = (i % width)
-
-            if (i > (width * height) - 200) {
-                console.log(x, y)
-            }
 
             if (!withinRenderRadius(x, y)) {
                 data_u32[i] = 0x000000
