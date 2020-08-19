@@ -62,8 +62,8 @@ describe('complex', () => {
                 mode: 'brush',
                 size: 10,
                 points: [
-                    { x: 291, y: -151.77924258372926 },
-                    { x: 582, y: 139.22075741627077 },
+                    { x: 291, y: 61.24995849609375 },
+                    { x: 582, y: 352.24995849609377 },
                 ],
                 type: 'road',
             })
@@ -72,8 +72,8 @@ describe('complex', () => {
                 mode: 'brush',
                 size: 10,
                 points: [
-                    { x: 582, y: 139.22075741627077 },
-                    { x: 873, y: 430.22075741627077 },
+                    { x: 582, y: 352.24995849609377 },
+                    { x: 873, y: 643.2499584960938 },
                 ],
                 type: 'road',
             })
@@ -88,7 +88,7 @@ describe('complex', () => {
             cy.get('.container').get('.item').click()
             cy.get('button').contains('edit').click()
             cy.wait(1500)
-            cy.get('#viewport-canvas').toMatchImageSnapshot()
+            cy.get('body').toMatchImageSnapshot()
         })
     })
 
