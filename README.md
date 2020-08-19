@@ -43,9 +43,20 @@ yarn test
 
 * Generate better depth maps & smooth the depth map filter
 
+* Optimize autoLine to be performant on mobile
+
 ### Other notes
 
 #### Depth maps
+
+Source | Map
+:-------------:|:------------:
+![source](https://raw.githubusercontent.com/commaai/comma10k/master/imgs/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005.png)  |  ![map](https://ik.imagekit.io/ollopa/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005_22oJYOoXu.jpg) |  
+
+Applied filter
+:-------------:
+[depth map gif](https://ik.imagekit.io/ollopa/depth-map_rO5SYEKGf.gif)
+
 
 ```
 # Convert to jpg
