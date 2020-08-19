@@ -3,6 +3,7 @@
     import TutorialSection from './TutorialSection.svelte'    
     import { PATH_COLORS } from '@lib/constants'
     import { showTutorial } from '../state'
+import { isDesktop } from '@lib/capacitor';
 
     const bold = (text) => `<span style=\'font-weight: bolder;\'>${text}</span>`
 
@@ -67,8 +68,15 @@
                 Additional taps will cycle through your drawing tools.
                 ${spacer}
                 Brush and fill work similar to all types of drawing apps.
-                ${spacer}
-                The auto line tries to detect lines in the image and draw them onto the mask. 
+                ${
+                    // Autoline is disabled on mobile 
+                    // because of performance reasons
+                    !isDesktop
+                    ? ''
+                    : `${spacer}
+                        The auto line tries to detect lines in the image and draw them onto the mask.
+                    `
+                }                
             `,
             },
         {
