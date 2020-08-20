@@ -69,8 +69,9 @@
         lastDelta = { x: deltaX, y: deltaY }
     }
     
-    const onPinch = ({ scale }: GestureEvent) => {            
-        const newZoom = $zoom + ((scale - lastScale) * SPEED)
+    const onPinch = ({ scale }: GestureEvent) => {  
+        const speed = SPEED * $zoom          
+        const newZoom = $zoom + ((scale - lastScale) * speed)
         
         $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
         lastScale = scale
