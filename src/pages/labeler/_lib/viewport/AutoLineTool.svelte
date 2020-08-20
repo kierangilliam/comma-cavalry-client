@@ -52,6 +52,12 @@
     onMount(() => {
         ctx = canvas.getContext('2d')
         imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
+        img_u8 = cannyProcessImage(
+            imageData,
+            $blurRadius,
+            $lowThreshold,
+            $highThreshold,
+        )
     })
 
     // TODO: Probably should've just gone with tensorflow
@@ -150,7 +156,10 @@
             }
         }
 
-        return result.length > 20
+        console.log(result.length > ($brushSize * 3))
+        console.log(result.length)
+
+        return result.length > ($brushSize * 3)
             ? result
             : []
     }
