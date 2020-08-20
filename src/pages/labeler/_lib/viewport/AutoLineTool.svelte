@@ -134,14 +134,13 @@
         const iMin = Math.round(width * (cursor.y - RENDER_RADIUS))
 
         // Make transparent
-        // data_u32.fill(0x000000, 0, width * height)
+        data_u32.fill(0x000000, 0, width * height)
 
         while(--i >= iMin) {
             const y = (i - (i % width)) / width
             const x = (i % width)
 
             if (!withinRenderRadius(x, y)) {
-                data_u32[i] = 0x000000
                 continue
             }
 
@@ -156,10 +155,7 @@
             }
         }
 
-        console.log(result.length > ($brushSize * 3))
-        console.log(result.length)
-
-        return result.length > ($brushSize * 3)
+        return result.length > ($brushSize)
             ? result
             : []
     }
