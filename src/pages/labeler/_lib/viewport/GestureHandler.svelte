@@ -50,8 +50,8 @@
     const onPanMove = ({ canvasX, canvasY, windowX, windowY, deltaX, deltaY }: GestureEvent) => {
         $cursor = cursorFromCanvasPosition(canvasX, canvasY, windowX, windowY)
 
-        if (isDrawingMode($toolMode)) {
-            dispatch('drawmove')
+        if ($toolMode === 'brush') {
+            dispatch('brushmove')
         } 
         
         else if ($toolMode === 'move') {

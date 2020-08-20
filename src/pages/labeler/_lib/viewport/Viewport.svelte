@@ -122,7 +122,7 @@
 <GestureHandler
     {canvas} 
     on:drawstart={startNewPathFromCursor}
-    on:drawmove={addPointToLastPath}
+    on:brushmove={addPointToLastPath}
     on:drawend={handleDrawEnd}
     on:doubletap={undo}
     on:fill={fill}
