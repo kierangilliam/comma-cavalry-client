@@ -9,13 +9,13 @@
         toolMode,
         resetState,
     } from '../state'
-    import { onMount, onDestroy } from 'svelte'
+    import { onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { Path } from '@lib/types'
     import { undo, getColor } from '../utils'
     import GestureHandler from './GestureHandler.svelte'
     import AutoLineTool from './AutoLineTool.svelte'
-    import { drawPaths, drawPoints, floodFill, collapseAutoLinePoints } from './canvas-helpers'
+    import { drawPaths, drawPoints, floodFill } from './canvas-helpers'
     import Cursor from './Cursor.svelte'    
     
     export let imageData: string // base64
@@ -34,10 +34,6 @@
         paths.subscribe(paths => 
             drawPaths({ ctx, paths })
         )
-    })
-
-    onDestroy(() => {
-        resetState()
     })
 
     const fill = ({ detail: { x, y } }) => {

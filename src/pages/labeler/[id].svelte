@@ -5,18 +5,24 @@
     import type { Image } from '@lib/types'
     import { BottomSheet, LoadingScreen } from '@lib/components'
     import { getEntry } from '@lib/storage'
-    import { paths } from './_lib/state'
+    import { paths, resetState } from './_lib/state'
     import { urlToImageData } from './_lib/viewport/canvas-helpers'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
+    import { onMount } from 'svelte'
 
     let loading = true
-    let error = null
+    let error = null 
+    let image = null
 
-    $: loadSavedPaths($params.id)
-    $: image = loadImage($params.id)
+    onMount(() => {
+        // TODO BUG: onMount fires twice when navigating from homepage 
+        resetState()
+        loadSavedPaths($params.id)
+        image = loadImage($params.id)
+    })
     
     function loadSavedPaths(id: string) {
         const { paths: loadedPaths } = getEntry(id)
