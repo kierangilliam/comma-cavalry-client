@@ -70,7 +70,9 @@
                 'Your mask was sent to your email. Check your spam folder if you do not see it.',
             )
         } catch (error) {
-            notifications.error('Could not submit', error.message)
+            if (error.message !== 'user canceled operation') {
+                notifications.error('Could not submit', error.message)
+            }                
         } finally {
             loading = false
         }
