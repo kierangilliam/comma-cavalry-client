@@ -16,7 +16,7 @@
     import { renderImageData, copyImageData } from './canvas-helpers'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
 
-    export let image: CanvasImageSource
+    export let image: HTMLImageElement
     
     let canvas: HTMLCanvasElement
     let ctx: CanvasRenderingContext2D
@@ -38,6 +38,7 @@
         && $cursor
         && generateAutoLine()
 
+    // TODO on touch end instead
     $: !$isTouching
         && ctx
         && (ctx.clearRect(0, 0, canvas.width, canvas.height))
@@ -51,20 +52,16 @@
 
     onMount(() => {
         ctx = canvas.getContext('2d')
-        imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
-        img_u8 = cannyProcessImage(
-            imageData,
-            $blurRadius,
-            $lowThreshold,
-            $highThreshold,
-        )
+
+        image.onload = () => {
+            imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+
     })
 
     const generateAutoLine = () => {
         debounce()        
-
-        // Triggers a reprocess on next go around
-        imageData = copyImageData({ x: 0, y: 0, ctx, image })
 
         const points = getCannyPointsAndRender(
             imageData, 
@@ -149,7 +146,7 @@
             }
         }
 
-        return result.length > ($brushSize)
+        return result.length > $brushSize
             ? result
             : []
     }
