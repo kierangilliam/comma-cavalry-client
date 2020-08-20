@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { PATH_COLORS } from '@lib/constants'
     import type { PathType, ToolMode } from '@lib/types'
-    import { Haptics, isDesktop } from '@lib/capacitor'
+    import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
     import { Spacer } from '@ollopa/cedar'
     import { setMode } from '../utils'
@@ -10,9 +10,7 @@
 
     const updateTool = (_ => {
         let lastType = $brushType
-        let drawingTools: ToolMode[] = isDesktop
-            ? ['brush', 'fill', 'autoLine']
-            : ['brush', 'fill']
+        let drawingTools: ToolMode[] = ['brush', 'fill', 'autoLine']
 
         return (type: string) => {
             Haptics.select()
