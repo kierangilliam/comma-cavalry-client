@@ -60,7 +60,6 @@
         )
     })
 
-    // TODO: Probably should've just gone with tensorflow
     const generateAutoLine = () => {
         debounce()        
 

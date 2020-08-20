@@ -1,5 +1,4 @@
 import type { Path, Point } from '@lib/types'
-import { mode, standardDeviation } from '@lib/utils'
 import FloodFill from 'q-floodfill'
 import { getColor } from '../utils'
 
@@ -91,6 +90,8 @@ export const drawPaths = ({
         ctx.lineJoin = 'round'
         ctx.lineCap = 'round'
 
+        // TODO Refactor tools into classes
+
         if (mode === 'fill') {
             const { x, y } = points[0]
             floodFill({ ctx, x, y, color })
@@ -137,63 +138,4 @@ export const floodFill = ({ ctx, x, y, color }: FloodFillOpts) => {
     const floodFill = new FloodFill(imageData)
     floodFill.fill(color, Math.round(x), Math.round(y), 10)
     ctx.putImageData(floodFill.imageData, 0, 0)
-}
-
-
-/**
- * AutoLine does creates excessive points. 
- * This is a hack to remove jitter in lines
- * and is a sign that there is an issue with 
- * the autoline algorithm somewhere
- */
-export const collapseAutoLinePoints = (points: Point[]) => {
-    const lastPoint = points[points.length - 1]
-    const distX = lastPoint.x - points[0].x
-    const distY = lastPoint.y - points[0].y
-    const horizontal = Math.abs(distX) > Math.abs(distY)
-    const leftToRight = (lastPoint.x - points[0].x) > 0
-    const topToBottom = (lastPoint.y - points[0].y) > 0
-
-    let lastValidX = points[0].x
-    let lastValidY = points[0].y
-    let pointsToKeep = [points[0]]
-
-    for (let i = 1; i < points.length; i++) {
-        let keep = true
-
-        if (
-            horizontal
-            && ((leftToRight && points[i].x < lastValidX)
-                || (!leftToRight && points[i].x > lastValidX))
-        ) {
-            keep = false
-        }
-
-        if (
-            !horizontal
-            && ((topToBottom && points[i].y < lastValidY)
-                || (!topToBottom && points[i].y > lastValidY))
-        ) {
-            keep = false
-        }
-
-        if (keep) {
-            lastValidX = points[i].x
-            lastValidY = points[i].y
-            pointsToKeep.push(points[i])
-        }
-    }
-
-    const orthogonalPoints = points.map(({ x, y }) => horizontal ? y : x)
-    const orthogonalMode = mode(orthogonalPoints)
-    const orthogonalDeviation = standardDeviation(orthogonalPoints)
-    const withinStdOfMode = (n: number) =>
-        n + orthogonalDeviation > orthogonalMode
-        && n - orthogonalDeviation < orthogonalMode
-
-    return pointsToKeep.filter(({ x, y }) =>
-        horizontal
-            ? withinStdOfMode(y)
-            : withinStdOfMode(x)
-    )
 }

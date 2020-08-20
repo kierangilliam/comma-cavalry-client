@@ -62,29 +62,3 @@ export const waitForEvent = <S>(Constructor: any, props: any, successEvent: stri
         })
     })
 }
-
-
-export const mean = (array: number[]) =>
-    array.reduce((a, b) => a + b) / array.length
-
-export const standardDeviation = (array: number[]): number => {
-    const m = mean(array)
-    return Math.sqrt(array.map(x => Math.pow(x - m, 2)).reduce((a, b) => a + b) / array.length)
-}
-
-export const mode = (arr: number[]) => {
-    const numMapping = {}
-    let greatestFreq = 0
-    let mode: number
-
-    arr.forEach((number) => {
-        numMapping[number] = (numMapping[number] || 0) + 1;
-
-        if (greatestFreq < numMapping[number]) {
-            greatestFreq = numMapping[number]
-            mode = number
-        }
-    })
-
-    return mode
-}
