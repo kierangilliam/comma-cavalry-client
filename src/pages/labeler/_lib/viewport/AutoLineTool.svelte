@@ -59,6 +59,7 @@
         debounce()        
 
         // Triggers a reprocess on next go around
+        const start = performance.now()
         imageData = copyImageData({ x: 0, y: 0, ctx, image })
 
         const points = getCannyPointsAndRender(
@@ -73,6 +74,10 @@
 
         renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
         
+        const end = performance.now()
+
+        console.log('time', end - start)
+
         currentPath.points = [...currentPath.points, ...points]
         $paths = [...$paths, currentPath]
     }
@@ -118,10 +123,14 @@
         const withinSearchRadius = withinRadiusHelper(cursor, $brushSize)
         const data_u32 = new Uint32Array(imageData.data.buffer)
         const result: Point[] = []
-        let pixel: number 
-        let i = width * height
+        let pixel: number
+        let i = Math.round(cursor.x + (width * (cursor.y + RENDER_RADIUS)))
+        const iMin = Math.round(width * (cursor.y - RENDER_RADIUS))
 
-        while(--i >= 0) {
+        // Make transparent
+        // data_u32.fill(0x000000, 0, width * height)
+
+        while(--i >= iMin) {
             const y = (i - (i % width)) / width
             const x = (i % width)
 
@@ -141,7 +150,7 @@
             }
         }
 
-        return result.length > 5
+        return result.length > 20
             ? result
             : []
     }
