@@ -65,7 +65,6 @@
         debounce()        
 
         // Triggers a reprocess on next go around
-        const start = performance.now()
         imageData = copyImageData({ x: 0, y: 0, ctx, image })
 
         const points = getCannyPointsAndRender(
@@ -80,10 +79,6 @@
 
         renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
         
-        const end = performance.now()
-
-        console.log('time', end - start)
-
         currentPath.points = [...currentPath.points, ...points]
         $paths = [...$paths, currentPath]
     }
