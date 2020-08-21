@@ -22,6 +22,9 @@
                 "./src/components/templates/index.ts"
             ],
         },
+        "types": [
+            "hammerjs"
+        ]
     },
     "exclude": [
         "node_modules/*",
