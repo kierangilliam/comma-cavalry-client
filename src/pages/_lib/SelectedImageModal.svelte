@@ -10,8 +10,8 @@
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { User } from '@lib/types'
     import { setCSSVar, waitForEvent, getCSSVarPx } from '@lib/utils'
-    import { drawPaths } from '../labeler/_lib/viewport/canvas-helpers'
     import UserModal from './UserModal.svelte'
+    import { MaskRenderer } from '@lib/editor-renderer'
 
     export let id: string
 
@@ -50,18 +50,15 @@
             const canvas = document.createElement('canvas')
             const ctx = canvas.getContext('2d')
             const { paths } = getEntry(id)
+            const renderer = new MaskRenderer()
 
+            renderer.ctx = ctx
             canvas.width = IMAGE_WIDTH
             canvas.height = IMAGE_HEIGHT
 
-            drawPaths({ ctx, paths, renderTruePathColors: true })
+            renderer.drawAllPaths({ paths, drawTruePathColors: true })
 
             const blob = await fetch(canvas.toDataURL('image/png')).then(r => r.blob())
-            // const mask = new Blob([blob], { type: `image/png` })
-
-            // let i = new Image()
-            // i.src = canvas.toDataURL('image/png')
-            // document.body.appendChild(i)
 
             await submitMask(id, user.name, user.email, blob)
 

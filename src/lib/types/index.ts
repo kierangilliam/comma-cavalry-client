@@ -14,11 +14,13 @@ export type PathType =
 
 export interface Path {
     type: PathType
-    mode: 'brush' | 'fill' | 'autoLine'
+    mode: DrawingMode
     points: Point[]
     size: number
 }
 
 export type User = { name: string, email: string }
 
-export type ToolMode = 'brush' | 'move' | 'fill' | 'autoLine'
+export type DrawingMode = 'brush' | 'fill' | 'autoLine'
+
+export type ToolMode = DrawingMode | 'move'

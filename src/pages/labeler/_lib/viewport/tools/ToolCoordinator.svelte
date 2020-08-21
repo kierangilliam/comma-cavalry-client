@@ -5,28 +5,30 @@
 -->
 
 <script lang='ts'>
-    import { createEventDispatcher, onMount } from 'svelte'
+    import { writable } from "svelte/store"
+    import { onMount, setContext } from 'svelte'
     import Hammer from 'hammerjs'
-    import type { Point, Cursor } from '@lib/types'
-    import { zoom, cursor, toolMode, canvasPosition, isTouching } from '../state'
-    import { setMode, isDrawingMode } from '../utils'
+    import type { Cursor } from '@lib/types'
+    import type { ToolEvent, ToolEventType } from './common'
+    import { TOOL_COORDINATOR_CONTEXT } from './common'
+    import { zoom, cursor, toolMode, isTouching } from '../../state'
+    import { setMode } from '../../utils'
     import { isDesktop } from '@lib/capacitor'
-    import { clamp } from '@lib/utils'
 
-    export let canvas: HTMLCanvasElement
+    export let canvas: HTMLCanvasElement    
 
-    type GestureEvent = Omit<HammerInput, 'destroy' | 'init' | 'handler'> 
-        & { canvasX: number, canvasY: number, windowX: number, windowY: number }
+    type EventDetails = Omit<ToolEvent, 'type'>
     
-    const dispatch = createEventDispatcher()    
-    const MIN_ZOOM = .2
-    const MAX_ZOOM = 10
-    const SPEED = 5 
     const CURSOR_OFFSET = 75
+    const eventStream = writable<ToolEvent>(null)
+
+    setContext(TOOL_COORDINATOR_CONTEXT, { eventStream })
     
     let target: HTMLElement
-    let lastScale = $zoom + SPEED
-    let lastDelta: Point = { x: 0, y: 0 }
+
+    const emit = (type: ToolEventType, e: EventDetails) => {
+        $eventStream = { ...e, type }
+    }
 
     // TODO Longpress to enable making the brush size bigger and smaller
 
@@ -38,65 +40,59 @@
         }
     }
 
-    const onPanStart = ({ canvasX, canvasY, windowX, windowY }: GestureEvent) => {
+    const onPanStart = (e: EventDetails) => {
+        const { canvasX, canvasY, windowX, windowY } = e
+
         $isTouching = true
         $cursor = cursorFromCanvasPosition(canvasX, canvasY, windowX, windowY)
         
-        if (isDrawingMode($toolMode)) {
-            dispatch('drawstart')
+        if ($toolMode === 'brush') {
+            emit('brushStart', e)
+        } else if ($toolMode === 'autoLine') {
+            emit('autoLineStart', e)
         }
     }        
     
-    const onPanMove = ({ canvasX, canvasY, windowX, windowY, deltaX, deltaY }: GestureEvent) => {
+    const onPanMove = (e: EventDetails) => {
+        const { canvasX, canvasY, windowX, windowY } = e
         $cursor = cursorFromCanvasPosition(canvasX, canvasY, windowX, windowY)
 
         if ($toolMode === 'brush') {
-            dispatch('brushmove')
-        } 
-        
-        else if ($toolMode === 'move') {
-            // Scale the speed with the zoom level
-            const speed = SPEED / $zoom
+            emit('brushMove', e)
+        } else if ($toolMode === 'autoLine') {
+            emit('autoLineMove', e)
+        } else if ($toolMode === 'move') {
+            emit('panMove', e)
+        }
+    }
 
-            const positionFromDelta = {
-                x: $canvasPosition.x + ((deltaX - lastDelta.x) * speed),
-                y: $canvasPosition.y + ((deltaY - lastDelta.y) * speed),
-            }
-
-            $canvasPosition = positionFromDelta
-        }        
-
-        lastDelta = { x: deltaX, y: deltaY }
+    const onScroll = ({ deltaY }: WheelEvent) => {
+        setMode('move')
+        // @ts-ignore
+        const e: EventDetails = { deltaY }
+        emit('zoomDesktop', e)
     }
     
-    const onPinch = ({ scale }: GestureEvent) => {  
-        const speed = SPEED * $zoom          
-        const newZoom = $zoom + ((scale - lastScale) * speed)
-        
-        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
-        lastScale = scale
-    }  
-    
-    // Desktop only
-    const onScroll = (deltaY: number) => {            
-        const newZoom = $zoom - (deltaY / 10)
-        
-        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
+    const onPinch = (e: EventDetails) => {  
+        setMode('move')
+        emit('zoomMobile', e)
     }  
 
     const onEnd = () => {                   
-        $isTouching = false
-        lastDelta = { x: 0, y: 0 }
-        lastScale = 1
+        $isTouching = false  
 
-        if (isDrawingMode($toolMode)) {
-            dispatch('drawend')            
+        if ($toolMode === 'move') {
+            emit('panEnd', null)
+        } else if ($toolMode === 'brush') {
+            emit('brushEnd', null)            
+        } else if ($toolMode === 'autoLine') {
+            emit('autoLineEnd', null)            
         }
     } 
 
-    const onTap = ({ canvasX, canvasY }: GestureEvent) => {
+    const onTap = (e: EventDetails) => {
         if ($toolMode === 'fill') {
-            dispatch('fill', { x: canvasX, y: canvasY })
+            emit('fill', e)
         }
     }
     
@@ -141,9 +137,9 @@
 
         gestures.on('longpress',  _ => onLongPress())
         gestures.on('pinchstart', _ => setMode('move'))
-        gestures.on('pinch',      e => onPinch(createEvent(e)))
-        gestures.on('panstart',   e => onPanStart(createEvent(e)))
-        gestures.on('panmove',    e => onPanMove(createEvent(e)))
+        gestures.on('pinch',      e => onPinch(createEventDetails(e)))
+        gestures.on('panstart',   e => onPanStart(createEventDetails(e)))
+        gestures.on('panmove',    e => onPanMove(createEventDetails(e)))
         gestures.on('panend pinchend pancancel pinchcancel', _ => onEnd())
         
         // Require failure from a double tap for a single
@@ -155,7 +151,7 @@
         
         gestures.on('doubletap', e => {
             clearTimeout(singletapTimeout)
-            dispatch('doubletap', createEvent(e))
+            emit('undo', createEventDetails(e))
         })
 
         gestures.on('tap', e => {
@@ -163,7 +159,7 @@
 
             if (now - tapStart > DOUBLE_TAP_INTERVAL) {
                 singletapTimeout = setTimeout(() => {
-                    onTap(createEvent(e))
+                    onTap(createEventDetails(e))
                 }, DOUBLE_TAP_INTERVAL)
             }
 
@@ -171,12 +167,10 @@
         })
 
         if (isDesktop) {
-            target.addEventListener('mousewheel', ({ deltaY }: WheelEvent) => {
-                onScroll(deltaY)
-            })
+            target.addEventListener('mousewheel', onScroll)
         }
 
-        function createEvent(e: HammerInput): GestureEvent {
+        function createEventDetails(e: HammerInput): EventDetails {
             const rect = canvas.getBoundingClientRect()        
             const { x, y } = e.center
 
@@ -190,6 +184,8 @@
         }
     })
 </script>
+
+<slot />
 
 <div 
     id='editor-gesture-target'

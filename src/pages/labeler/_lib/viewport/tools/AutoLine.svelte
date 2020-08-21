@@ -1,21 +1,25 @@
 <script lang='ts'>
-    import { onMount } from 'svelte'
-    import * as jsfeat from 'jsfeat'
     import { 
-        isTouching, 
+        brushType,
         cursor, 
         paths, 
-        toolMode, 
         brushSize, 
         canvasStyle,
         highThreshold,
         lowThreshold,
         blurRadius,
-    } from '../state'
+    } from '../../state'
+    import { onMount } from 'svelte'
+    import * as jsfeat from 'jsfeat'    
+    import type { AutoLineRenderer } from '@lib/editor-renderer'
     import type { Point, Cursor } from '@lib/types'
-    import { renderImageData, copyImageData } from './canvas-helpers'
-    import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
-
+    import { renderImageData, copyImageData } from '@lib/utils'
+    import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
+    import { removeSinglePointPaths, listenToEvents, createNewPath } from './common'
+    import type { AutoLineEvent } from './common'
+    import { getColor } from '../../utils'
+    
+    export let renderer: AutoLineRenderer 
     export let image: HTMLImageElement
     
     let canvas: HTMLCanvasElement
@@ -24,24 +28,6 @@
     let img_u8: jsfeat.matrix_t
     let debounceTimer: any
     let debounced: boolean = false
-
-    const debounce = () => {
-        debounced = true
-        clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(() => { debounced = false }, 50)
-    }
-    
-    $: $toolMode === 'autoLine' 
-        && !debounced
-        && img_u8
-        && $isTouching 
-        && $cursor
-        && generateAutoLine()
-
-    // TODO on touch end instead
-    $: !$isTouching
-        && ctx
-        && (ctx.clearRect(0, 0, canvas.width, canvas.height))
 
     $: img_u8 = cannyProcessImage(
         imageData,
@@ -52,16 +38,29 @@
 
     onMount(() => {
         ctx = canvas.getContext('2d')
-
-        image.onload = () => {
-            imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
-            ctx.clearRect(0, 0, canvas.width, canvas.height)
-        }
-
+        imageData = copyImageData({ x: 0, y: 0, ctx, image })                 
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
     })
 
-    const generateAutoLine = () => {
-        debounce()        
+    const debounce = () => {
+        debounced = true
+        clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => { debounced = false }, 50)
+    }   
+
+    const startNewPathFromCursor = () => {
+        const path = createNewPath({ x: $cursor.x, y: $cursor.y, renderer }) 
+        const color = getColor($brushType)
+
+        renderer.drawPoints({ ...path, color })
+
+        $paths.push(path)
+    }
+
+    const autoLineMove = () => {
+        if (debounced) return
+
+        debounce()
 
         const points = getCannyPointsAndRender(
             imageData, 
@@ -77,6 +76,11 @@
         
         currentPath.points = [...currentPath.points, ...points]
         $paths = [...$paths, currentPath]
+    }
+
+    const autoLineEnd = () => {
+        removeSinglePointPaths()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
     
     const cannyProcessImage = (
@@ -150,6 +154,12 @@
             ? result
             : []
     }
+
+    listenToEvents<AutoLineEvent>('autoLine', {
+        autoLineStart: startNewPathFromCursor,
+        autoLineMove,
+        autoLineEnd,
+    })
 </script>
 
 <canvas 

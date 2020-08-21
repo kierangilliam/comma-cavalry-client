@@ -6,6 +6,7 @@ import { params } from '@sveltech/routify'
 import { get } from 'svelte/store'
 import { paths, toolMode } from './state'
 
+// TODO Remove
 export const getColor = (type: PathType, truePathColor = false): string => {
     return truePathColor
         ? TRUE_PATH_COLORS[type]
@@ -50,6 +51,7 @@ export const setMode = (() => {
 export const isPaintMode = (mode: ToolMode) =>
     mode === 'autoLine' || mode === 'brush' || mode === 'fill'
 
+// TODO Remove?
 export const isDrawingMode = (mode: ToolMode) =>
     mode === 'autoLine' || mode === 'brush'
 

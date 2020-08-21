@@ -1,128 +1,62 @@
 <script lang='ts'>
     import { 
-        paths, 
-        brushType, 
-        brushSize, 
-        cursor,
-        canvasStyle,
-        imageStyle,
-        toolMode,
-        resetState,
-    } from '../state'
+        Brush, 
+        ToolCoordinator, 
+        AutoLine, 
+        Move, 
+        Fill, 
+        Undo,
+    } from './tools'
+    import { paths, canvasStyle, imageStyle } from '../state'
     import { onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
-    import type { Path } from '@lib/types'
-    import { undo, getColor } from '../utils'
-    import GestureHandler from './GestureHandler.svelte'
-    import AutoLineTool from './AutoLineTool.svelte'
-    import { drawPaths, drawPoints, floodFill } from './canvas-helpers'
     import Cursor from './Cursor.svelte'    
+    import { MaskRenderer } from '@lib/editor-renderer'    
     
-    export let imageData: string // base64
+    export let image: HTMLImageElement
+
+    const renderer = new MaskRenderer()
     
     let canvas: HTMLCanvasElement
-    let image: HTMLImageElement    
     let ctx: CanvasRenderingContext2D
+    let imageContainer: HTMLImageElement
     
-    $: image && (image.src = imageData)
-
-    onMount(() => {        
+    onMount(() => {                
+        imageContainer.appendChild(image)
         image.width = canvas.width = IMAGE_WIDTH
         image.height = canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
+        renderer.ctx = ctx
 
         paths.subscribe(paths => 
-            drawPaths({ ctx, paths })
+            renderer.drawAllPaths({ paths })
         )
     })
-
-    const fill = ({ detail: { x, y } }) => {
-        const path = createNewPath(x, y)
-        const color = getColor($brushType)
-
-        floodFill({ ctx, color, x, y })
-        $paths.push(path)
-    }   
-
-    const startNewPathFromCursor = () => {
-        const path = createNewPath($cursor.x, $cursor.y)
-        const color = getColor($brushType)
-
-        drawPoints({ ctx, points: path.points, color, size: path.size })
-        $paths.push(path)
-    }
-
-    const createNewPath = (x: number, y: number): Path => {
-        if ($toolMode === 'move') {
-            throw Error('Cannot create a new path with mode "move"')
-        }
-
-        ctx.beginPath()
-        ctx.moveTo(x, y)
-
-        return {
-            type: $brushType,
-            size: $brushSize,
-            // @ts-ignore
-            mode: $toolMode,
-            points: [{ x, y }],
-        }
-    }
-
-    const addPointToLastPath = () => {
-        if ($paths.length == 0) {
-            return
-        }
-
-        const { x, y } = $cursor
-
-        $paths[$paths.length - 1].points.push({ x, y })
-        
-        ctx.lineTo(x, y)
-        ctx.lineWidth = $brushSize
-        ctx.stroke()
-    } 
-
-    const handleDrawEnd = () => {
-        if ($toolMode !== 'autoLine') {
-            ctx.fill()
-        }
-        
-        removeSinglePointPaths()
-    }
-
-    const removeSinglePointPaths = () => {
-        $paths = $paths.filter(({ points, mode }) => 
-            points.length > 1 || mode === 'fill'
-        )
-    }
 </script>
 
 <div class='background'></div>
 <div class='container'>
-    <img 
-        bind:this={image}            
+    <div 
+        bind:this={imageContainer}            
         style={$imageStyle}
         alt='Source'
     >
+    </div>
     <canvas 
-        id='viewport-canvas'
+        id='mask-canvas'
         style={$canvasStyle}
         bind:this={canvas} 
     />    
     {#if image}
-        <AutoLineTool {image} />
+        <ToolCoordinator {canvas}>
+            <Brush renderer={renderer.getTool('brush')} />
+            <Fill renderer={renderer.getTool('fill')} />
+            <AutoLine renderer={renderer.getTool('autoLine')} {image} />
+            <Move />
+            <Undo />
+        </ToolCoordinator>
     {/if}
 </div>
-
-<GestureHandler
-    {canvas} 
-    on:drawstart={startNewPathFromCursor}
-    on:brushmove={addPointToLastPath}
-    on:drawend={handleDrawEnd}
-    on:doubletap={undo}
-    on:fill={fill}
-/>
 
 <Cursor />
 
