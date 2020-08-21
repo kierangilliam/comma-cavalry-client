@@ -4,6 +4,7 @@
     import type { Point } from '@lib/types'
     import { frag, vert } from './glsl-depth-displacement'
     import Regl from 'regl'
+    import { loadImageFromUrl } from '@lib/utils'
     
     export let scale = .25
     export let drift = 10
@@ -40,24 +41,12 @@
 
     const loadImages = async () => {
         const images = await Promise.all([
-            loadImage(source), 
-            loadImage(map)
+            loadImageFromUrl(source), 
+            loadImageFromUrl(map)
         ])
         
         sourceImage = images[0] 
         mapImage = images[1]
-
-        async function loadImage(url): Promise<HTMLImageElement> {
-            const image = new Image()
-            image.crossOrigin = 'anonymous'
-            image.src = url
-
-            return new Promise(resolve => {    
-                image.onload = () => resolve(image)
-                image.onerror = (e) => 
-                    console.error('Filter: Could not load ', url)
-            })
-        }
     }
 
     const initRegl = () => {

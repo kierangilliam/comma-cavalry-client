@@ -62,3 +62,40 @@ export const waitForEvent = <S>(Constructor: any, props: any, successEvent: stri
         })
     })
 }
+
+export async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
+    const image = new Image()
+    image.crossOrigin = 'anonymous'
+    image.src = url
+
+    return new Promise(resolve => {
+        image.onload = () => resolve(image)
+        image.onerror = (e) =>
+            console.error('Filter: Could not load ', url)
+    })
+}
+
+interface CopyImageDataOpts {
+    ctx: CanvasRenderingContext2D
+    x: number
+    y: number
+    image: CanvasImageSource
+}
+
+export const copyImageData = ({ ctx, x, y, image }: CopyImageDataOpts): ImageData => {
+    ctx.drawImage(image, x, y, image.width as number, image.height as number)
+    return ctx.getImageData(x, y, image.width as number, image.height as number)
+}
+
+interface RenderImageDataOpts {
+    ctx: CanvasRenderingContext2D
+    x: number
+    y: number
+    canvas: HTMLCanvasElement
+    imageData: ImageData
+}
+
+export const renderImageData = ({ imageData, canvas, ctx, x, y }: RenderImageDataOpts) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.putImageData(imageData, x, y)
+}

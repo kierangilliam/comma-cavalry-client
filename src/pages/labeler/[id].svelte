@@ -6,7 +6,7 @@
     import { BottomSheet, LoadingScreen } from '@lib/components'
     import { getEntry } from '@lib/storage'
     import { paths, resetState } from './_lib/state'
-    import { urlToImageData } from './_lib/viewport/canvas-helpers'
+    import { loadImageFromUrl } from '@lib/utils'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import StatusIndicator from './_lib/StatusIndicator.svelte'
@@ -33,14 +33,14 @@
         }
     }
 
-    async function loadImage(id: string): Promise<Image & { imageData: string }> {
+    async function loadImage(id: string): Promise<Image & { image: HTMLImageElement }> {
         loading = true 
 
         try {
-            const image = await getImage(id)
-            const imageData = await urlToImageData(image.url)
+            const comma10KImage = await getImage(id)
+            const image = await loadImageFromUrl(comma10KImage.url)
 
-            return { ...image, imageData }
+            return { ...comma10KImage, image }
         } catch (e) {
             error = e
             return null 
@@ -63,8 +63,8 @@
         </div>
     </LoadingScreen>
 {:else}
-    {#await image then { id, imageData }}
-        <Viewport {imageData} />
+    {#await image then { id, image }}
+        <Viewport {image} />
         <StatusIndicator />
         <BottomSheet>
             <Controls {id} />
