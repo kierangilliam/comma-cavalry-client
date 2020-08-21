@@ -62,7 +62,7 @@
 
         debounce()
 
-        const points = getCannyPointsAndRender(
+        const points = getCannyPointsAndRenderAutoLineDisplay(
             imageData, 
             img_u8, 
             image.width as number, 
@@ -70,12 +70,10 @@
             $cursor
         )
 
-        const currentPath = $paths.pop()
-
-        renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
-        
+        // Finish by drawing the most recent set of points onto the mask
+        const currentPath = $paths[$paths.length - 1]
+        renderer.drawPoints({ points, color: getColor($brushType), size: $brushSize })
         currentPath.points = [...currentPath.points, ...points]
-        $paths = [...$paths, currentPath]
     }
 
     const autoLineEnd = () => {
@@ -110,7 +108,7 @@
             return dist < radius
         }
 
-    const getCannyPointsAndRender = (
+    const getCannyPointsAndRenderAutoLineDisplay = (
         imageData: ImageData, 
         img_u8: jsfeat.matrix_t, 
         width: number, 
@@ -150,6 +148,8 @@
             }
         }
 
+        renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
+
         return result.length > $brushSize
             ? result
             : []
@@ -163,6 +163,7 @@
 </script>
 
 <canvas 
+    id='autoline-display'
     style={$canvasStyle + 'opacity: 1;'}
     bind:this={canvas} 
     width={IMAGE_WIDTH}
