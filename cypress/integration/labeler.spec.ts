@@ -18,7 +18,8 @@ describe('bottom sheet', () => {
     it('contains seven colors', () => {
         cy.get('.color-row').children().should('have.length', 6)
         cy.wait(250)
-        cy.get('.color-row').toMatchImageSnapshot()
+        // @ts-ignore
+        cy.get('.color-row').toMatchImageSnapshot({ failureThreshold: 0.05 })
     })
 
     it('should toggle open on swipe up and down', () => {
@@ -57,7 +58,8 @@ describe('loading screen', () => {
         cy.get('p').contains('Could not find image')
 
         cy.wait(1000)
-        cy.get('img').toMatchImageSnapshot()
+        // @ts-ignore
+        cy.get('img').toMatchImageSnapshot({ failureThreshold: 0.05 })
 
         cy.get('a').contains('go back').click()
         cy.location('pathname').should('not.contain', '/labeler/')

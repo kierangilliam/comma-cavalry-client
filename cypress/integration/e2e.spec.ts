@@ -88,7 +88,7 @@ describe('complex', () => {
             cy.get('.container').get('.item').click()
             cy.get('button').contains('edit').click()
             cy.wait(1500)
-            cy.get('body').toMatchImageSnapshot()
+            cy.get('#mask-canvas').toMatchImageSnapshot()
         })
     })
 
@@ -104,6 +104,7 @@ describe('complex', () => {
         cy.get('.notification')
             .should('be.visible')
             .contains('Success')
+        cy.get('.notification')
             .contains('Your mask was sent to your email')
     })
 })
