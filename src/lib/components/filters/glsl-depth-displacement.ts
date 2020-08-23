@@ -26,7 +26,7 @@ export const frag = ({ easing }: { easing: boolean }) => `
 
     uniform sampler2D source;
     uniform sampler2D depthMap;
-    uniform vec2 size;
+    uniform vec3 size;
     uniform float dx;
     uniform float dy;
     
@@ -47,9 +47,11 @@ export const frag = ({ easing }: { easing: boolean }) => `
     }
 
     void main () {
-        vec4 resolution = vec4(size, 1., 1.);
+        vec4 resolution = vec4(size.x, size.y, 1., 1.);
         vec2 uv = PIXEL_RATIO * gl_FragCoord.xy / resolution.xy;
         vec2 vUv = (uv - vec2(0.5)) * resolution.zw + vec2(0.5);
+        vUv = vUv * size.z;
+        
         vec4 depthTexture = texture2D(depthMap, mirrored(vUv)); 
         
         // The * -.1 eases it a bit
@@ -59,7 +61,7 @@ export const frag = ({ easing }: { easing: boolean }) => `
             // honestly not sure why dx and dy have
             // to be backwards
             vUv.x + depth * dy, 
-            vUv.y + depth * dx
+            (-vUv.y) + depth * dx
         );
 
         gl_FragColor = texture2D(source, mirrored(fake3d));

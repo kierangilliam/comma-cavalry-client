@@ -25,6 +25,8 @@
     $: regl && sourceImage && mapImage && (initRegl()) 
     $: scaledHeight = IMAGE_HEIGHT * scale
     $: scaledWidth = IMAGE_WIDTH * scale
+    $: scaledHeightCanvas = scaledHeight * 2
+    $: scaledWidthCanvas = scaledWidth * 2
     $: style = `
         width: ${scaledWidth}px;
         height: ${scaledHeight}px;
@@ -85,8 +87,6 @@
             dx: regl.prop('dy'),
             dy: regl.prop('dx'),
             size: regl.prop('size'),
-            wRcp: ({ viewportWidth }) => 1.0 / viewportWidth,
-            hRcp: ({ viewportHeight }) => 1.0 / viewportHeight
         },
         count: 3
     })
@@ -100,7 +100,9 @@
                 depth: 1
             })
 
-            const size = [IMAGE_WIDTH, IMAGE_HEIGHT]
+            
+            const scale = IMAGE_WIDTH / scaledWidthCanvas
+            const size = [IMAGE_WIDTH, IMAGE_HEIGHT, scale]
             let dx = Math.sin(time * speed) * DRIFT
             let dy = Math.cos(time * 0.5 * speed) * DRIFT
             
@@ -134,8 +136,8 @@
     <div {style}>
         <canvas 
             bind:this={target}
-            width={IMAGE_WIDTH}
-            height={IMAGE_HEIGHT}
+            width={scaledWidthCanvas}
+            height={scaledHeightCanvas}
             on:mousemove={e => setCursor(e)}
             on:touchmove={({ touches }) => setCursor(touches[0])}
             on:touchend={() => setCursor(null)}
