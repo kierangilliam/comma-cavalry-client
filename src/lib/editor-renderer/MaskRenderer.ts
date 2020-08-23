@@ -1,3 +1,5 @@
+import { PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
+import type { PathType } from '@lib/types'
 import { AutoLineRenderer } from './AutoLineRenderer'
 import { BrushRenderer } from './BrushRenderer'
 import { FillRenderer } from './FillRenderer'
@@ -18,7 +20,7 @@ export class MaskRenderer {
         this.tools = {
             brush: new BrushRenderer(),
             autoLine: new AutoLineRenderer(),
-            fill: new FillRenderer(10),
+            fill: new FillRenderer(),
         }
     }
 
@@ -43,6 +45,10 @@ export class MaskRenderer {
     }: DrawPathsOpts) {
         this.clear(drawTruePathColors)
 
+        this.tools.fill.palette = drawTruePathColors
+            ? this.asPalette(TRUE_PATH_COLORS)
+            : this.asPalette(PATH_COLORS)
+
         paths.forEach(({ points, size, type, mode }) => {
             const color = getColor(type, drawTruePathColors)
 
@@ -58,5 +64,9 @@ export class MaskRenderer {
 
     public getTool<T extends keyof Tools>(tool: T): Tools[T] {
         return this.tools[tool]
+    }
+
+    private asPalette(colors: Record<PathType, string>): string[] {
+        return Object.values(colors)
     }
 }
