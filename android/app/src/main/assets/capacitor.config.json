@@ -6,7 +6,8 @@
   "webDir": "dist",
   "plugins": {
     "Keyboard": {
-      "resize": "none"
+      "resize": "body",
+      "style": "dark"
     },
     "SplashScreen": {
       "launchShowDuration": 0
