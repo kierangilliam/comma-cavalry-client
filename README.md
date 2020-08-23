@@ -44,7 +44,7 @@ yarn test
 
 * Start off with an [automatically segmented image](https://colab.research.google.com/github/lexfridman/mit-deep-learning/blob/master/tutorial_driving_scene_segmentation/tutorial_driving_scene_segmentation.ipynb)
 
-* Generate better depth maps & smooth the depth map filter
+* Generate better depth maps 
 
 * Optimize autoLine to be performant on mobile
 

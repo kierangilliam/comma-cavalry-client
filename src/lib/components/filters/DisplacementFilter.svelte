@@ -61,7 +61,12 @@
         const sourceTexture = regl.texture(emptyTextureDimension)({ data: sourceImage })
         const mapTexture = regl.texture(emptyTextureDimension)({ data: mapImage })
 
-        startRegl(draw(sourceTexture, mapTexture))
+        try {
+            startRegl(draw(sourceTexture, mapTexture))
+        } catch (error) {
+            console.error('Could not start regl', error)
+            map = null // go to fallback
+        }
     }
 
     const draw = (source, depthMap) => regl({
@@ -126,14 +131,17 @@
 </script>
 
 {#if map && hasWebglSupport()}
-    <canvas 
-        bind:this={target}
-        {style} 
-        on:mousemove={e => setCursor(e)}
-        on:touchmove={({ touches }) => setCursor(touches[0])}
-        on:touchend={() => setCursor(null)}
-        on:mouseout={() => setCursor(null)}
-    ></canvas>
+    <div {style}>
+        <canvas 
+            bind:this={target}
+            width={IMAGE_WIDTH}
+            height={IMAGE_HEIGHT}
+            on:mousemove={e => setCursor(e)}
+            on:touchmove={({ touches }) => setCursor(touches[0])}
+            on:touchend={() => setCursor(null)}
+            on:mouseout={() => setCursor(null)}
+        ></canvas>
+    </div>
 {:else}
     <!-- Fallback -->
     <img {style} src={source} alt=''>
