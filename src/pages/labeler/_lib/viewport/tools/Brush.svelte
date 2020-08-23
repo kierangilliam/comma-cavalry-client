@@ -17,6 +17,7 @@
     }
 
     const addPointToLastPath = () => {
+        // TODO Check if I can remove this guard
         if ($paths.length == 0) {
             return
         }
