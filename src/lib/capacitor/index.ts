@@ -1,7 +1,4 @@
-import { setup } from './config';
-
-setup()
-
+export * from './config';
 export * from './haptics';
 export * from './state';
 

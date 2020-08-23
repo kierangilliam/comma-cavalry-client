@@ -1,3 +1,12 @@
+<script>
+    // TODO
+    // import { keyboard } from '@lib/capacitor'
+
+    // $: style = `
+    //     top: ${($keyboard.visible ? `-${$keyboard.height}px` : 0)};
+    // `
+</script>
+
 <div>
     <slot />
 </div>
