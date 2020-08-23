@@ -1,13 +1,3 @@
-const isFloat = (n: number) => {
-    return Number(n) === n && n % 1 !== 0;
-}
-
-const toFloatString = (n: number): string => {
-    return isFloat(n)
-        ? `${n}`
-        : `${n}.`
-}
-
 export const vert = `
     precision mediump float;
     attribute vec2 position;
@@ -20,7 +10,7 @@ export const vert = `
     }
 `
 
-// TODO test other devicePixelRatios
+// TODO test other devicePixelRatios (1, 1.5, 4)
 export const frag = ({ easing }: { easing: boolean }) => `
     precision mediump float;
 
@@ -33,7 +23,6 @@ export const frag = ({ easing }: { easing: boolean }) => `
     varying vec2 uv;
 
     const float EASING = ${easing ? -1 : 1}.;
-    const float PIXEL_RATIO = ${toFloatString(window.devicePixelRatio)};
 
     /**
      * Mirroring helps fake information around the edges
@@ -48,7 +37,7 @@ export const frag = ({ easing }: { easing: boolean }) => `
 
     void main () {
         vec4 resolution = vec4(size.x, size.y, 1., 1.);
-        vec2 uv = PIXEL_RATIO * gl_FragCoord.xy / resolution.xy;
+        vec2 uv = 2. * gl_FragCoord.xy / resolution.xy;
         vec2 vUv = (uv - vec2(0.5)) * resolution.zw + vec2(0.5);
         vUv = vUv * size.z;
         
