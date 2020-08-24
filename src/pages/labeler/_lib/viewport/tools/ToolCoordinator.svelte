@@ -33,6 +33,8 @@
     // TODO Longpress to enable making the brush size bigger and smaller
 
     const onLongPress = () => {
+        if (isDesktop) return 
+
         if ($toolMode === 'move') {
             setMode('last')
         } else {
@@ -67,14 +69,12 @@
     }
 
     const onScroll = ({ deltaY }: WheelEvent) => {
-        setMode('move')
         // @ts-ignore
         const e: EventDetails = { deltaY }
         emit('zoomDesktop', e)
     }
     
     const onPinch = (e: EventDetails) => {  
-        setMode('move')
         emit('zoomMobile', e)
     }  
 
