@@ -32,9 +32,10 @@
         --borderRadiusSmall: 12px;
         --buttonBorderRadius: var(--borderRadiusFull);
 
-        /* Fonts */
+        /* Typography */
         --bodyFont: "Avenir";
         --headingFont: "Avenir";
+        --textSmall: .75rem;
 
         --viewPaddingTop: var(--s-8);
         --viewPaddingBottom: var(--s-8);
