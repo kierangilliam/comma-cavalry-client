@@ -4,13 +4,16 @@
     <div>
         <p>
             <strong>comma cavalry</strong> is a community project to help label 
-            the comma 10k dataset from your phone.
+            the comma 10k dataset from a phone or desktop.
         </p>
         
         <br>
         
         <p>
-            Click the button below to label your first image.
+            Click the button below to get your <i>in progress</i> items on the 
+            <a href="https://docs.google.com/spreadsheets/d/1ZKqku0cAyWY0ELY5L2qsKYYYA2AMGbgAn4p53uoT3v8">
+                google spreadsheet.
+            </a>
         </p>
     </div>
 </div>
