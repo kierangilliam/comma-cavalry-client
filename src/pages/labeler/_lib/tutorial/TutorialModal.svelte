@@ -83,8 +83,10 @@
             `,
         },        
         {
-            title: 'lastly',
+            title: 'final notes',
             body: `
+                The autoLine tool works like the brush but it tries to draw only over lines that it detects.
+                ${spacer}
                 Save and exit by swipping up from the bottom.
                 ${spacer}
                 You can access this tutorial at any time from the same screen.
