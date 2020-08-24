@@ -17,6 +17,7 @@ export type Query = {
   __typename?: 'Query';
   image: Image;
   inProgress: Images;
+  openPullRequests: PullRequests;
   unclaimed: Image;
 };
 
@@ -53,6 +54,27 @@ export enum Status {
 export type Images = {
   __typename?: 'Images';
   images: Array<Image>;
+};
+
+export type PullRequests = {
+  __typename?: 'PullRequests';
+  pullRequests: Array<PullRequest>;
+};
+
+export type PullRequest = {
+  __typename?: 'PullRequest';
+  id: Scalars['ID'];
+  state: Scalars['String'];
+  url: Scalars['String'];
+  number: Scalars['Int'];
+  files: Array<PullRequestFile>;
+};
+
+export type PullRequestFile = {
+  __typename?: 'PullRequestFile';
+  filename: Scalars['String'];
+  maskURL: Scalars['String'];
+  originalURL: Scalars['String'];
 };
 
 export type Mutation = {
