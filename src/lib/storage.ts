@@ -5,30 +5,32 @@ import { persistent } from './utils'
 export const LOCAL_STORAGE_SAVED = 'saved'
 const VIEWPORT_VERSION = 0
 
-interface Entry {
+export interface Entry {
     version?: number
     paths?: Path[]
+    archived?: boolean
 }
 
 export const savedEntries = persistent<Record<string, Entry>>(LOCAL_STORAGE_SAVED, {})
 
-// TODO Add image and mask?
-// TODO Remove?
-export const getEntry = (id: string): { paths: Path[] } => {
+export const getEntry = (id: string): Entry => {
     const saved = get(savedEntries)
     const entry = saved[id]
 
     return {
-        paths: entry?.paths || []
+        version: entry?.version || -1,
+        paths: entry?.paths || [],
+        archived: entry?.archived || false,
     }
 }
 
-export const saveEntry = (id: string, { paths }: Omit<Entry, 'version'>) => {
+export const saveEntry = (id: string, { paths, archived }: Omit<Entry, 'version'>) => {
     const saved = get(savedEntries)
 
     saved[id] = {
         version: VIEWPORT_VERSION,
         paths,
+        archived,
     }
 
     savedEntries.set(saved)
@@ -43,4 +45,13 @@ export const deleteEntry = (id: string) => {
     savedEntries.set(saved)
 
     console.debug('Deleted entry', id)
+}
+
+export const archiveEntry = (id: string) => {
+    const saved = get(savedEntries)
+
+    saved[id].archived = true
+    savedEntries.set(saved)
+
+    console.debug('Archived entry', id)
 }

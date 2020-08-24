@@ -5,13 +5,14 @@
     import { Button, Flex, H4, Spacer } from '@ollopa/cedar'
     import { goto } from '@sveltech/routify'
     import { getImage, submitMask } from '@gql'
-    import { deleteEntry, getEntry } from '@lib/storage'
+    import { deleteEntry, getEntry, archiveEntry } from '@lib/storage'
     import { notifications } from '@lib/notifications'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import type { User } from '@lib/types'
     import { setCSSVar, waitForEvent, getCSSVarPx } from '@lib/utils'
     import UserModal from './UserModal.svelte'
     import { MaskRenderer } from '@lib/editor-renderer'
+import { tick } from 'svelte';
 
     export let id: string
 
@@ -19,6 +20,7 @@
     let loading = false
 
     $: imageScale = setImageScale(innerWidth)
+    $: entry = getEntry(id)
 
     const setImageScale = (_) => {
         const maxModalWidth = getCSSVarPx('maxModalWidth')
@@ -31,11 +33,16 @@
 
     const gotoEditor = () => $goto(`/labeler/${id}`)  
 
-    const deleteImage = async () => {
+    const remove = async () => {
         if (await notifications.confirm('Are you sure?')) {
             deleteEntry(id)
             id = null
         }
+    }
+    
+    const archive = async () => {
+        archiveEntry(id)
+        id = null
     }
 
     const getUser = async (): Promise<User> => {    
@@ -94,10 +101,18 @@
     <div class='details'>
         <H4>image {id}</H4>
 
+        {#if entry.archived}
+            <p>Archived</p>
+        {/if}
+
         <Spacer s={8} />
 
         <Flex justify='around' stretch>
-            <Button on:click={deleteImage} stretch outline disabled={loading} warn>delete</Button>
+            {#if entry.archived}
+                <Button on:click={remove} stretch outline disabled={loading} warn>delete</Button>
+            {:else}
+                <Button on:click={archive} stretch outline disabled={loading} warn>archive</Button>
+            {/if}
             <Spacer s={4} />
             <Button on:click={gotoEditor} stretch disabled={loading} small>edit</Button>
         </Flex>

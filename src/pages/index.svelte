@@ -3,6 +3,7 @@
     import { getUnclaimed } from '@gql'
     import { Header } from '@lib/components'
     import { savedEntries } from '@lib/storage'
+    import type { Entry } from '@lib/storage'
     import { Button, Flex, Spacer } from '@ollopa/cedar'
     import ImageRow from './_lib/ImageRow.svelte'
     import Onboard from './_lib/Onboard.svelte'
@@ -12,10 +13,13 @@
     let disabled = false
     let selectedImageID: string = null
 
-    $: inProgress = getInProgress($savedEntries)
+    $: inProgress = getEntryIDs($savedEntries, { archived: false })
+    $: archived = getEntryIDs($savedEntries, { archived: true })
 
-    const getInProgress = (saved) => 
-        Object.entries(saved).map(([id]) => ({ id }))
+    const getEntryIDs = (saved: Record<string, Entry>, { archived = false }): string[] => 
+        Object.entries(saved)
+            .filter(([_id, entry]) => (entry.archived ?? false) == archived)
+            .map(([id, _entry]) => id)
 
     const labelNewImage = async () => {
         disabled = true
@@ -33,18 +37,28 @@
 </script>
 
 <Flex justify='between' align='start' span column>
-    {#if inProgress.length > 0}
-        <Header />
-
-        <Spacer s={6} />
-
-        <ImageRow 
-            label='in progress'
-            images={inProgress}
-            on:select={({ detail: { id } }) => selectedImageID = id} 
-        />
-    {:else}
+    {#if inProgress.length == 0 && archived.length == 0}
         <Onboard />
+    {:else}
+        <Header />
+        
+        {#if inProgress.length > 0}
+            <Spacer s={6} />
+            <ImageRow 
+                label='in progress'
+                images={inProgress}
+                on:select={({ detail: { id } }) => selectedImageID = id} 
+            />
+        {/if}
+
+        {#if archived.length > 0}
+            <Spacer s={6} />
+            <ImageRow 
+                label='archived'
+                images={archived}
+                on:select={({ detail: { id } }) => selectedImageID = id} 
+            />
+        {/if}
     {/if}
 
     <div class='footer'>

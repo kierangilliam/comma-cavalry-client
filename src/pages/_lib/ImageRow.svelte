@@ -6,7 +6,7 @@
     
     const dispatch = createEventDispatcher()
 
-    export let images: { id: string }[]
+    export let images: string[]
     export let label: string = ''
 </script>
 
@@ -15,7 +15,7 @@
 <Spacer />
 
 <div class='container hide-scrollbar'>
-    {#each images as { id }, i}
+    {#each images as id, i}
         <div 
             class='item' 
             on:click={() => dispatch('select', { id })}
