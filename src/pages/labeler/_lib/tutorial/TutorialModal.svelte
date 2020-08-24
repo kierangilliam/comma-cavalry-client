@@ -1,8 +1,10 @@
 <script lang='ts'>
     import { Carousel, Modal } from '@lib/components'    
     import TutorialSection from './TutorialSection.svelte'    
-    import { PATH_COLORS } from '@lib/constants'
+    import { PATH_COLORS, COLOR_SHORTCUTS, TOOL_SHORTCUTS } from '@lib/constants'
     import { showTutorial } from '../state'
+    import { isDesktop } from '@lib/capacitor'
+    import { key } from '@lib/utils'
 
     const bold = (text) => `<span style=\'font-weight: bolder;\'>${text}</span>`
 
@@ -14,32 +16,53 @@
 
         if (name === 'undrivable')   textColor = '#331f15'
         else if (name === 'movable') textColor = '#22441f'
+        else if (name === 'empty') textColor = 'var(--black)'
         
         return `
-            <span style='
-                padding: var(--s-1) var(--s-2);
+            <span class='tag' style='
                 color: ${textColor}; 
                 background: ${color};
-                font-weight: bolder;
-                border-radius: 5px;
-                margin-right: var(--s-2);
-                box-shadow: inset 0px -2.5px 0 rgba(12, 12, 12, .2);
-            '>
-                ${name}
-            </span>
+                margin-right: var(--s-2);        
+            '>${name}</span>
         `
     }
 
+    const colorShortcuts = Object.entries(COLOR_SHORTCUTS).map(([code, path]) =>
+        `
+            <div style='padding: var(--s-1) 0'>
+                <span class='tag monospace' style='margin-right: var(--s-2)'>${key(code)}</span>
+                ${color(path)}
+            </div>
+        `
+    )
+    
+    const toolShortcuts = Object.entries(TOOL_SHORTCUTS).map(([code, tool]) =>
+        `
+            <div style='padding: var(--s-1) 0'>
+                <span class='tag monospace' style='margin-right: var(--s-2)'>${key(code)}</span>
+                <span class='tag' style='background: var(--gray);'>${tool}</span>
+            </div>
+        `
+    )
+
+    const desktopShortcuts = `
+        <div style='display: grid; grid-template-columns: 1fr 1fr;'>
+            ${[...colorShortcuts, ...toolShortcuts].join('')}
+        </div>
+    `
+    
+    const mobileShortcuts = `
+        In the editor, press finger down for half a second to toggle ${bold('move mode')}. 
+        ${spacer}
+        In move mode, drag your finger across the screen to pan around. 
+        ${spacer}
+        When you are done, hold your finger down to switch back into drawing mode.
+    `
+
     const tutorials = [
         {
-            title: 'what to do',
-            body: `
-                Draw on the image until the it is entirely filled with color.
-                ${spacer}
-                You are creating a ${bold('mask')} that will help comma ai’s cars drive themselves.
-                ${spacer}
-                Once you are finished with a mask you can submit it for review.
-            `,
+            title: 'shortcuts',
+            body: isDesktop ? desktopShortcuts : mobileShortcuts,
         },
         {
             title: 'color guide',
@@ -58,39 +81,15 @@
                 ${spacer}
                 ${color('ego')} My car and anything inside it, including wires, mounts, etc. No reflections.
             `,
-        },
+        },        
         {
-            title: 'drawing',
+            title: 'lastly',
             body: `
-                Tap on a color to select it.
+                Save and exit by swipping up from the bottom.
                 ${spacer}
-                Additional taps will cycle through your drawing tools.
-                ${spacer}
-                Brush and fill work similar to all types of drawing apps.
-                ${spacer}
-                The auto line tries to detect lines in the image and draw them onto the mask.               
+                You can access this tutorial at any time from the same screen.
             `,
-            },
-        {
-            title: 'moving around',
-            body: `
-                In the editor, press finger down for half a second to toggle ${bold('move mode')}. 
-                ${spacer}
-                In move mode, drag your finger across the screen to pan around. 
-                ${spacer}
-                When you are done, hold your finger down to switch back into drawing mode.
-            `,
-        },
-        {
-            title: 'zooming and more',
-            body: `
-                Pinch to zoom in and out. 
-                ${spacer}
-                This also automatically enables move mode after you release.
-                ${spacer}
-                Lastly, swipe the bottom drawer up to access more controls.
-            `,
-        },
+        },        
     ]
 
     const sections = tutorials.map(({ title, body }) => ({

@@ -133,6 +133,19 @@
         font-weight: lighter;
     }
 
+    :global(.tag) {
+        box-shadow: inset 0px -2.5px 0 rgba(12, 12, 12, .2);
+        padding: var(--s-1) var(--s-2);
+        font-weight: bolder;
+        border-radius: 5px;
+        background: var(--lightGray);
+        color: var(--black);
+    }
+
+    :global(.monospace) {
+        font-family: monospace;
+    }
+
     :global(.center) {
         display: flex;
         justify-content: center;
