@@ -9,8 +9,8 @@
     import { loadImageFromUrl } from '@lib/utils'
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
-    import StatusIndicator from './_lib/StatusIndicator.svelte'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
+    import ToolBar from './_lib/ToolBar.svelte'
     import { onMount } from 'svelte'
 
     let loading = true
@@ -65,7 +65,7 @@
 {:else}
     {#await image then { id, image }}
         <Viewport {image} />
-        <StatusIndicator />
+        <ToolBar />
         <BottomSheet>
             <Controls {id} />
         </BottomSheet>

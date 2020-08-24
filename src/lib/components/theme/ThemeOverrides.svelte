@@ -29,6 +29,7 @@
 
         /* Borders */
         --borderRadius: 22px;
+        --borderRadiusSmall: 12px;
         --buttonBorderRadius: var(--borderRadiusFull);
 
         /* Fonts */
