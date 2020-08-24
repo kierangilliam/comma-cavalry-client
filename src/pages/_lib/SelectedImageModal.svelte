@@ -11,8 +11,7 @@
     import type { User } from '@lib/types'
     import { setCSSVar, waitForEvent, getCSSVarPx } from '@lib/utils'
     import UserModal from './UserModal.svelte'
-    import { MaskRenderer } from '@lib/editor-renderer'
-import { tick } from 'svelte';
+    import { MaskRenderer } from '@lib/mask-renderer'
 
     export let id: string
 

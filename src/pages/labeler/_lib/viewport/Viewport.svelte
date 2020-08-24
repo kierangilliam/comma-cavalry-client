@@ -11,7 +11,7 @@
     import { onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import Cursor from './Cursor.svelte'    
-    import { MaskRenderer } from '@lib/editor-renderer'    
+    import { MaskRenderer } from '@lib/mask-renderer'    
     
     export let image: HTMLImageElement
 

@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import type { FillRenderer } from '@lib/editor-renderer'
+    import type { FillRenderer } from '@lib/mask-renderer'
     import { createNewPath, listenToEvents } from './common'
     import type { ToolEvent, FillEvent } from './common'
     import { brushType, paths } from '../../state'

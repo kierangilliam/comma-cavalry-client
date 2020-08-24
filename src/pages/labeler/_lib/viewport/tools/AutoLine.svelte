@@ -11,7 +11,7 @@
     } from '../../state'
     import { onMount } from 'svelte'
     import * as jsfeat from 'jsfeat'    
-    import type { AutoLineRenderer } from '@lib/editor-renderer'
+    import type { AutoLineRenderer } from '@lib/mask-renderer'
     import type { Point, Cursor } from '@lib/types'
     import { renderImageData, copyImageData } from '@lib/utils'
     import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'

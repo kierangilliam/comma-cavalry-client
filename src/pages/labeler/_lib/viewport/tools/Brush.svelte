@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import type { BrushRenderer } from '@lib/editor-renderer'
+    import type { BrushRenderer } from '@lib/mask-renderer'
     import { cursor, paths, brushSize, brushType } from '../../state'
     import { removeSinglePointPaths, listenToEvents, createNewPath } from './common'
     import type { BrushEvent } from './common'
