@@ -23,8 +23,8 @@
     
     onMount(() => {                
         imageContainer.appendChild(image)
-        image.width = canvas.width = IMAGE_WIDTH
-        image.height = canvas.height = IMAGE_HEIGHT
+        canvas.width = IMAGE_WIDTH
+        canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
         renderer.ctx = ctx
 

@@ -1,4 +1,4 @@
-import { IMAGE_WIDTH } from '@lib/constants'
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
 import type { Cursor, Path, PathType, Point, ToolMode } from '@lib/types'
 import { persistent } from '@lib/utils'
 import { params } from '@sveltech/routify'
@@ -62,6 +62,8 @@ export const imageStyle = derived(
         const originX = (window.innerWidth / 2) - $canvasPosition.x
         const originY = (window.innerHeight / 2) - $canvasPosition.y
         return `
+            width: ${IMAGE_WIDTH}px;
+            height: ${IMAGE_HEIGHT}px;
             position: absolute;
             transform-origin: ${originX}px ${originY}px;
             transform: scale(${$zoom});
