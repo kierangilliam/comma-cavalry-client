@@ -53,11 +53,11 @@ Made using intel's [MiDaS](https://github.com/intel-isl/MiDaS) depth detection m
 
 Source | Map
 :-------------:|:------------:
-![source](https://raw.githubusercontent.com/commaai/comma10k/master/imgs/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005.png)  |  ![map](https://ik.imagekit.io/ollopa/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005_22oJYOoXu.jpg) |  
+![source](https://raw.githubusercontent.com/commaai/comma10k/master/imgs/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005.png)  |  ![map](https://ik.imagekit.io/ollopa/depth_maps/3917_b5e785c1fc446ed0_2018-06-18--08-35-24_12_1005_bfINQ13hY.jpg) |  
 
 Applied filter
 :-------------:
-[depth map gif](https://ik.imagekit.io/ollopa/depth-map_rO5SYEKGf.gif)
+[depth map gif](https://media.giphy.com/media/kcgJmFq0uqvLrigFD0/giphy.gif)
 
 
 ```
