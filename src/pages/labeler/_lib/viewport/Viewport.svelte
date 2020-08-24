@@ -38,6 +38,7 @@
 <div class='container'>
     <div 
         bind:this={imageContainer}            
+        id='image-container'
         style={$imageStyle}
         alt='Source'
     >
@@ -77,7 +78,7 @@
         position: relative;
     }
 
-    img {
+    #image-container {
         box-shadow: 
             0px 0px 10px rgba(25, 25, 25, 0.5),
             0px 0px 100px rgba(45, 45, 45, .2)
