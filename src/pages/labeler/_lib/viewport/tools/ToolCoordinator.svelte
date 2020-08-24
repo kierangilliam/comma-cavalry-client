@@ -69,12 +69,14 @@
     }
 
     const onScroll = ({ deltaY }: WheelEvent) => {
+        setMode('move')
         // @ts-ignore
         const e: EventDetails = { deltaY }
         emit('zoomDesktop', e)
     }
     
     const onPinch = (e: EventDetails) => {  
+        setMode('move')
         emit('zoomMobile', e)
     }  
 
