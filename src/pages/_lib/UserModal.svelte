@@ -1,5 +1,5 @@
 <script lang='ts'>
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, onMount } from 'svelte'
     import { Field, Form, ErrorMessage } from 'svelte-forms-lib'
     import { Modal } from '@lib/components'
     import { H5, Spacer } from '@ollopa/cedar'
@@ -8,6 +8,18 @@
     export let active = false
 
     const dispatch = createEventDispatcher()
+
+    const alterEgos = [
+        ['formalist george', 'geocoq@gmail.com'],
+        ['sad george', 'geosnot@gmail.com'],
+        ['small george', 'geotot@gmail.com'],
+        ['thrombus george', 'geoclot@gmail.com'],
+        ['alex mouser', 'alecat@gmail.com'],
+        ['willem scream', 'wilhem@gmail.com'],
+        ['racous harald', 'harsch@gmail.com'],
+        ['steady nico', 'n.mcpoy@gmail.com'],
+    ]
+    
     const form = {
         initialValues: {
             name: '',
@@ -22,6 +34,15 @@
             dispatch('submit', { ...values })
         }
     }
+
+    let placeholderName, placeholderEmail
+
+    const choice = (array) =>
+        array[Math.floor(Math.random() * array.length)]
+
+    onMount(() => {
+        [placeholderName, placeholderEmail] = choice(alterEgos)
+    })
 </script>
 
 <Modal {active} on:close={() => dispatch('cancel', { message: 'user canceled operation' })}>
@@ -31,13 +52,13 @@
 
     <Form {...form}>
         <label>name</label>
-        <Field class='form-field' name='name' placeholder='lex fridmen' />
+        <Field class='form-field' name='name' placeholder={placeholderName} />
         <ErrorMessage class='form-error' name='name' />
 
         <Spacer />
         
         <label>email</label>
-        <Field class='form-field' name='email' placeholder='geosnot@gmail.com' />
+        <Field class='form-field' name='email' placeholder={placeholderEmail} />
         <ErrorMessage class='form-error' name='email' />
     
         <Spacer s={8} />
