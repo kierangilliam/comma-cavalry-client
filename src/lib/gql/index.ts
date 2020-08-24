@@ -1,6 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client/core'
 import { DEV } from '@lib/constants'
-import type { Image } from '@lib/types'
+import type { Image, Images } from '@lib/types'
 import { createUploadLink } from 'apollo-upload-client'
 
 const httpLink = createUploadLink({
@@ -33,6 +33,16 @@ const UNCLAIMED_QUERY = gql`
     }
 `
 
+const IN_PROGRESS_QUERY = gql`
+    query inProgress($username: String!) {
+        inProgress(username: $username) {
+            images {
+                ${IMAGE_FRAGMENT}
+            }
+        }
+    }
+`
+
 const IMAGE_QUERY = gql`
     query image($id: ID!) {
         image(id: $id) {
@@ -60,6 +70,16 @@ export const getUnclaimed = async (): Promise<Image> => {
     })
 
     return data.unclaimed
+}
+
+export const getInProgress = async (username: string): Promise<Images> => {
+    const { data } = await client.query({
+        query: IN_PROGRESS_QUERY,
+        variables: { username },
+        fetchPolicy: 'network-only',
+    })
+
+    return data.inProgress
 }
 
 export const submitMask = async (id: string, name: string, email: string, mask: Blob): Promise<String> => {

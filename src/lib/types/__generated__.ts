@@ -9,17 +9,25 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
   __typename?: 'Query';
   image: Image;
+  inProgress: Images;
   unclaimed: Image;
 };
 
 
 export type QueryImageArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryInProgressArgs = {
+  username: Scalars['String'];
 };
 
 export type Image = {
@@ -42,6 +50,11 @@ export enum Status {
   Unclaimed = 'Unclaimed'
 }
 
+export type Images = {
+  __typename?: 'Images';
+  images: Array<Image>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   submitMask: Scalars['String'];
@@ -52,5 +65,6 @@ export type MutationSubmitMaskArgs = {
   id: Scalars['ID'];
   name: Scalars['String'];
   email: Scalars['String'];
-  mask: Scalars['String'];
+  mask?: Maybe<Scalars['Upload']>;
 };
+
