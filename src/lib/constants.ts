@@ -33,7 +33,7 @@ export const IMAGE_HEIGHT = 874
 // @ts-ignore
 export const DEV = __buildEnv__ === 'development'
 
-const KEY_CODES = {
+export const KEY_CODES = {
     a: 65,
     s: 83,
     d: 68,

@@ -1,4 +1,5 @@
-import { Writable, writable } from "svelte/store"
+import { Writable, writable } from 'svelte/store'
+import { KEY_CODES } from './constants'
 
 export const wait = async (ms: number) =>
     new Promise(res => setTimeout(() => res(), ms))
@@ -98,4 +99,10 @@ interface RenderImageDataOpts {
 export const renderImageData = ({ imageData, canvas, ctx, x, y }: RenderImageDataOpts) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.putImageData(imageData, x, y)
+}
+
+export const key = (keyCode: number) => {
+    const entry = Object.entries(KEY_CODES).find(([_, code]) => code == keyCode)
+
+    return entry ? entry[0] : '???'
 }
