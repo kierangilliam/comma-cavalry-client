@@ -34,9 +34,9 @@ export const IMAGE_HEIGHT = 874
 export const DEV = __buildEnv__ === 'development'
 
 const KEY_CODES = {
-    a: 56,
+    a: 65,
     s: 83,
-    d: 86,
+    d: 68,
     f: 70,
     '1': 49,
     '2': 50,
@@ -48,9 +48,9 @@ const KEY_CODES = {
 
 export const TOOL_SHORTCUTS: Record<number, ToolMode> = {
     [KEY_CODES.a]: 'brush',
-    [KEY_CODES.a]: 'fill',
-    [KEY_CODES.a]: 'autoLine',
-    [KEY_CODES.a]: 'move',
+    [KEY_CODES.s]: 'fill',
+    [KEY_CODES.d]: 'autoLine',
+    [KEY_CODES.f]: 'move',
 }
 
 export const COLOR_SHORTCUTS: Record<number, PathType> = {
