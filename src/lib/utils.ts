@@ -69,10 +69,9 @@ export async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     image.crossOrigin = 'anonymous'
     image.src = url
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         image.onload = () => resolve(image)
-        image.onerror = (e) =>
-            console.error('Filter: Could not load ', url)
+        image.onerror = (e) => reject(`Filter: Could not load ${url}`)
     })
 }
 

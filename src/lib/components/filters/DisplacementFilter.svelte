@@ -22,7 +22,7 @@
     let regl: any
 
     // Wait until everything is loaded to start regl
-    $: regl && sourceImage && mapImage && (initRegl()) 
+    $: sourceImage && mapImage && (initRegl()) 
     $: scaledHeight = IMAGE_HEIGHT * scale
     $: scaledWidth = IMAGE_WIDTH * scale
     $: scaledHeightCanvas = scaledHeight * 2
@@ -32,8 +32,7 @@
         height: ${scaledHeight}px;
     `
 
-    onMount(() => { 
-        regl = Regl(target)
+    onMount(() => {         
         loadImages()
     })
 
@@ -42,17 +41,24 @@
     })
 
     const loadImages = async () => {
-        const images = await Promise.all([
-            loadImageFromUrl(source), 
-            loadImageFromUrl(map)
-        ])
-        
-        sourceImage = images[0] 
-        mapImage = images[1]
+        try {
+            const images = await Promise.all([
+                loadImageFromUrl(source), 
+                loadImageFromUrl(map)
+            ])
+            
+            sourceImage = images[0] 
+            mapImage = images[1]
+        } catch (error) {
+            console.error(error)
+            map = null
+        }
     }
 
     const initRegl = () => {
         console.debug('Initializing regl')
+
+        regl = Regl(target)
 
         const emptyTextureDimension = {
             width: 1164,
@@ -99,7 +105,6 @@
                 color: [0, 0, 0, 0],
                 depth: 1
             })
-
             
             const scale = IMAGE_WIDTH / scaledWidthCanvas
             const size = [IMAGE_WIDTH, IMAGE_HEIGHT, scale]
@@ -112,6 +117,7 @@
                 dx = (percentX - .5) * (DRIFT * 2) * -1
                 dy = (percentY - .5) * (DRIFT * 2) * -1
             }
+
             draw({ dx, dy, size })
         })
     }

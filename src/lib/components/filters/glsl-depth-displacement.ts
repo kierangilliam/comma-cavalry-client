@@ -43,8 +43,8 @@ export const frag = ({ easing }: { easing: boolean }) => `
         
         vec4 depthTexture = texture2D(depthMap, mirrored(vUv)); 
         
-        // The * -.1 eases it a bit
-        float depth = ((depthTexture.r * EASING) + 1.) / 255.;
+        // 1. - r channel to make white the foreground
+        float depth = (((1. - depthTexture.r) * EASING) + 1.) / 255.;
 
         vec2 fake3d = vec2(
             // honestly not sure why dx and dy have

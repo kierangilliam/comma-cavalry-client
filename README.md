@@ -44,13 +44,12 @@ yarn test
 
 * Start off with an [automatically segmented image](https://colab.research.google.com/github/lexfridman/mit-deep-learning/blob/master/tutorial_driving_scene_segmentation/tutorial_driving_scene_segmentation.ipynb)
 
-* Generate better depth maps 
-
-* Optimize autoLine to be performant on mobile
 
 ### Other notes
 
 #### Depth maps
+
+Made using intel's [MiDaS](https://github.com/intel-isl/MiDaS) depth detection model
 
 Source | Map
 :-------------:|:------------:
@@ -62,11 +61,11 @@ Applied filter
 
 
 ```
+# Notes
+
 # Convert to jpg
 for i in *.png; do mogrify -format jpg "$i" && rm "$i"; echo "$i converted to ${i%.*}.jpg"; done
 
-# Convert using http://stereo.jpn.org/jpn/stphmkr/google/colabe.html
-
-# Download and get cropped right half
-for i in *.jpg; do convert -crop 50%x100% +repage "$i" "$i"; echo "$i cropped"; mv ${i%.*}-1.jpg $i; rm ${i%.*}-0.jpg; done
+# Compress
+for i in *.jpg; do convert $i -sampling-factor 4:2:0 -strip -quality 85 -interlace JPEG -colorspace RGB $i; echo "compressed $i"; done
 ```
