@@ -1,4 +1,4 @@
-import type { ToolRenderer } from '@lib/editor-renderer/ToolRenderer'
+import type { ToolRenderer } from '@lib/mask-renderer/ToolRenderer'
 import type { Path, ToolMode } from '@lib/types'
 import { getContext } from 'svelte'
 import { get, Writable } from 'svelte/store'
