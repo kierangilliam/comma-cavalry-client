@@ -140,12 +140,14 @@
         class:open={$open}
         {style}
     >
+        <div class='swipe-indicator' class:active={!$open}></div>
         <slot />
     </div>
 {/if}
 
 <style>
     .sheet {
+        --modalPaddingY: var(--s-8);
         position: absolute;
         bottom: 0;
         left: 0;
@@ -155,7 +157,24 @@
         height: auto;
         margin-left: 4px;
         margin-right: 4px;
-        padding: var(--s-8) var(--s-4);;
+        padding: var(--modalPaddingY) var(--s-4);;
         touch-action: none;
+    }
+
+    .swipe-indicator {
+        position: absolute;
+        background: var(--gray);
+        width: 44px;
+        height: 4px;
+        border-radius: var(--borderRadiusFull);
+        margin: 0 auto;
+        top: calc(var(--modalPaddingY) / 2 - 4px);
+        left: 0;
+        right: 0;
+        opacity: 0;
+        transition: opacity 250ms;
+    }
+    .swipe-indicator.active {
+        opacity: 1;
     }
 </style>
