@@ -8,7 +8,12 @@ export interface DrawPointsOpts {
 
 export interface DrawPathsOpts {
     paths: Path[],
-    drawTruePathColors?: boolean,
+    truePathColors?: boolean,
+}
+
+export interface ToPngOpts {
+    paths: Path[],
+    truePathColors?: boolean,
 }
 
 export type DrawPathOpts = Omit<Path, 'type'> & { color: string }
