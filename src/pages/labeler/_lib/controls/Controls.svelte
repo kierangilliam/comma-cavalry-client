@@ -4,7 +4,8 @@
         dirty, 
         brushSize, 
         paths, 
-        showTutorial 
+        showTutorial, 
+        showGit, 
     } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
@@ -41,11 +42,17 @@
         $showTutorial = true
         $open = false
     }
+
+    const toggleGit = () => {
+        $showGit = true
+        $open = false
+    }
 </script>
 
 <Fade visible={$open}>
     <H3>Image {id}</H3>
-    <div class='tutorial' on:click={toggleTutorial}>show tutorial</div>
+    <div class='clickable' on:click={toggleTutorial}>show tutorial</div>
+    <div class='clickable' on:click={toggleGit}>github</div>
     <Spacer s={GUTTER_SPACING} />
 </Fade>
 
@@ -102,7 +109,8 @@
 </Fade>
 
 <style>
-    .tutorial {
+    .clickable {
+        font-weight: bold;
         color: var(--primary);
     }
 </style>

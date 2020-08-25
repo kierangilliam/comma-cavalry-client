@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import { onMount } from 'svelte'
     import { params, url } from '@sveltech/routify'
     import { H4, Spacer } from '@ollopa/cedar'
     import { getImage } from '@gql'
@@ -10,8 +11,8 @@
     import Viewport from './_lib/viewport/Viewport.svelte'
     import Controls from './_lib/controls/Controls.svelte'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
-    import ToolBar from './_lib/ToolBar.svelte'
-    import { onMount } from 'svelte'
+    import ToolBar from './_lib/ToolBar.svelte'    
+    import GitModal from './_lib/GitModal.svelte'
 
     let loading = true
     let error = null 
@@ -70,5 +71,6 @@
             <Controls {id} />
         </BottomSheet>
         <TutorialModal />            
+        <GitModal />            
     {/await}
 {/if}

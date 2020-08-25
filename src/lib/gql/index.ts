@@ -51,6 +51,30 @@ const IMAGE_QUERY = gql`
     }
 `
 
+const OPEN_PRS_QUERY = gql`
+    {
+        openPullRequests {
+            pullRequests {
+                id
+                state
+                url
+                number
+                files {
+                    filename
+                    maskURL
+                    originalURL
+                }
+            }
+        }
+    }
+`
+
+const GITHUB_TOKEN_QUERY = gql`
+    query token($code: String!, $state: String!, $redirect_uri: String!) {
+        githubToken(code: $code, state: $state, redirect_uri: $redirect_uri)
+    }
+`
+
 const SUBMIT_MASK_MUTATION = gql`
     mutation submitMask($id: ID!, $name: String!, $email: String!, $mask: Upload!) {
         submitMask(name: $name, email: $email, mask: $mask, id: $id) 
@@ -89,4 +113,21 @@ export const submitMask = async (id: string, name: string, email: string, mask: 
     })
 
     return data.submitMask.message
+}
+
+export const getOpenPRs = async (): Promise<String> => {
+    const { data } = await client.mutate({ mutation: OPEN_PRS_QUERY })
+
+    return data.openPullRequests.pullRequests
+}
+
+export const getGithubToken = async (code: string): Promise<String> => {
+    const state = window.localStorage.getItem('GITHUB_STATE')
+    const redirect_uri = window.localStorage.getItem('GITHUB_REDIRECT')
+    const { data } = await client.query({
+        query: GITHUB_TOKEN_QUERY,
+        variables: { code, state, redirect_uri },
+    })
+
+    return data.githubToken
 }

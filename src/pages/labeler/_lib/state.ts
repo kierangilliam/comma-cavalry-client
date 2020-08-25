@@ -33,6 +33,7 @@ export const cursor = writable<Cursor>(null)
 export const isTouching = writable<boolean>(false)
 
 export const showTutorial = persistent('showEditorTutorial', true)
+export const showGit = writable(false)
 
 // Canny parameters
 export const highThreshold = writable<number>(50)

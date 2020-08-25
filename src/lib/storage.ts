@@ -11,7 +11,18 @@ export interface Entry {
     archived?: boolean
 }
 
+interface GitInfo {
+    username: string
+    // Authorization token
+    token: string
+    // Personal repo
+    repo: string
+    // Branch to commit to
+    branch: string
+}
+
 export const savedEntries = persistent<Record<string, Entry>>(LOCAL_STORAGE_SAVED, {})
+export const git = persistent<GitInfo>('git', null)
 
 export const getEntry = (id: string): Entry => {
     const saved = get(savedEntries)

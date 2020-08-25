@@ -38,7 +38,10 @@
                 saveEntry(id, { ...entry })
             })
         } catch(error) {
-            notifications.error('Coud not get a new image', error)
+            if (error.message !== 'user canceled operation') {
+                notifications.error('Coud not get a new image', error)
+            }
+            
             disabled = false
             console.error(error)
         } finally {
