@@ -10,7 +10,7 @@ const confirm = async (question: string): Promise<boolean> => {
     }
 }
 
-const success = (title: string, body: string) => {
+const success = (title: string, body?: string) => {
     createNotification(title, body, 'var(--primary)')
 }
 

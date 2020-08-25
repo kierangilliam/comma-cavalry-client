@@ -5,7 +5,7 @@
 <script lang='ts'>
     import { fly } from 'svelte/transition'
     import { quintOut } from 'svelte/easing'
-    import { H4, Spacer } from '@ollopa/cedar'
+    import { H5, Spacer } from '@ollopa/cedar'
     import { onMount, createEventDispatcher } from 'svelte'
 
     export let timeout: number = 7500
@@ -46,9 +46,11 @@
             duration: ANIMATION_DURATION,
         }}
     >
-        <H4>{title}</H4>
-        <Spacer s={2} />
-        <p>{body}</p>
+        <H5>{title}</H5>
+        {#if body}
+            <Spacer s={2} />
+            <p>{body}</p>
+        {/if}
     </div>
 {/if}
 
