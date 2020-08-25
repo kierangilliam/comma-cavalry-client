@@ -42,8 +42,7 @@ const rollupWrapper = cfg => {
             __buildEnv__: `'${process.env.NODE_ENV}'`,
         }),
         alias({ entries: aliasEntries }),
-        // TODO typescript({ sourceMap: !production }),
-        typescript({ sourceMap: true }),
+        typescript({ sourceMap: !production }),
     ]
     return cfg
 }
