@@ -53,18 +53,12 @@
 
         try {
             const user = await getUser()
-            const canvas = document.createElement('canvas')
-            const ctx = canvas.getContext('2d')
             const { paths } = getEntry(id)
-            const renderer = new MaskRenderer()
-
-            renderer.ctx = ctx
-            canvas.width = IMAGE_WIDTH
-            canvas.height = IMAGE_HEIGHT
-
-            renderer.drawAllPaths({ paths, drawTruePathColors: true })
-
-            const blob = await fetch(canvas.toDataURL('image/png')).then(r => r.blob())
+            
+            const blob = await MaskRenderer.toPngBlob({
+                paths,
+                truePathColors: true,
+            })
 
             await submitMask(id, user.name, user.email, blob)
 
