@@ -33,18 +33,6 @@ export const IMAGE_HEIGHT = 874
 // @ts-ignore
 export const DEV = __buildEnv__ === 'development'
 
-export const KEY_CODES = {
-    a: 65,
-    s: 83,
-    d: 68,
-    f: 70,
-    '1': 49,
-    '2': 50,
-    '3': 51,
-    '4': 52,
-    '5': 53,
-    '6': 54,
-}
 
 export const TOOL_SHORTCUTS: Record<string, ToolMode> = {
     a: 'brush',
@@ -54,10 +42,10 @@ export const TOOL_SHORTCUTS: Record<string, ToolMode> = {
 }
 
 export const COLOR_SHORTCUTS: Record<number, PathType> = {
-    [KEY_CODES['1']]: 'empty',
-    [KEY_CODES['2']]: 'road',
-    [KEY_CODES['3']]: 'undrivable',
-    [KEY_CODES['4']]: 'ego',
-    [KEY_CODES['5']]: 'lane markings',
-    [KEY_CODES['6']]: 'movable',
+    '1': 'empty',
+    '2': 'road',
+    '3': 'undrivable',
+    '4': 'ego',
+    '5': 'lane markings',
+    '6': 'movable',
 }

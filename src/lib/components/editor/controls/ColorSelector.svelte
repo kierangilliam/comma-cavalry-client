@@ -9,9 +9,9 @@
     export let showLabels: boolean = false
 
     if (isDesktop) {
-        window.addEventListener('keyup', ({ keyCode }: KeyboardEvent) => {
-            if (COLOR_SHORTCUTS[keyCode]) {
-                $brushType = COLOR_SHORTCUTS[keyCode]
+        window.addEventListener('keyup', ({ key }: KeyboardEvent) => {
+            if (COLOR_SHORTCUTS[key]) {
+                $brushType = COLOR_SHORTCUTS[key]
             }
         })
     }
