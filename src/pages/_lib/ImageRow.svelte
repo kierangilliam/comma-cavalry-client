@@ -23,7 +23,7 @@
 <div class='container hide-scrollbar'>
     {#each images as id, i}
         <div class='item' on:click={() => dispatch('select', { id })}>
-            <Image url={getUrl(id)} scale={.15} {i} />
+            <Image url={getUrl(id)} scale={.15} {i} hoverable />
         </div>
     {/each}
 </div>
@@ -36,9 +36,6 @@
     }
 
     .item {
-        --shadowOffset: 3px;
-        padding-top: var(--shadowOffset);
-        padding-left: var(--shadowOffset);
         display: inline-block;
         vertical-align: top;
         margin-right: 20px;
