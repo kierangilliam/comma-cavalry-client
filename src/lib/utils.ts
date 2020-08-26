@@ -64,9 +64,13 @@ export const waitForEvent = <S>(Constructor: any, props: any, successEvent: stri
     })
 }
 
-export async function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
+export async function loadImageFromUrl(url: string, opts = { anonymous: true }): Promise<HTMLImageElement> {
     const image = new Image()
-    image.crossOrigin = 'anonymous'
+
+    if (opts.anonymous) {
+        image.crossOrigin = 'anonymous'
+    }
+
     image.src = url
 
     return new Promise((resolve, reject) => {

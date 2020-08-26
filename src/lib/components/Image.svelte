@@ -7,7 +7,7 @@
     import { loadImageFromUrl } from '@lib/utils'
     import { fly } from 'svelte/transition'
 
-    export let url: Promise<string>
+    export let url: Promise<string> | string
     export let alt: string = ''
     export let scale = .25
     export let i = 0 // to delay the image flying in by i * 100ms
@@ -19,7 +19,7 @@
 
     const loadImage = async (): Promise<string> => {
         const _url = await url
-        await loadImageFromUrl(_url)
+        await loadImageFromUrl(_url, { anonymous: false })
         
         return _url
     }
