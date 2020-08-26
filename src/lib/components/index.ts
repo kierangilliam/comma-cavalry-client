@@ -8,6 +8,7 @@ export { default as LoadingScreen } from './LoadingScreen.svelte';
 export { default as Modal } from './Modal.svelte';
 export { default as Confirmation } from './notifications/Confirmation.svelte';
 export { default as Notification } from './notifications/Notification.svelte';
+export { default as Slider } from './Slider.svelte';
 export { default as Stats } from './Stats.svelte';
 export { default as Theme } from './theme/Theme.svelte';
 
