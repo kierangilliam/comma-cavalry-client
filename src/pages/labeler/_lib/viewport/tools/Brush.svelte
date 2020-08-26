@@ -1,11 +1,15 @@
 <script lang='ts'>
     import type { BrushRenderer } from '@lib/mask-renderer'
-    import { cursor, paths, brushSize, brushType } from '../../state'
-    import { removeSinglePointPaths, listenToEvents, createNewPath } from './common'
+    import { cursor, brushSize, brushType } from '../../state'
+    import { listenToEvents, createNewPath, getSinglePointPaths } from './common'
     import type { BrushEvent } from './common'
     import { getColor } from '../../utils'
+    import type { EditorContext, } from '@lib/types'
+    import { getContext } from 'svelte'
     
     export let renderer: BrushRenderer
+
+    const { paths } = getContext<EditorContext>('editor')
 
     const startNewPathFromCursor = () => {
         const path = createNewPath({ x: $cursor.x, y: $cursor.y, renderer }) 
@@ -30,7 +34,7 @@
     } 
 
     const handleBrushEnd = () => {
-        removeSinglePointPaths()
+        $paths = getSinglePointPaths($paths)
         renderer.finishPath()
     }
 

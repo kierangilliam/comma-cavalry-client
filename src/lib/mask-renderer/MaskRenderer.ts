@@ -1,5 +1,6 @@
 import { IMAGE_HEIGHT, IMAGE_WIDTH, PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
 import type { PathType } from '@lib/types'
+import { renderImageData } from '@lib/utils'
 import { AutoLineRenderer } from './AutoLineRenderer'
 import { BrushRenderer } from './BrushRenderer'
 import { FillRenderer } from './FillRenderer'
@@ -34,14 +35,18 @@ export class MaskRenderer {
         })
     }
 
-    private clear(trueEmptyColor: boolean) {
+    public clear(trueEmptyColor: boolean) {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
         this.ctx.fillStyle = getColor('empty', trueEmptyColor)
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     }
 
-    public drawAllPaths({ paths, truePathColors = false }: DrawPathsOpts) {
-        this.clear(truePathColors)
+    public drawAllPaths({ paths, mask = null, truePathColors = false }: DrawPathsOpts) {
+        if (mask) {
+            renderImageData({ imageData: mask, ctx: this._ctx, x: 0, y: 0 })
+        } else {
+            this.clear(truePathColors)
+        }
 
         this.tools.fill.palette = truePathColors
             ? this.asPalette(TRUE_PATH_COLORS)

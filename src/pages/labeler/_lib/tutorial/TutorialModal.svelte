@@ -2,9 +2,9 @@
     import { Carousel, Modal } from '@lib/components'    
     import TutorialSection from './TutorialSection.svelte'    
     import { PATH_COLORS, COLOR_SHORTCUTS, TOOL_SHORTCUTS } from '@lib/constants'
-    import { showTutorial } from '../state'
     import { isDesktop } from '@lib/capacitor'
-    import { key } from '@lib/utils'
+
+    export let active: boolean = false
 
     const bold = (text) => `<span style=\'font-weight: bolder;\'>${text}</span>`
 
@@ -30,7 +30,7 @@
     const colorShortcuts = Object.entries(COLOR_SHORTCUTS).map(([code, path]) =>
         `
             <div style='padding: var(--s-1) 0'>
-                <span class='tag monospace' style='margin-right: var(--s-2)'>${key(code)}</span>
+                <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
                 ${color(path)}
             </div>
         `
@@ -39,7 +39,7 @@
     const toolShortcuts = Object.entries(TOOL_SHORTCUTS).map(([code, tool]) =>
         `
             <div style='padding: var(--s-1) 0'>
-                <span class='tag monospace' style='margin-right: var(--s-2)'>${key(code)}</span>
+                <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
                 <span class='tag' style='background: var(--gray);'>${tool}</span>
             </div>
         `
@@ -100,9 +100,6 @@
     }))
 </script>
 
-<Modal 
-    bind:active={$showTutorial}
-    padding={{ x: '0' }}
->
+<Modal bind:active padding={{ x: '0' }}>
     <Carousel {sections} />
 </Modal>

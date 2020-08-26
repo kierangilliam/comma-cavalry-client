@@ -4,18 +4,20 @@
     import { setMode } from './utils'
     import { isDesktop } from '@lib/capacitor'
     import { TOOL_SHORTCUTS } from '@lib/constants'
+    import { createEventDispatcher } from 'svelte'
 
     const tools: ToolMode[] = ['brush', 'fill', 'autoLine', 'move']
+    const dispatch = createEventDispatcher()
 
     if (isDesktop) {
-        window.addEventListener('keyup', ({ keyCode }: KeyboardEvent) => {
-            if (TOOL_SHORTCUTS[keyCode]) setMode(TOOL_SHORTCUTS[keyCode])
+        window.addEventListener('keyup', ({ code }) => {
+            if (TOOL_SHORTCUTS[code]) setMode(TOOL_SHORTCUTS[code])
         })
-    }
+    }    
 </script>
 
 <div class='container'>
-    <div id='toolbar'>
+    <div class='toolbar'>
         {#each tools as tool}
             <img 
                 id='icon' 
@@ -25,6 +27,11 @@
                 on:click={() => setMode(tool)}
             >
         {/each}
+        <img src='/tools/undo.svg' alt='undo' on:click={() => dispatch('undo')} />
+    </div>
+    <div class='toolbar'>
+        <img src='/github.svg' alt='github' on:click={() => dispatch('github')} />
+        <img src='/help.svg' alt='help' on:click={() => dispatch('help')} />
     </div>
 </div>
 
@@ -32,22 +39,17 @@
     .container {        
         position: absolute;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        top: 0;
-        bottom: 0;  
+        top: calc(env(safe-area-inset-top) + 16px);     
         right: calc(env(safe-area-inset-right) + 16px);     
         pointer-events: none; 
     }
 
-    @media screen and (min-width: 600px) {
-        .container {
-            right: 7vw;
-        }
-    }   
-
-    #toolbar {
+    .toolbar {
         display: flex;
+        margin-bottom: var(--s-2);
         justify-content: center;
         align-items: center;
         flex-direction: column;
@@ -58,7 +60,7 @@
     }
 
     img {
-        height: var(--s-4);
+        height: var(--s-5);
         margin: var(--s-2) 0;
         transition: filter 150ms ease-out;
     }
@@ -73,5 +75,8 @@
             hue-rotate(78deg) 
             brightness(104%) 
             contrast(94%);
+    }
+    img:hover {
+        cursor: pointer;
     }
 </style>

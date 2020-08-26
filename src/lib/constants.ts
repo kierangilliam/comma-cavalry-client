@@ -46,11 +46,11 @@ export const KEY_CODES = {
     '6': 54,
 }
 
-export const TOOL_SHORTCUTS: Record<number, ToolMode> = {
-    [KEY_CODES.a]: 'brush',
-    [KEY_CODES.s]: 'fill',
-    [KEY_CODES.d]: 'autoLine',
-    [KEY_CODES.f]: 'move',
+export const TOOL_SHORTCUTS: Record<string, ToolMode> = {
+    a: 'brush',
+    s: 'fill',
+    d: 'autoLine',
+    f: 'move',
 }
 
 export const COLOR_SHORTCUTS: Record<number, PathType> = {

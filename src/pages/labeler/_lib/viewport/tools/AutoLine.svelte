@@ -2,25 +2,26 @@
     import { 
         brushType,
         cursor, 
-        paths, 
         brushSize, 
         canvasStyle,
         highThreshold,
         lowThreshold,
         blurRadius,
     } from '../../state'
-    import { onMount } from 'svelte'
+    import { getContext, onMount } from 'svelte'
     import * as jsfeat from 'jsfeat'    
     import type { AutoLineRenderer } from '@lib/mask-renderer'
-    import type { Point, Cursor } from '@lib/types'
+    import type { Point, Cursor, EditorContext } from '@lib/types'
     import { renderImageData, copyImageData } from '@lib/utils'
     import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
-    import { removeSinglePointPaths, listenToEvents, createNewPath } from './common'
+    import { getSinglePointPaths, listenToEvents, createNewPath } from './common'
     import type { AutoLineEvent } from './common'
     import { getColor } from '../../utils'
     
     export let renderer: AutoLineRenderer 
     export let image: HTMLImageElement
+    
+    const { paths } = getContext<EditorContext>('editor')
     
     let canvas: HTMLCanvasElement
     let ctx: CanvasRenderingContext2D
@@ -77,7 +78,7 @@
     }
 
     const autoLineEnd = () => {
-        removeSinglePointPaths()
+        $paths = getSinglePointPaths($paths)
         ctx.clearRect(0, 0, canvas.width, canvas.height)
     }
     
@@ -148,7 +149,7 @@
             }
         }
 
-        renderImageData({ x: 0, y: 0, ctx, canvas, imageData })
+        renderImageData({ x: 0, y: 0, ctx, imageData })
 
         return result.length > $brushSize
             ? result

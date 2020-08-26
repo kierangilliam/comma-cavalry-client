@@ -7,30 +7,50 @@
         Fill, 
         Undo,
     } from './tools'
-    import { paths, canvasStyle, imageStyle } from '../state'
-    import { onMount } from 'svelte'
+    import { canvasStyle, imageStyle, resetState } from '../state'
+    import { getContext, onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import Cursor from './Cursor.svelte'    
-    import { MaskRenderer } from '@lib/mask-renderer'    
+    import { MaskRenderer } from '@lib/mask-renderer'
+    import type { EditorContext } from '@lib/types'
+    import { getImageData } from '@lib/utils'
     
     export let image: HTMLImageElement
+    export let mask: HTMLImageElement
+    export let truePathColors: boolean = false
+
+    const { paths } = getContext<EditorContext>('editor')
 
     const renderer = new MaskRenderer()
     
     let canvas: HTMLCanvasElement
     let ctx: CanvasRenderingContext2D
     let imageContainer: HTMLImageElement
+    let maskImageData: ImageData
+
+    // Rerender if ctx, paths, etc changes
+    $: (_ => { 
+        if (!maskImageData || !ctx) return
+
+        renderer.drawAllPaths({ 
+            paths: $paths, 
+            mask: maskImageData, 
+            truePathColors,
+        })
+    })([ctx, paths, maskImageData, truePathColors])
     
-    onMount(() => {                
-        imageContainer.appendChild(image)
+    onMount(() => {        
+        resetState() 
+
+        imageContainer.appendChild(image)        
         canvas.width = IMAGE_WIDTH
         canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
         renderer.ctx = ctx
-
-        paths.subscribe(paths => 
-            renderer.drawAllPaths({ paths })
-        )
+        renderer.clear(truePathColors)
+        maskImageData = mask 
+            ? getImageData(mask) 
+            : null
     })
 </script>
 
@@ -41,8 +61,7 @@
         id='image-container'
         style={$imageStyle}
         alt='Source'
-    >
-    </div>
+    ></div>   
     <canvas 
         id='mask-canvas'
         style={$canvasStyle}

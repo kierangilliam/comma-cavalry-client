@@ -1,10 +1,8 @@
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
-import type { Cursor, Path, PathType, Point, ToolMode } from '@lib/types'
-import { persistent } from '@lib/utils'
-import { params } from '@sveltech/routify'
+import type { Cursor, PathType, Point, ToolMode } from '@lib/types'
 import { quintOut } from 'svelte/easing'
 import { tweened } from 'svelte/motion'
-import { derived, get, writable } from 'svelte/store'
+import { derived, writable } from 'svelte/store'
 
 const defaults = {
     zoom: window.innerWidth / IMAGE_WIDTH,
@@ -18,8 +16,6 @@ const defaults = {
     },
 }
 
-export const paths = writable<Path[]>([])
-
 export const toolMode = writable<ToolMode>(defaults.mode)
 export const brushSize = writable<number>(defaults.brushSize)
 export const brushType = writable<PathType>(defaults.brushType)
@@ -32,30 +28,10 @@ export const canvasPosition = tweened<Point>(defaults.canvasPosition, tweenMotio
 export const cursor = writable<Cursor>(null)
 export const isTouching = writable<boolean>(false)
 
-export const showTutorial = persistent('showEditorTutorial', true)
-export const showGit = writable(false)
-
 // Canny parameters
 export const highThreshold = writable<number>(50)
 export const lowThreshold = writable<number>(10)
 export const blurRadius = writable<number>(.5)
-
-// Dirty - Have changes been saved?
-export const dirty = derived(
-    paths,
-    ($paths) => {
-        const pathsString = JSON.stringify($paths)
-        const saved = JSON.parse(localStorage.getItem('saved'))
-        const { id } = get(params)
-        const savedPathsString = JSON.stringify(
-            saved
-                ? saved[id]?.paths || []
-                : []
-        )
-
-        return savedPathsString !== pathsString
-    }
-)
 
 export const imageStyle = derived(
     [zoom, canvasPosition],
@@ -82,7 +58,6 @@ export const canvasStyle = derived(
 )
 
 export const resetState = () => {
-    paths.set([])
     toolMode.set(defaults.mode)
     brushSize.set(defaults.brushSize)
     brushType.set(defaults.brushType)

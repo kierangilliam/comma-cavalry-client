@@ -1,5 +1,5 @@
 <script>
-    import { cursor, isTouching, canvasPosition, toolMode, brushType, brushSize, zoom } from '../state'
+    import { cursor, isTouching, toolMode, brushType, brushSize } from '../state'
     import { isDrawingMode, getColor } from '../utils'
 
     $: cursorSize = $brushSize + 5

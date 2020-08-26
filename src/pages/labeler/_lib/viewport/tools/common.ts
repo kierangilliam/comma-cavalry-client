@@ -2,7 +2,7 @@ import type { ToolRenderer } from '@lib/mask-renderer/ToolRenderer'
 import type { Path, ToolMode } from '@lib/types'
 import { getContext } from 'svelte'
 import { get, Writable } from 'svelte/store'
-import { brushSize, brushType, paths, toolMode } from '../../state'
+import { brushSize, brushType, toolMode } from '../../state'
 
 export type BrushEvent = 'brushStart' | 'brushMove' | 'brushEnd'
 export type MoveEvent = 'zoomMobile' | 'zoomDesktop' | 'panMove' | 'panEnd'
@@ -40,12 +40,10 @@ export const listenToEvents = <T extends string>(
     })
 }
 
-export const removeSinglePointPaths = () => {
-    const filtered = get(paths).filter(({ points, mode }) =>
+export const getSinglePointPaths = (paths: Path[]) => {
+    return paths.filter(({ points, mode }) =>
         points.length > 1 || mode === 'fill'
     )
-
-    paths.set(filtered)
 }
 
 interface CreateNewPathOpts {

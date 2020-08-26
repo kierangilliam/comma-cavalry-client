@@ -1,58 +1,31 @@
 <script lang='ts'>
-    import { 
-        overlayOpacity, 
-        dirty, 
-        brushSize, 
-        paths, 
-        showTutorial, 
-        showGit, 
-    } from '../state'
+    import { overlayOpacity, brushSize, } from '../state'
     import { Fade } from '@lib/components'
     import ColorSelector from './ColorSelector.svelte'
-    import { undo, save } from '../utils'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
-    import { getContext } from 'svelte'
-    import { goto } from '@sveltech/routify'
+    import { createEventDispatcher, getContext } from 'svelte'
     import Slider from './Slider.svelte'
     import { notifications } from '@lib/notifications'
+    import type { Readable, Writable } from 'svelte/store'
+    import type { Path } from '@lib/types'
     
+    export let paths: Writable<Path[]>
+    export let dirty: Readable<boolean>
     export let id: string
     
+    const dispatch = createEventDispatcher()
     const { open, positionLocked } = getContext('bottomSheet')
     const GUTTER_SPACING = 8
-
-    const exit = async () => {
-        if (
-            $dirty 
-            && await notifications.confirm('Save changes before exiting?')
-        ) {
-            save()
-        }
-
-        $goto('/')
-    }
 
     const clearAll = async () => {
         if (await notifications.confirm('Are you sure?')) {
             $paths = []
         }
     }
-
-    const toggleTutorial = () => {
-        $showTutorial = true
-        $open = false
-    }
-
-    const toggleGit = () => {
-        $showGit = true
-        $open = false
-    }
 </script>
 
 <Fade visible={$open}>
     <H3>Image {id}</H3>
-    <div class='clickable' on:click={toggleTutorial}>show tutorial</div>
-    <div class='clickable' on:click={toggleGit}>github</div>
     <Spacer s={GUTTER_SPACING} />
 </Fade>
 
@@ -62,13 +35,13 @@
     <Spacer s={GUTTER_SPACING} />
 
     <Flex justify='around'>
-        <Button on:click={exit} outline warn stretch>
+        <Button on:click={() => dispatch('exit')} outline warn stretch>
             exit
         </Button>
 
         <Spacer s={16} />
 
-        <Button on:click={save} disabled={!$dirty} stretch>
+        <Button on:click={() => dispatch('save')} disabled={!$dirty} stretch>
             save
         </Button>
     </Flex>
@@ -77,12 +50,6 @@
 
     <Flex justify='around'>
         <Flex flex={1} column justify='between'>
-            <Flex stretch column>
-                <Button on:click={undo} stretch>undo</Button>
-                <Spacer s={2} />
-                <label>Or, double tap to undo</label>
-            </Flex>
-            <Spacer s={6} />
             <Button on:click={clearAll} stretch warn>clear all</Button>
         </Flex>
         
@@ -107,10 +74,3 @@
         </div>
     </Flex>
 </Fade>
-
-<style>
-    .clickable {
-        font-weight: bold;
-        color: var(--primary);
-    }
-</style>

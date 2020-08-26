@@ -1,5 +1,4 @@
 import { Writable, writable } from 'svelte/store'
-import { KEY_CODES } from './constants'
 
 export const wait = async (ms: number) =>
     new Promise(res => setTimeout(() => res(), ms))
@@ -91,21 +90,21 @@ export const copyImageData = ({ ctx, x, y, image }: CopyImageDataOpts): ImageDat
     return ctx.getImageData(x, y, image.width as number, image.height as number)
 }
 
+export const getImageData = (image: HTMLImageElement) => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+
+    return copyImageData({ ctx, x: 0, y: 0, image })
+}
+
 interface RenderImageDataOpts {
     ctx: CanvasRenderingContext2D
     x: number
     y: number
-    canvas: HTMLCanvasElement
     imageData: ImageData
 }
 
-export const renderImageData = ({ imageData, canvas, ctx, x, y }: RenderImageDataOpts) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+export const renderImageData = ({ imageData, ctx, x, y }: RenderImageDataOpts) => {
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     ctx.putImageData(imageData, x, y)
-}
-
-export const key = (keyCode: number) => {
-    const entry = Object.entries(KEY_CODES).find(([_, code]) => code == keyCode)
-
-    return entry ? entry[0] : '???'
 }

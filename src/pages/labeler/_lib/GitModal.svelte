@@ -1,6 +1,5 @@
 <script lang='ts'>
     import { Modal } from '@lib/components'
-    import { paths, showGit } from './state'
     import { git } from '@lib/storage'
     import { getGithubCode, getRepos, getBranches, commitFile } from '@lib/git'
     import { H4, Button, Spacer, Flex } from '@ollopa/cedar'
@@ -8,6 +7,10 @@
     import { getImage } from '@gql'
     import { MaskRenderer } from '@lib/mask-renderer'
     import { notifications } from '@lib/notifications'
+    import type { Path } from '@lib/types'
+
+    export let paths: Path[]
+    export let active: boolean = false
 
     $: repos = (_ => {
         if (!$git) { return }
@@ -23,7 +26,7 @@
 
     const logout = () => {
         $git = null
-        $showGit = false
+        active = false
     }    
 
     const commit = async () => {
@@ -35,7 +38,7 @@
         const image = await getImage($params.id)
         const imageName = image.url.split('/imgs/')[1]
         let contents = await MaskRenderer.toPngBase64({
-            paths: $paths,
+            paths,
             truePathColors: true,
         })
 
@@ -61,7 +64,7 @@
     }
 </script>
 
-<Modal bind:active={$showGit}>
+<Modal bind:active>
     <div class='container'>    
     {#if $git && $git.token}
         <H4>{$git.username}</H4>
