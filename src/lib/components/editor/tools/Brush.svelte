@@ -1,9 +1,9 @@
 <script lang='ts'>
     import type { BrushRenderer } from '@lib/mask-renderer'
-    import { cursor, brushSize, brushType } from '../../state'
+    import { cursor, brushSize, brushType } from '../state'
     import { listenToEvents, createNewPath, getSinglePointPaths } from './common'
     import type { BrushEvent } from './common'
-    import { getColor } from '../../utils'
+    import { getColor } from '../utils'
     import type { EditorContext, } from '@lib/types'
     import { getContext } from 'svelte'
     

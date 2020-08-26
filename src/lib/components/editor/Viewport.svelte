@@ -1,19 +1,12 @@
 <script lang='ts'>
-    import { 
-        Brush, 
-        ToolCoordinator, 
-        AutoLine, 
-        Move, 
-        Fill, 
-        Undo,
-    } from './tools'
-    import { canvasStyle, imageStyle, resetState } from '../state'
     import { getContext, onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import Cursor from './Cursor.svelte'    
     import { MaskRenderer } from '@lib/mask-renderer'
     import type { EditorContext } from '@lib/types'
     import { getImageData } from '@lib/utils'
+    import { Brush, ToolCoordinator, AutoLine, Move, Fill, Undo } from './tools'
+    import { canvasStyle, imageStyle, resetState } from './state'
     
     export let image: HTMLImageElement
     export let mask: HTMLImageElement
@@ -29,15 +22,7 @@
     let maskImageData: ImageData
 
     // Rerender if ctx, paths, etc changes
-    $: (_ => { 
-        if (!maskImageData || !ctx) return
-
-        renderer.drawAllPaths({ 
-            paths: $paths, 
-            mask: maskImageData, 
-            truePathColors,
-        })
-    })([ctx, paths, maskImageData, truePathColors])
+    $: render([ctx, $paths, maskImageData, truePathColors])
     
     onMount(() => {        
         resetState() 
@@ -52,6 +37,16 @@
             ? getImageData(mask) 
             : null
     })
+
+    const render = _ => { 
+        if (!ctx) return
+
+        renderer.drawAllPaths({ 
+            paths: $paths, 
+            mask: maskImageData, 
+            truePathColors,
+        })
+    }
 </script>
 
 <div class='background'></div>

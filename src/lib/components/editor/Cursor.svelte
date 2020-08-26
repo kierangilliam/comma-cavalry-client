@@ -1,6 +1,6 @@
 <script>
-    import { cursor, isTouching, toolMode, brushType, brushSize } from '../state'
-    import { isDrawingMode, getColor } from '../utils'
+    import { cursor, isTouching, toolMode, brushType, brushSize } from './state'
+    import { isDrawingMode, getColor } from './utils'
 
     $: cursorSize = $brushSize + 5
     $: invisible = !$isTouching || !isDrawingMode($toolMode)

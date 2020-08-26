@@ -1,9 +1,9 @@
 <script lang='ts'>
-    import { zoom, canvasPosition } from "../../state"
-    import { clamp } from "@lib/utils"
-    import { listenToEvents } from "./common"
-    import type { ToolEvent, MoveEvent } from "./common"
-    import type { Point } from "@lib/types"
+    import { zoom, canvasPosition } from '../state'
+    import { clamp } from '@lib/utils'
+    import { listenToEvents } from './common'
+    import type { ToolEvent, MoveEvent } from './common'
+    import type { Point } from '@lib/types'
 
     const MIN_ZOOM = .2
     const MAX_ZOOM = 10

@@ -7,7 +7,7 @@
         highThreshold,
         lowThreshold,
         blurRadius,
-    } from '../../state'
+    } from '../state'
     import { getContext, onMount } from 'svelte'
     import * as jsfeat from 'jsfeat'    
     import type { AutoLineRenderer } from '@lib/mask-renderer'
@@ -16,7 +16,7 @@
     import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
     import { getSinglePointPaths, listenToEvents, createNewPath } from './common'
     import type { AutoLineEvent } from './common'
-    import { getColor } from '../../utils'
+    import { getColor } from '../utils'
     
     export let renderer: AutoLineRenderer 
     export let image: HTMLImageElement

@@ -5,14 +5,14 @@
 -->
 
 <script lang='ts'>
-    import { writable } from "svelte/store"
+    import { writable } from 'svelte/store'
     import { onMount, setContext } from 'svelte'
     import Hammer from 'hammerjs'
     import type { Cursor } from '@lib/types'
     import type { ToolEvent, ToolEventType } from './common'
     import { TOOL_COORDINATOR_CONTEXT } from './common'
-    import { zoom, cursor, toolMode, isTouching } from '../../state'
-    import { setMode } from '../../utils'
+    import { zoom, cursor, toolMode, isTouching } from '../state'
+    import { setMode } from '../utils'
     import { isDesktop } from '@lib/capacitor'
 
     export let canvas: HTMLCanvasElement    

@@ -1,7 +1,7 @@
 <script lang='ts'>
     import { toolMode } from './state'
     import type { ToolMode } from '@lib/types'
-    import { setMode } from './utils'
+    import { setMode, undo } from './utils'
     import { isDesktop } from '@lib/capacitor'
     import { TOOL_SHORTCUTS } from '@lib/constants'
     import { createEventDispatcher } from 'svelte'
@@ -10,8 +10,10 @@
     const dispatch = createEventDispatcher()
 
     if (isDesktop) {
-        window.addEventListener('keyup', ({ code }) => {
-            if (TOOL_SHORTCUTS[code]) setMode(TOOL_SHORTCUTS[code])
+        window.addEventListener('keyup', ({ key }) => {
+            if (TOOL_SHORTCUTS[key]) {
+                setMode(TOOL_SHORTCUTS[key])
+            }
         })
     }    
 </script>
@@ -27,7 +29,7 @@
                 on:click={() => setMode(tool)}
             >
         {/each}
-        <img src='/tools/undo.svg' alt='undo' on:click={() => dispatch('undo')} />
+        <img src='/tools/undo.svg' alt='undo' on:click={undo} />
     </div>
     <div class='toolbar'>
         <img src='/github.svg' alt='github' on:click={() => dispatch('github')} />

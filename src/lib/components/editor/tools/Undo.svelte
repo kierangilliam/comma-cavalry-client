@@ -3,17 +3,13 @@
     import type { ToolEvent } from './common'
     import type { Writable } from 'svelte/store'
     import { getContext } from 'svelte'
-    import type { EditorContext } from '@lib/types'
+    import { undo } from '../utils'
 
-    const { paths } = getContext<EditorContext>('editor')
     const { eventStream }: { eventStream: Writable<ToolEvent> } = getContext(TOOL_COORDINATOR_CONTEXT)
 
     eventStream.subscribe(e => {
         if (e !== null && e.type === 'undo') {
-            $paths.pop()
-
-            // Trigger state refresh
-            $paths = $paths
+            undo()
         }
     })
 </script>

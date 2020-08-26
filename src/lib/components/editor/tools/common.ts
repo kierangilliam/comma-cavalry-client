@@ -2,7 +2,7 @@ import type { ToolRenderer } from '@lib/mask-renderer/ToolRenderer'
 import type { Path, ToolMode } from '@lib/types'
 import { getContext } from 'svelte'
 import { get, Writable } from 'svelte/store'
-import { brushSize, brushType, toolMode } from '../../state'
+import { brushSize, brushType, toolMode } from '../state'
 
 export type BrushEvent = 'brushStart' | 'brushMove' | 'brushEnd'
 export type MoveEvent = 'zoomMobile' | 'zoomDesktop' | 'panMove' | 'panEnd'

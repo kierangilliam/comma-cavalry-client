@@ -8,12 +8,9 @@
     import type { EditorContext, Image, Path } from '@lib/types'
     import { BottomSheet, LoadingScreen } from '@lib/components'
     import { getEntry } from '@lib/storage'
-    import { resetState } from './_lib/state'
     import { loadImageFromUrl, persistent } from '@lib/utils'
-    import Viewport from './_lib/viewport/Viewport.svelte'
-    import Controls from './_lib/controls/Controls.svelte'
+    import { Viewport, Controls, ToolBar } from '@lib/components/editor'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
-    import ToolBar from './_lib/ToolBar.svelte'    
     import GitModal from './_lib/GitModal.svelte'
     import { derived, writable } from 'svelte/store'
     import { notifications } from '@lib/notifications'
@@ -29,8 +26,6 @@
     setContext<EditorContext>('editor', { paths })
 
     onMount(() => {
-        // TODO BUG: onMount fires twice when navigating from homepage 
-        resetState()
         loadSavedPaths($params.id)
         image = loadImage($params.id)
     })
@@ -60,14 +55,6 @@
         } finally {
             loading = false
         }
-    }
-
-    export const undo = () => {
-        console.debug('Undo')
-        const _paths = $paths
-
-        _paths.pop()
-        $paths = _paths
     }
 
     export const onSave = () => {
@@ -123,7 +110,6 @@
     {#await image then { id, image }}
         <Viewport {image} />
         <ToolBar 
-            on:undo={undo} 
             on:github={() => showGit = true} 
             on:help={() => $showTutorial = true} 
         />
