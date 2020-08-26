@@ -57,7 +57,7 @@
 
 <Modal bind:active={$showGit}>
     <div class='container'>    
-    {#if $git?.token}
+    {#if $git && $git.token}
         <H4>{$git.username}</H4>
 
         <Spacer s={4} />
