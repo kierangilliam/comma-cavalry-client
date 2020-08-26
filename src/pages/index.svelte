@@ -4,7 +4,7 @@
     import { Header } from '@lib/components'
     import { notifications } from '@lib/notifications'
     import { savedEntries, getEntry, saveEntry } from '@lib/storage'
-    import type { Entry } from '@lib/storage'
+    import type { Entry } from '@lib/types'
     import { Button, Flex, Spacer } from '@ollopa/cedar'
     import ImageRow from './_lib/ImageRow.svelte'
     import Onboard from './_lib/Onboard.svelte'

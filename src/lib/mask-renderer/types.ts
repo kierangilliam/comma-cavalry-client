@@ -9,6 +9,7 @@ export interface DrawPointsOpts {
 export interface DrawPathsOpts {
     paths: Path[],
     truePathColors?: boolean,
+    mask?: ImageData,
 }
 
 export interface ToPngOpts {
