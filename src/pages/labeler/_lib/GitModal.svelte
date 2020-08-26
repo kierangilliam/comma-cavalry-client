@@ -19,12 +19,16 @@
         return getBranches()
     })($git?.repo)
 
+    let loading = false
+
     const logout = () => {
         $git = null
         $showGit = false
     }    
 
     const commit = async () => {
+        loading = true 
+
         const message = window.prompt(
             'Commit message', `${$params.id} ${$git.username}`
         )
@@ -43,6 +47,8 @@
         } catch (error) {
             console.error(error)
             notifications.error('Could not commit file', error)
+        } finally {
+            loading = false
         }
     }
 
@@ -110,9 +116,9 @@
         <Spacer s={8} />
         
         <Flex stretch>
-            <Button on:click={logout} small stretch outline warn>Logout</Button>
+            <Button on:click={logout} disabled={loading} small stretch outline warn>Logout</Button>
             <Spacer s={8} />
-            <Button on:click={commit} small stretch>commit</Button>
+            <Button on:click={commit} disabled={loading} small stretch>commit</Button>
         </Flex>
     {:else}
         <H4>github integation</H4>
