@@ -41,7 +41,7 @@
         />      
     </div>
     
-    <div class='error-container'>
+    <div class='text-container'>
         {#if !error}
             <slot></slot>
         {/if}   
@@ -62,9 +62,9 @@
         background: #1b1b1b;
     }
 
-    .logo-container, .error-container {
+    .logo-container, .text-container {
         position: absolute;
-        top: 20vh;
+        top: 30vh;
         left: 0;
         width: 100vw;
         height: 60vh;
