@@ -4,12 +4,14 @@
     import type { Writable } from 'svelte/store'
     import { getContext } from 'svelte'
     import { undo } from '../utils'
+    import type { EditorContext } from '@lib/types'
 
+    const { paths } = getContext<EditorContext>('editor')
     const { eventStream }: { eventStream: Writable<ToolEvent> } = getContext(TOOL_COORDINATOR_CONTEXT)
 
     eventStream.subscribe(e => {
         if (e !== null && e.type === 'undo') {
-            undo()
+            undo(paths)
         }
     })
 </script>

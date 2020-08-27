@@ -1,13 +1,11 @@
 import { PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
-import type { EditorContext, PathType, ToolMode } from '@lib/types'
-import { getContext } from 'svelte'
-import { get } from 'svelte/store'
+import type { Path, PathType, ToolMode } from '@lib/types'
+import { get, Writable } from 'svelte/store'
 import { toolMode } from './state'
 
 
-export const undo = () => {
+export const undo = (paths: Writable<Path[]>) => {
     console.debug('Undo')
-    const { paths } = getContext<EditorContext>('editor')
     const _paths = get(paths)
 
     _paths.pop()

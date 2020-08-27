@@ -1,9 +1,10 @@
 <script lang='ts'>
     import { toolMode } from './state'
-    import type { ToolMode } from '@lib/types'
+    import type { EditorContext, ToolMode } from '@lib/types'
     import { setMode, undo } from './utils'
-    import { createEventDispatcher } from 'svelte'
+    import { createEventDispatcher, getContext } from 'svelte'
 
+    const { paths } = getContext<EditorContext>('editor')
     const tools: ToolMode[] = ['brush', 'fill', 'autoLine', 'move']
     const dispatch = createEventDispatcher()
 </script>
@@ -19,7 +20,7 @@
                 on:click={() => setMode(tool)}
             >
         {/each}
-        <img src='/tools/undo.svg' alt='undo' on:click={undo} />
+        <img src='/tools/undo.svg' alt='undo' on:click={() => undo(paths)} />
     </div>
     <div class='toolbar'>
         <img src='/github.svg' alt='github' on:click={() => dispatch('github')} />
