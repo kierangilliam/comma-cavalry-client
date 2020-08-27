@@ -1,6 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client/core'
 import { DEV } from '@lib/constants'
-import type { Image, Images } from '@lib/types'
+import type { Image, Images, PullRequest } from '@lib/types'
 import { createUploadLink } from 'apollo-upload-client'
 
 const httpLink = createUploadLink({
@@ -23,6 +23,19 @@ const IMAGE_FRAGMENT = `
     github
     url
     depthMapUrl
+`
+
+const PR_FRAGMENT = `
+    id
+    state
+    url
+    number
+    files {
+        id
+        filename
+        maskURL
+        imageURL
+    }
 `
 
 const UNCLAIMED_QUERY = gql`
@@ -55,16 +68,16 @@ const OPEN_PRS_QUERY = gql`
     {
         openPullRequests {
             pullRequests {
-                id
-                state
-                url
-                number
-                files {
-                    filename
-                    maskURL
-                    originalURL
-                }
+                ${PR_FRAGMENT}
             }
+        }
+    }
+`
+
+const PR_QUERY = gql`
+    query pullRequest($number: Int!) {
+        pullRequest(number: $number) {
+            ${PR_FRAGMENT}
         }
     }
 `
@@ -115,10 +128,22 @@ export const submitMask = async (id: string, name: string, email: string, mask: 
     return data.submitMask.message
 }
 
-export const getOpenPRs = async (): Promise<String> => {
-    const { data } = await client.mutate({ mutation: OPEN_PRS_QUERY })
+export const getOpenPRs = async (): Promise<PullRequest[]> => {
+    const { data } = await client.query({ query: OPEN_PRS_QUERY })
 
     return data.openPullRequests.pullRequests
+}
+
+// TODO Refactor gql requests to throw on errors automatically
+export const getPR = async (number: number): Promise<PullRequest> => {
+    const { data, errors } = await client.query({ query: PR_QUERY, variables: { number } })
+
+    if (errors) {
+        console.error(errors)
+        throw Error(errors[0].message)
+    }
+
+    return data.pullRequest
 }
 
 export const getGithubToken = async (code: string): Promise<String> => {

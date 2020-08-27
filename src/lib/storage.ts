@@ -1,27 +1,12 @@
 import { get } from 'svelte/store'
-import type { Path } from './types'
+import type { Entry, GitInfo } from './types'
 import { persistent } from './utils'
 
-export const LOCAL_STORAGE_SAVED = 'saved'
+const LOCAL_STORAGE_ENTRIES = 'saved'
 const VIEWPORT_VERSION = 0
 
-export interface Entry {
-    version?: number
-    paths?: Path[]
-    archived?: boolean
-}
+export const savedEntries = persistent<Record<string, Entry>>(LOCAL_STORAGE_ENTRIES, {})
 
-interface GitInfo {
-    username: string
-    // Authorization token
-    token: string
-    // Personal repo
-    repo: string
-    // Branch to commit to
-    branch: string
-}
-
-export const savedEntries = persistent<Record<string, Entry>>(LOCAL_STORAGE_SAVED, {})
 export const git = persistent<GitInfo>('git', null)
 
 export const getEntry = (id: string): Entry => {

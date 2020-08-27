@@ -13,16 +13,6 @@ export interface Entry {
     archived?: boolean
 }
 
-// Used when reviewing pull requests
-// and working with multiple masks
-export interface PREntry {
-    version?: number
-    masks?: {
-        id: string
-        paths?: Path[]
-    }[]
-}
-
 export interface GitInfo {
     username: string
     // Authorization token
