@@ -89,7 +89,7 @@
                 ${spacer}
                 Save and exit by swipping up from the bottom.
                 ${spacer}
-                You can access this tutorial at any time from the same screen.
+                You can access this tutorial at any time by clicking the help button on the right.
             `,
         },        
     ]
