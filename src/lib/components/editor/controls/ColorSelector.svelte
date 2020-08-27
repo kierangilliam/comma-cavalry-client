@@ -1,20 +1,12 @@
 <script lang='ts'>
-    import { PATH_COLORS, COLOR_SHORTCUTS } from '@lib/constants'
+    import { PATH_COLORS } from '@lib/constants'
     import type { PathType, ToolMode } from '@lib/types'
-    import { Haptics, isDesktop } from '@lib/capacitor'
+    import { Haptics } from '@lib/capacitor'
     import { brushType, toolMode } from '../state'
     import { Spacer } from '@ollopa/cedar'
     import { setMode } from '../utils'
 
     export let showLabels: boolean = false
-
-    if (isDesktop) {
-        window.addEventListener('keyup', ({ key }: KeyboardEvent) => {
-            if (COLOR_SHORTCUTS[key]) {
-                $brushType = COLOR_SHORTCUTS[key]
-            }
-        })
-    }
 
     const updateTool = (_ => {
         let lastType = $brushType

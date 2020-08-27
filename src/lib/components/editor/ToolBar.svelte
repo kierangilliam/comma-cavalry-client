@@ -2,20 +2,10 @@
     import { toolMode } from './state'
     import type { ToolMode } from '@lib/types'
     import { setMode, undo } from './utils'
-    import { isDesktop } from '@lib/capacitor'
-    import { TOOL_SHORTCUTS } from '@lib/constants'
     import { createEventDispatcher } from 'svelte'
 
     const tools: ToolMode[] = ['brush', 'fill', 'autoLine', 'move']
     const dispatch = createEventDispatcher()
-
-    if (isDesktop) {
-        window.addEventListener('keyup', ({ key }) => {
-            if (TOOL_SHORTCUTS[key]) {
-                setMode(TOOL_SHORTCUTS[key])
-            }
-        })
-    }    
 </script>
 
 <div class='container'>
