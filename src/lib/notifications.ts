@@ -1,4 +1,5 @@
-import { Confirmation, Notification } from '@lib/components'
+import Confirmation from './components/notifications/Confirmation.svelte'
+import Notification from './components/notifications/Notification.svelte'
 import { waitForEvent } from './utils'
 
 const confirm = async (question: string): Promise<boolean> => {

@@ -1,13 +1,13 @@
 <script lang='ts'>
-    import { Fade } from '@lib/components'
     import { H3, Button, Spacer, Flex } from '@ollopa/cedar'    
     import { createEventDispatcher, getContext } from 'svelte'
     import { notifications } from '@lib/notifications'
     import type { Readable, Writable } from 'svelte/store'
     import type { Path } from '@lib/types'
     import { overlayOpacity, brushSize } from '../state'
-    import ColorSelector from './ColorSelector.svelte'
+    import Fade from '../../Fade.svelte'
     import Slider from '../../Slider.svelte'
+    import ColorSelector from './ColorSelector.svelte'
     
     export let paths: Writable<Path[]>
     export let dirty: Readable<boolean>
