@@ -1,15 +1,12 @@
 <script lang='ts'>
     import { Haptics } from '@lib/capacitor'
     import { saveEntry } from '@lib/storage'
-    import { onMount, setContext } from 'svelte'
-    import { goto, params, url } from '@sveltech/routify'
-    import { H4, Spacer } from '@ollopa/cedar'
-    import { getImage } from '@gql'
-    import type { EditorContext, Image, Path } from '@lib/types'
-    import { BottomSheet, LoadingScreen } from '@lib/components'
+    import { onMount } from 'svelte'
+    import { goto, params } from '@sveltech/routify'
+    import type { Path } from '@lib/types'
     import { getEntry } from '@lib/storage'
-    import { loadImageFromUrl, persistent } from '@lib/utils'
-    import { Viewport, Controls, ToolBar } from '@lib/components/editor'
+    import { persistent } from '@lib/utils'
+    import { Editor } from '@lib/components'
     import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
     import GitModal from './_lib/GitModal.svelte'
     import { derived, writable } from 'svelte/store'
@@ -19,15 +16,10 @@
     const showTutorial = persistent('showLabelerTutorial', true)
     
     let showGit = false
-    let loading = true
-    let error = null 
-    let image = null
-
-    setContext<EditorContext>('editor', { paths })
+    let loading: boolean
 
     onMount(() => {
         loadSavedPaths($params.id)
-        image = loadImage($params.id)
     })
     
     function loadSavedPaths(id: string) {
@@ -41,23 +33,7 @@
         }
     }
 
-    async function loadImage(id: string): Promise<Image & { image: HTMLImageElement }> {
-        loading = true 
-
-        try {
-            const comma10KImage = await getImage(id)
-            const image = await loadImageFromUrl(comma10KImage.url)
-
-            return { ...comma10KImage, image }
-        } catch (e) {
-            error = e
-            return null 
-        } finally {
-            loading = false
-        }
-    }
-
-    export const onSave = () => {
+    const onSave = () => {
         const { id } = $params
 
         saveEntry(id, { paths: $paths })
@@ -94,35 +70,18 @@
     )
 </script>
 
-{#if loading || error}
-    <LoadingScreen {error}>
-        <a href={$url('/')}>cancel</a>
+<Editor 
+    bind:loading
+    bind:showGit
+    bind:showTutorial={$showTutorial}
+    id={$params.id} 
+    {paths} 
+    {dirty}
+    {onExit}
+    {onSave}
+/>
 
-        <div slot='error'>
-            <H4>Something went wrong.</H4>
-            <Spacer />
-            <p>{error}</p>
-            <Spacer />
-            <a href={$url('/')}>go back</a>
-        </div>
-    </LoadingScreen>
-{:else}
-    {#await image then { id, image }}
-        <Viewport {image} />
-        <ToolBar 
-            on:github={() => showGit = true} 
-            on:help={() => $showTutorial = true} 
-        />
-        <BottomSheet>
-            <Controls 
-                {id} 
-                {paths} 
-                {dirty}
-                on:exit={onExit}
-                on:save={onSave}
-            />
-        </BottomSheet>
-        <TutorialModal bind:active={$showTutorial} />            
-        <GitModal bind:active={showGit} paths={$paths} />            
-    {/await}
+{#if !loading}
+    <TutorialModal bind:active={$showTutorial} />            
+    <GitModal bind:active={showGit} paths={$paths} /> 
 {/if}

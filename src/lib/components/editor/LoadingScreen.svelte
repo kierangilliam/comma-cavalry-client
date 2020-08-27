@@ -1,10 +1,10 @@
 
-<script>
+<script lang='ts'>
     import { quartOut } from 'svelte/easing'
     import { tweened } from 'svelte/motion'
-    import Fade from './Fade.svelte'
+    import Fade from '../Fade.svelte'
 
-    export let error = false
+    export let error: Error
 
     const errorTween = tweened(0, { duration: 1500, easing: quartOut })
 
@@ -31,27 +31,38 @@
         : ''
 </script>
 
-<div class="logo-container">    
-    <img 
-        src="/comma.svg" 
-        alt="logo" 
-        class:error 
-        style={errorStyle}
-    />      
-</div>
-
-<div>
-    {#if !error}
-        <slot></slot>
-    {/if}   
-        
-    <Fade visible={error}>
-        <slot name="error" />
-    </Fade>  
+<div class='container'>
+    <div class='logo'>    
+        <img 
+            src='/comma.svg' 
+            alt='logo' 
+            class:error 
+            style={errorStyle}
+        />      
+    </div>
+    
+    <div class='error'>
+        {#if !error}
+            <slot></slot>
+        {/if}   
+            
+        <Fade visible={!!error}>
+            <slot name='error' />
+        </Fade>  
+    </div>
 </div>
 
 <style>
-    div {
+    .container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--darkGray);
+    }
+
+    .logo, .error {
         position: absolute;
         top: 40vh;
         left: 0;
@@ -63,7 +74,7 @@
         align-items: center;
     }
 
-    div.logo-container {
+    .logo {
         top: 0;
         height: 60vh;
     }

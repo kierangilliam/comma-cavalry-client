@@ -1,12 +1,12 @@
 <script lang='ts'>
     import { getContext, onMount } from 'svelte'
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
-    import Cursor from './Cursor.svelte'    
+    import Cursor from './Cursor.svelte'        
     import { MaskRenderer } from '@lib/mask-renderer'
-    import type { EditorContext } from '@lib/types'
     import { getImageData } from '@lib/utils'
     import { Brush, ToolCoordinator, AutoLine, Move, Fill, Undo } from './tools'
     import { canvasStyle, imageStyle, resetState } from './state'
+    import type { EditorContext } from '@lib/types'
     
     export let image: HTMLImageElement
     export let mask: HTMLImageElement
