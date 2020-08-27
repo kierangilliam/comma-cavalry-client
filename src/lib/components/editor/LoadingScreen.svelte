@@ -32,7 +32,7 @@
 </script>
 
 <div class='container'>
-    <div class='logo'>    
+    <div class='logo-container'>    
         <img 
             src='/comma.svg' 
             alt='logo' 
@@ -41,7 +41,7 @@
         />      
     </div>
     
-    <div class='error'>
+    <div class='error-container'>
         {#if !error}
             <slot></slot>
         {/if}   
@@ -59,12 +59,12 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: var(--darkGray);
+        background: #1b1b1b;
     }
 
-    .logo, .error {
+    .logo-container, .error-container {
         position: absolute;
-        top: 40vh;
+        top: 20vh;
         left: 0;
         width: 100vw;
         height: 60vh;
@@ -74,7 +74,7 @@
         align-items: center;
     }
 
-    .logo {
+    .logo-container {
         top: 0;
         height: 60vh;
     }
