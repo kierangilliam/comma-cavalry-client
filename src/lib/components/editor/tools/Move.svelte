@@ -30,14 +30,20 @@
         const speed = SPEED * $zoom          
         const newZoom = $zoom + ((scale - lastScale) * speed)
         
-        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
         lastScale = scale
+        setZoom(newZoom)
     }  
     
     const onZoomDesktop = ({ deltaY }: ToolEvent) => {            
-        const newZoom = $zoom - (deltaY / 10)
+        const newZoom = $zoom - (deltaY / 20)
         
-        $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
+        setZoom(newZoom)
+    }
+
+    const setZoom = (newZoom: number) => {
+        requestAnimationFrame(() => {
+            $zoom = clamp(newZoom, MIN_ZOOM, MAX_ZOOM)
+        })
     }
 
     const onEnd = () => {
