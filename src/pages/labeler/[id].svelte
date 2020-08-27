@@ -90,6 +90,7 @@
     bind:error
     bind:showGit
     bind:showTutorial={$showTutorial}
+    id={$params.id}
     {imageURL} 
     {paths} 
     {dirty}

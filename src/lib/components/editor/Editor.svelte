@@ -34,7 +34,7 @@
     const loadDetails = async (_, __) => {
         loading = true 
 
-        if (!id && !imageURL) {
+        if (!imageURL) {
             return
         }
 
