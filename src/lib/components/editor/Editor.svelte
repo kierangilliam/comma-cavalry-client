@@ -1,16 +1,17 @@
 <script lang='ts'>
     import { Viewport, Controls, ToolBar } from '.'
     import KeyboardShortcuts from './KeyboardShortcuts.svelte'
-    import type { EditorContext, Image, Path } from '@lib/types'
+    import type { EditorContext, Path } from '@lib/types'
     import { H4, Spacer } from '@ollopa/cedar'
     import LoadingScreen from './LoadingScreen.svelte'
     import BottomSheet from '../BottomSheet.svelte'
-    import { onMount, setContext } from 'svelte'
+    import { setContext } from 'svelte'
     import type { Readable, Writable } from 'svelte/store'
-    import { getImage } from '@gql'
     import { loadImageFromUrl } from '@lib/utils'
 
     export let id: string
+    export let imageURL: string
+    export let maskURL: string
     export let paths: Writable<Path[]>
     export let dirty: Readable<boolean>
     export let onSave: () => any
@@ -20,29 +21,37 @@
     export let showGit: boolean
     export let showTutorial: boolean
     export let loading: boolean
+    export let error: Error
 
-    let error: Error
     let image: HTMLImageElement
+    let mask: HTMLImageElement
+    let truePathColors = false
 
     setContext<EditorContext>('editor', { paths })
 
-    $: (async (_) => {
+    $: loadDetails(imageURL, maskURL)
+
+    const loadDetails = async (_, __) => {
         loading = true 
 
-        if (!id) {
+        if (!id && !imageURL) {
             return
         }
 
+        truePathColors = !!mask
+
         try {
-            const comma10KImage = await getImage(id)
-            
-            image = await loadImageFromUrl(comma10KImage.url)
+            if (maskURL) {
+                mask = await loadImageFromUrl(maskURL)
+            }
+
+            image = await loadImageFromUrl(imageURL)
         } catch (e) {
             error = e
         } finally {
             loading = false
         }
-    })(id)
+    }
 </script>
 
 {#if loading || error}
@@ -58,7 +67,7 @@
         </div>
     </LoadingScreen>
 {:else if image}
-    <Viewport {image} />
+    <Viewport {image} {mask} {truePathColors} />
 {:else}
     Something went wrong.
 {/if}

@@ -11,18 +11,33 @@
     import GitModal from './_lib/GitModal.svelte'
     import { derived, writable } from 'svelte/store'
     import { notifications } from '@lib/notifications'
+    import { getImage } from '@gql'
 
     const paths = writable<Path[]>([])
     const showTutorial = persistent('showLabelerTutorial', true)
     
     let showGit = false
     let loading: boolean
+    let error: Error
+    let imageURL
+
+    $: getImageURL($params.id)
 
     onMount(() => {
         loadSavedPaths($params.id)
     })
+
+    const getImageURL = async (id: string) => {
+        try {
+            const comma10KImage = await getImage(id)
+
+            imageURL = comma10KImage.url
+        } catch (e) {
+            error = e
+        }
+    }
     
-    function loadSavedPaths(id: string) {
+    const loadSavedPaths = (id: string) => {
         const { paths: loadedPaths } = getEntry(id)
 
         if (loadedPaths.length > 0) {
@@ -72,9 +87,10 @@
 
 <Editor 
     bind:loading
+    bind:error
     bind:showGit
     bind:showTutorial={$showTutorial}
-    id={$params.id} 
+    {imageURL} 
     {paths} 
     {dirty}
     {onExit}
