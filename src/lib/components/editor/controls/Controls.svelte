@@ -35,22 +35,16 @@
     <Spacer s={GUTTER_SPACING} />
 
     <Flex justify='around'>
-        <Button on:click={() => dispatch('exit')} outline warn stretch>
-            exit
-        </Button>
-
-        <Spacer s={16} />
-
-        <Button on:click={() => dispatch('save')} disabled={!$dirty} stretch>
-            save
-        </Button>
-    </Flex>
-
-    <Spacer s={GUTTER_SPACING} />
-
-    <Flex justify='around'>
         <Flex flex={1} column justify='between'>
-            <Button on:click={clearAll} stretch warn>clear all</Button>
+            <Button on:click={clearAll} outline stretch warn>clear all</Button>
+            <Spacer />
+            <Button on:click={() => dispatch('exit')} warn stretch>
+                exit
+            </Button>
+            <Spacer />
+            <Button on:click={() => dispatch('save')} disabled={!$dirty} stretch>
+                save
+            </Button>
         </Flex>
         
         <Spacer s={8} />
