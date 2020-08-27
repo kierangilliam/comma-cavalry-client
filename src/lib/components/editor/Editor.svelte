@@ -26,33 +26,23 @@
 
     setContext<EditorContext>('editor', { paths })
 
-    onMount(async () => {
+    $: (async (_) => {
         loading = true 
 
-        try {
-            image = await loadImage(id)
-        } catch (e) {
-            error = e
-        } finally {
-            loading = false
+        if (!id) {
+            return
         }
-
-        setContext<EditorContext>('editor', { paths })
-    })
-
-    async function loadImage(id: string): Promise<HTMLImageElement> {
-        loading = true 
 
         try {
             const comma10KImage = await getImage(id)
-            return await loadImageFromUrl(comma10KImage.url)
+            
+            image = await loadImageFromUrl(comma10KImage.url)
         } catch (e) {
             error = e
-            return null 
         } finally {
             loading = false
         }
-    }
+    })(id)
 </script>
 
 {#if loading || error}
