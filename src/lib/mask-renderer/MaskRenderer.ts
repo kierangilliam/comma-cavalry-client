@@ -1,7 +1,8 @@
-import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
+import { IMAGE_HEIGHT, IMAGE_WIDTH, PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
 import { AutoLineRenderer } from './AutoLineRenderer'
 import { BrushRenderer } from './BrushRenderer'
 import { FillRenderer } from './FillRenderer'
+import { ColorRGBA, hex2RGBA, isSameColor } from './q-floodfill/color-utils'
 import type { ToolRenderer } from './ToolRenderer'
 import type { DrawPathsOpts, ToPngOpts } from './types'
 import { getColor } from './utils'
@@ -70,6 +71,8 @@ export class MaskRenderer {
 
             this.tools[mode].drawPath({ type, points, size, mode })
         })
+
+        this.forceAliasing()
     }
 
     public getTool<T extends keyof Tools>(tool: T): Tools[T] {
@@ -96,4 +99,45 @@ export class MaskRenderer {
         return canvas.toDataURL('image/png')
     }
 
+    /**
+     * Not nearly an efficient way to do this, 
+     * but it runs at a decent rate (40ms)
+     */
+    private forceAliasing() {
+        const { width, height } = this.ctx.canvas
+        const imageData = this.ctx.getImageData(0, 0, width, height)
+        const palette = Object
+            .values(this.truePathColor ? TRUE_PATH_COLORS : PATH_COLORS)
+            .map(hex2RGBA)
+            .map(color => ({ ...color, a: 255 }))
+
+        const inPalette = (pixel: ColorRGBA) =>
+            !!palette.find(color => isSameColor(pixel, color, 0))
+
+        let lastValidColor: ColorRGBA
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const pixel = y * width + x
+                const pos = pixel * 4
+                const color = {
+                    r: imageData.data[pos],
+                    g: imageData.data[pos + 1],
+                    b: imageData.data[pos + 2],
+                    a: imageData.data[pos + 3],
+                }
+
+                if (!inPalette(color)) {
+                    imageData.data[pos] = lastValidColor.r
+                    imageData.data[pos + 1] = lastValidColor.g
+                    imageData.data[pos + 2] = lastValidColor.b
+                    imageData.data[pos + 3] = 255
+                } else {
+                    lastValidColor = color
+                }
+            }
+        }
+
+        this.ctx.putImageData(imageData, 0, 0)
+    }
 }
