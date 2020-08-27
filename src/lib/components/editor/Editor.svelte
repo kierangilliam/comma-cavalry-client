@@ -25,7 +25,7 @@
 
     let image: HTMLImageElement
     let mask: HTMLImageElement
-    let truePathColors = false
+    let truePathColor = false
 
     setContext<EditorContext>('editor', { paths })
 
@@ -38,10 +38,9 @@
             return
         }
 
-        truePathColors = !!mask
-
         try {
             if (maskURL) {
+                truePathColor = true
                 mask = await loadImageFromUrl(maskURL)
             }
 
@@ -67,7 +66,7 @@
         </div>
     </LoadingScreen>
 {:else if image}
-    <Viewport {image} {mask} {truePathColors} />
+    <Viewport {image} {mask} {truePathColor} />
 {:else}
     Something went wrong.
 {/if}

@@ -14,8 +14,8 @@ export class BrushRenderer extends ToolRenderer {
         super()
     }
 
-    public drawPath({ points, color, size }: DrawPathOpts) {
-        this.drawPoints({ size, color, points })
+    public drawPath({ points, type, size }: DrawPathOpts) {
+        this.drawPoints({ size, type, points })
         this.ctx.fill()
     }
 

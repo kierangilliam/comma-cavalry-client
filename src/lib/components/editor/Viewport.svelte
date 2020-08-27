@@ -3,14 +3,14 @@
     import { IMAGE_WIDTH, IMAGE_HEIGHT } from '@lib/constants'
     import Cursor from './Cursor.svelte'        
     import { MaskRenderer } from '@lib/mask-renderer'
-    import { getImageData } from '@lib/utils'
+    import { copyImageData } from '@lib/utils'
     import { Brush, ToolCoordinator, AutoLine, Move, Fill, Undo } from './tools'
     import { canvasStyle, imageStyle, resetState } from './state'
     import type { EditorContext } from '@lib/types'
     
     export let image: HTMLImageElement
     export let mask: HTMLImageElement
-    export let truePathColors: boolean = false
+    export let truePathColor: boolean = true
 
     const { paths } = getContext<EditorContext>('editor')
 
@@ -22,7 +22,8 @@
     let maskImageData: ImageData
 
     // Rerender if ctx, paths, etc changes
-    $: render([ctx, $paths, maskImageData, truePathColors])
+    $: render([ctx, $paths])
+    $: renderer.truePathColor = truePathColor
     
     onMount(() => {        
         resetState() 
@@ -32,9 +33,9 @@
         canvas.height = IMAGE_HEIGHT
         ctx = canvas.getContext('2d')
         renderer.ctx = ctx
-        renderer.clear(truePathColors)
+        renderer.clear()
         maskImageData = mask 
-            ? getImageData(mask) 
+            ? copyImageData({ ctx, image: mask, x: 0, y: 0 }) 
             : null
     })
 
@@ -44,7 +45,6 @@
         renderer.drawAllPaths({ 
             paths: $paths, 
             mask: maskImageData, 
-            truePathColors,
         })
     }
 </script>

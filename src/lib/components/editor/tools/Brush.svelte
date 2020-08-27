@@ -3,7 +3,6 @@
     import { cursor, brushSize, brushType } from '../state'
     import { listenToEvents, createNewPath, getSinglePointPaths } from './common'
     import type { BrushEvent } from './common'
-    import { getColor } from '../utils'
     import type { EditorContext, } from '@lib/types'
     import { getContext } from 'svelte'
     
@@ -13,10 +12,8 @@
 
     const startNewPathFromCursor = () => {
         const path = createNewPath({ x: $cursor.x, y: $cursor.y, renderer }) 
-        const color = getColor($brushType)
 
-        renderer.drawPoints({ ...path, color })
-
+        renderer.drawPoints(path)
         $paths.push(path)
     }
 

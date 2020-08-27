@@ -1,9 +1,8 @@
-import { IMAGE_HEIGHT, IMAGE_WIDTH, PATH_COLORS, TRUE_PATH_COLORS } from '@lib/constants'
-import type { PathType } from '@lib/types'
-import { renderImageData } from '@lib/utils'
+import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
 import { AutoLineRenderer } from './AutoLineRenderer'
 import { BrushRenderer } from './BrushRenderer'
 import { FillRenderer } from './FillRenderer'
+import type { ToolRenderer } from './ToolRenderer'
 import type { DrawPathsOpts, ToPngOpts } from './types'
 import { getColor } from './utils'
 
@@ -16,6 +15,7 @@ interface Tools {
 export class MaskRenderer {
     private tools: Tools
     private _ctx: CanvasRenderingContext2D
+    private _truePathColor: boolean
 
     constructor() {
         this.tools = {
@@ -29,39 +29,46 @@ export class MaskRenderer {
 
     set ctx(ctx: CanvasRenderingContext2D) {
         this._ctx = ctx
+        this._ctx.imageSmoothingEnabled = false
 
         Object.values(this.tools).forEach(tool => {
             tool.ctx = ctx
         })
     }
 
-    public clear(trueEmptyColor: boolean) {
+    get truePathColor(): boolean { return this._truePathColor }
+
+    set truePathColor(truePathColor: boolean) {
+        this._truePathColor = truePathColor
+
+        Object.values(this.tools).forEach((tool: ToolRenderer) => {
+            tool.truePathColor = truePathColor
+        })
+    }
+
+    public clear() {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-        this.ctx.fillStyle = getColor('empty', trueEmptyColor)
+        this.ctx.fillStyle = getColor('empty', this.truePathColor)
         this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     }
 
-    public drawAllPaths({ paths, mask = null, truePathColors = false }: DrawPathsOpts) {
+    public drawAllPaths({ paths, mask = null }: DrawPathsOpts) {
         if (mask) {
-            renderImageData({ imageData: mask, ctx: this._ctx, x: 0, y: 0 })
+            const { width, height } = this.ctx.canvas
+            this.ctx.clearRect(0, 0, width, height)
+            this.ctx.putImageData(mask, 0, 0, 0, 0, width, height)
         } else {
-            this.clear(truePathColors)
+            this.clear()
         }
 
-        this.tools.fill.palette = truePathColors
-            ? this.asPalette(TRUE_PATH_COLORS)
-            : this.asPalette(PATH_COLORS)
-
         paths.forEach(({ points, size, type, mode }) => {
-            const color = getColor(type, truePathColors)
-
             this.ctx.beginPath()
             this.ctx.moveTo(points[0].x, points[0].y)
 
             this.ctx.lineJoin = 'round'
             this.ctx.lineCap = 'round'
 
-            this.tools[mode].drawPath({ color, points, size, mode })
+            this.tools[mode].drawPath({ type, points, size, mode })
         })
     }
 
@@ -89,7 +96,4 @@ export class MaskRenderer {
         return canvas.toDataURL('image/png')
     }
 
-    private asPalette(colors: Record<PathType, string>): string[] {
-        return Object.values(colors)
-    }
 }

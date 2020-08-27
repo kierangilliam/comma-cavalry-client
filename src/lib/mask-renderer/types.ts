@@ -1,9 +1,9 @@
-import type { Path, Point } from '@lib/types'
+import type { Path, PathType, Point } from '@lib/types'
 
 export interface DrawPointsOpts {
-    color: string
     points: Point[]
     size: number
+    type: PathType
 }
 
 export interface DrawPathsOpts {
@@ -17,4 +17,4 @@ export interface ToPngOpts {
     truePathColors?: boolean,
 }
 
-export type DrawPathOpts = Omit<Path, 'type'> & { color: string }
+export type DrawPathOpts = Path

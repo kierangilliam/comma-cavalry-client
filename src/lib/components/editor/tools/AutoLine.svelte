@@ -16,7 +16,6 @@
     import { IMAGE_HEIGHT, IMAGE_WIDTH } from '@lib/constants'
     import { getSinglePointPaths, listenToEvents, createNewPath } from './common'
     import type { AutoLineEvent } from './common'
-    import { getColor } from '../utils'
     
     export let renderer: AutoLineRenderer 
     export let image: HTMLImageElement
@@ -51,10 +50,8 @@
 
     const startNewPathFromCursor = () => {
         const path = createNewPath({ x: $cursor.x, y: $cursor.y, renderer }) 
-        const color = getColor($brushType)
 
-        renderer.drawPoints({ ...path, color })
-
+        renderer.drawPoints(path)
         $paths.push(path)
     }
 
@@ -73,7 +70,7 @@
 
         // Finish by drawing the most recent set of points onto the mask
         const currentPath = $paths[$paths.length - 1]
-        renderer.drawPoints({ points, color: getColor($brushType), size: $brushSize })
+        renderer.drawPoints({ points, type: $brushType, size: $brushSize })
         currentPath.points = [...currentPath.points, ...points]
     }
 

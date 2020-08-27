@@ -90,13 +90,6 @@ export const copyImageData = ({ ctx, x, y, image }: CopyImageDataOpts): ImageDat
     return ctx.getImageData(x, y, image.width as number, image.height as number)
 }
 
-export const getImageData = (image: HTMLImageElement) => {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-
-    return copyImageData({ ctx, x: 0, y: 0, image })
-}
-
 interface RenderImageDataOpts {
     ctx: CanvasRenderingContext2D
     x: number
