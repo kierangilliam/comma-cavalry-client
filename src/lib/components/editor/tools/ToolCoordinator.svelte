@@ -68,11 +68,18 @@
         }
     }
 
-    const onScroll = ({ deltaY }: WheelEvent) => {
+    const onScroll = (e: WheelEvent) => {
         setMode('move')
         // @ts-ignore
-        const e: EventDetails = { deltaY }
-        emit('zoomDesktop', e)
+        const isTouchPad = e.wheelDeltaY ? e.wheelDeltaY === -3 * e.deltaY : e.deltaMode === 0
+
+        if (isTouchPad) {
+            // @ts-ignore
+            emit('zoomTrackPad', { deltaY: e.deltaY })
+        } else {
+            // @ts-ignore
+            emit('zoomMouseWheel', { deltaY: e.deltaY })
+        }
     }
     
     const onPinch = (e: EventDetails) => {  

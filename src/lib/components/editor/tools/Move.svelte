@@ -26,7 +26,7 @@
         lastDelta = { x: deltaX, y: deltaY }
     }
 
-    const onZoomMobile = ({ scale }: ToolEvent) => {
+    const zoomMobile = ({ scale }: ToolEvent) => {
         const speed = SPEED * $zoom          
         const newZoom = $zoom + ((scale - lastScale) * speed)
         
@@ -34,9 +34,14 @@
         setZoom(newZoom)
     }  
     
-    const onZoomDesktop = ({ deltaY }: ToolEvent) => {            
+    const zoomTrackPad = ({ deltaY }: ToolEvent) => {            
         const newZoom = $zoom - (deltaY / 20)
-        
+        setZoom(newZoom)
+    }
+    
+    const zoomMouseWheel = ({ deltaY }: ToolEvent) => {            
+        const deltaYClamped = clamp(deltaY, -5, 5) * $zoom
+        const newZoom = $zoom - (deltaYClamped / 20)
         setZoom(newZoom)
     }
 
@@ -54,7 +59,8 @@
     listenToEvents<MoveEvent>('move', {
         panMove: onMove,
         panEnd: onEnd,
-        zoomMobile: onZoomMobile,
-        zoomDesktop: onZoomDesktop,
+        zoomMobile,
+        zoomMouseWheel,
+        zoomTrackPad,
     })
 </script>

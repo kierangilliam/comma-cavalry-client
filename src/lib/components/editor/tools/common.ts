@@ -5,7 +5,7 @@ import { get, Writable } from 'svelte/store'
 import { brushSize, brushType, toolMode } from '../state'
 
 export type BrushEvent = 'brushStart' | 'brushMove' | 'brushEnd'
-export type MoveEvent = 'zoomMobile' | 'zoomDesktop' | 'panMove' | 'panEnd'
+export type MoveEvent = 'zoomMobile' | 'zoomTrackPad' | 'zoomMouseWheel' | 'panMove' | 'panEnd'
 export type FillEvent = 'fill'
 export type AutoLineEvent = 'autoLineStart' | 'autoLineMove' | 'autoLineEnd'
 export type UndoEvent = 'undo'
