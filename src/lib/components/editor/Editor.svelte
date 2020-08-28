@@ -71,10 +71,7 @@
     Something went wrong.
 {/if}
 
-<ToolBar 
-    on:github={() => showGit = true} 
-    on:help={() => showTutorial = true} 
-/>
+<ToolBar {id} on:help={() => showTutorial = true} />
 
 <BottomSheet>
     <Controls 
