@@ -10,6 +10,7 @@
     import { Editor } from '@lib/components'
     // import TutorialModal fro../labeler/_lib/tutorial/TutorialModal.sveltelte'
     import GitModal from './_lib/GitModal.svelte'
+    import Pagination from './_lib/Pagination.svelte'
     import { derived, writable } from 'svelte/store'
     import { notifications } from '@lib/notifications'
 
@@ -60,6 +61,7 @@
             return ['', '']
         }
         
+        console.log('index', index)
         const { maskURL, imageURL, id } = pr.files[index]        
         const entry = getEntry(id)
         
@@ -67,10 +69,6 @@
 
         return [id, imageURL, maskURL]
     }
-
-    /**
-     * TODO WHY DEOES THIS HAVE TO BE DIFFERENT FROM THE ENTRY API?
-     */ 
 
     const onSave = () => {
         const { id } = $params
@@ -120,6 +118,10 @@
     {onExit}
     {onSave}
 />
+
+{#if pr} 
+    <Pagination {pr} bind:index={workingIndex} />
+{/if}
 
 <!-- {#if !loading}
     <TutorialModal bind:active={$showTutorial} />            
