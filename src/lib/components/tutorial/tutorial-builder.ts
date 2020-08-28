@@ -44,9 +44,17 @@ const keyboardShortcutBuilder = (shortcuts: Record<string, string>) =>
 
 const toolShortcuts = keyboardShortcutBuilder(TOOL_SHORTCUTS)
 
+const sliderShortcuts = keyboardShortcutBuilder({
+    'o': 'toggle opacity',
+    '[': 'increase opacity',
+    ']': 'decrease opacity',
+    '{': 'decrease brush size',
+    '}': 'increase brush size',
+})
+
 const desktopShortcuts = (extraShortcuts?: Record<string, string>) => `
-    <div style='display: grid; grid-template-rows: repeat(6, 1fr); grid-auto-flow: column;'>
-        ${[...colorShortcuts, ...toolShortcuts, ...keyboardShortcutBuilder(extraShortcuts)].join('')}
+    <div style='display: grid; grid-template-rows: repeat(9, 1fr); grid-auto-flow: column;'>
+        ${[...colorShortcuts, ...toolShortcuts, ...sliderShortcuts, ...keyboardShortcutBuilder(extraShortcuts)].join('')}
     </div>
 `
 
