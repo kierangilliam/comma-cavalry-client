@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import { isDesktop } from '@lib/capacitor'
     import { Flex } from '@ollopa/cedar'
     import Hammer from 'hammerjs'
     import { onMount, tick } from 'svelte'
@@ -40,6 +41,10 @@
         transform: translateX(${-$xPos}px); 
     `
 
+    const inc = () => sectionIndex = Math.min(++sectionIndex, sections.length - 1)
+    
+    const dec = () => sectionIndex = Math.max(--sectionIndex, 0)
+
     const calculateSectionHeights = () => {        
         sectionHeights = Array.from(carousel.children).map(c => 
             Array.from(c.children).reduce((acc, e) => 
@@ -48,8 +53,9 @@
         )
     }
 
-    const setXPosition = () => {
+    const finalize = () => {
         $xPos = sectionIndex * sectionWidth
+        gestures.get('pan').set({ enable: true })
     }
 
     onMount(async () => {
@@ -64,9 +70,8 @@
         await tick()
         calculateSectionHeights()
 
-        carousel.addEventListener('touchstart', () => {
-            isFirstTouch = true
-        })        
+        carousel.addEventListener('touchstart', () => isFirstTouch = true)        
+        carousel.addEventListener('mousedown', () => isFirstTouch = true)        
 
         gestures.on('panleft panright', ({ type, deltaX, velocityX }) => {            
             if (isFirstTouch) {
@@ -83,20 +88,30 @@
             $xPos = -deltaX + xStart
             
             if (exceedsVelocityThreshold || gotoNext || gotoPrevious) {
-                sectionIndex = type === 'panleft'
-                    ? Math.min(++sectionIndex, sections.length - 1)
-                    : Math.max(--sectionIndex, 0)
+                if (type === 'panleft') inc()
+                else dec()
                 
                 // Disable pan if we surpassed a threshold
                 gestures.get('pan').set({ enable: false })
             }             
         })
 
-        carousel.addEventListener('touchend', () => {
-            setXPosition()
-            gestures.get('pan').set({ enable: true })
-        })
+        carousel.addEventListener('touchend', finalize)
+        carousel.addEventListener('mouseup', finalize)
     })
+
+    if (isDesktop) {
+        document.addEventListener('keyup', ({ key, cancelBubble }) => {
+            if (key === 'ArrowRight') {
+                inc() 
+                finalize()
+            }
+            else if (key === 'ArrowLeft') {
+                dec()
+                finalize()
+            }
+        }, {})
+    }
 </script>
 
 <div 
@@ -116,7 +131,7 @@
         <div 
             class='bubble' 
             class:active={sectionIndex === i}
-            on:click={() => { sectionIndex = i; setXPosition() }}
+            on:click={() => { sectionIndex = i; finalize() }}
         ></div>
     {/each}
 </Flex>
@@ -135,6 +150,7 @@
         width: var(--bubbleSize);
         height: var(--bubbleSize);
         transition: all 250ms ease-out;
+        cursor: pointer;
     }
     .bubble.active {
         background: var(--white);
