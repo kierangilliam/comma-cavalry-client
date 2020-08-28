@@ -8,7 +8,7 @@
     import { getEntry } from '@lib/storage'
     import { persistent } from '@lib/utils'
     import { Editor } from '@lib/components'
-    // import TutorialModal fro../labeler/_lib/tutorial/TutorialModal.sveltelte'
+    import { TutorialModal, baseTutorials } from '@lib/components/tutorial'
     import GitModal from './_lib/GitModal.svelte'
     import Pagination from './_lib/Pagination.svelte'
     import { derived, writable } from 'svelte/store'
@@ -111,6 +111,7 @@
     bind:loading
     bind:showGit
     bind:showTutorial={$showTutorial}
+    {id}
     {imageURL}
     {maskURL}
     {paths} 
@@ -123,7 +124,7 @@
     <Pagination {pr} bind:index={workingIndex} />
 {/if}
 
-<!-- {#if !loading}
-    <TutorialModal bind:active={$showTutorial} />            
+{#if !loading}
+    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials} />            
     <GitModal bind:active={showGit} paths={$paths} /> 
-{/if} -->
+{/if}

@@ -7,7 +7,7 @@
     import { getEntry } from '@lib/storage'
     import { persistent } from '@lib/utils'
     import { Editor } from '@lib/components'
-    import TutorialModal from './_lib/tutorial/TutorialModal.svelte'
+    import { TutorialModal, baseTutorials } from '@lib/components/tutorial'
     import GitModal from './_lib/GitModal.svelte'
     import { derived, writable } from 'svelte/store'
     import { notifications } from '@lib/notifications'
@@ -99,6 +99,6 @@
 />
 
 {#if !loading}
-    <TutorialModal bind:active={$showTutorial} />            
+    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials} />            
     <GitModal bind:active={showGit} paths={$paths} /> 
 {/if}
