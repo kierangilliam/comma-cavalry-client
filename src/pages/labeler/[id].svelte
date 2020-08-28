@@ -99,6 +99,6 @@
 />
 
 {#if !loading}
-    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials} />            
+    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials({})} />            
     <GitModal bind:active={showGit} paths={$paths} /> 
 {/if}

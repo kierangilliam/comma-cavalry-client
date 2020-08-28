@@ -14,50 +14,54 @@ const color = (name: keyof typeof PATH_COLORS) => {
     else if (name === 'empty') textColor = 'var(--black)'
 
     return `
-            <span class='tag' style='
-                color: ${textColor}; 
-                background: ${color};
-                margin-right: var(--s-2);        
-            '>${name}</span>
-        `
+        <span class='tag' style='
+            color: ${textColor}; 
+            background: ${color};
+            margin-right: var(--s-2);        
+        '>${name}</span>
+    `
 }
 
 const colorShortcuts = Object.entries(COLOR_SHORTCUTS).map(([code, path]) =>
     `
-            <div style='padding: var(--s-1) 0'>
-                <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
-                ${color(path)}
-            </div>
-        `
-)
-
-const toolShortcuts = Object.entries(TOOL_SHORTCUTS).map(([code, tool]) =>
+    <div style='padding: var(--s-1) 0'>
+        <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
+        ${color(path)}
+    </div>
     `
-            <div style='padding: var(--s-1) 0'>
-                <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
-                <span class='tag' style='background: var(--gray);'>${tool}</span>
-            </div>
-        `
 )
 
-const desktopShortcuts = `
-        <div style='display: grid; grid-template-columns: 1fr 1fr;'>
-            ${[...colorShortcuts, ...toolShortcuts].join('')}
+// Default looking keyboard shortcut
+const keyboardShortcutBuilder = (shortcuts: Record<string, string>) =>
+    Object.entries(shortcuts).map(([code, tool]) =>
+        `
+        <div style='padding: var(--s-1) 0'>
+            <span class='tag monospace' style='margin-right: var(--s-2)'>${code}</span>
+            <span class='tag' style='background: var(--gray);'>${tool}</span>
         </div>
-    `
+        `
+    )
+
+const toolShortcuts = keyboardShortcutBuilder(TOOL_SHORTCUTS)
+
+const desktopShortcuts = (extraShortcuts?: Record<string, string>) => `
+    <div style='display: grid; grid-template-rows: repeat(6, 1fr); grid-auto-flow: column;'>
+        ${[...colorShortcuts, ...toolShortcuts, ...keyboardShortcutBuilder(extraShortcuts)].join('')}
+    </div>
+`
 
 export const mobileShortcuts = `
-        In the editor, press finger down for half a second to toggle ${bold('move mode')}. 
-        ${spacer}
-        In move mode, drag your finger across the screen to pan around. 
-        ${spacer}
-        When you are done, hold your finger down to switch back into drawing mode.
-    `
+    In the editor, press finger down for half a second to toggle ${bold('move mode')}. 
+    ${spacer}
+    In move mode, drag your finger across the screen to pan around. 
+    ${spacer}
+    When you are done, hold your finger down to switch back into drawing mode.
+`
 
-export const baseTutorials = [
+export const baseTutorials = ({ extraDesktopShortcuts = {} }) => [
     {
         title: 'shortcuts',
-        body: isDesktop ? desktopShortcuts : mobileShortcuts,
+        body: isDesktop ? desktopShortcuts(extraDesktopShortcuts) : mobileShortcuts,
     },
     {
         title: 'color guide',

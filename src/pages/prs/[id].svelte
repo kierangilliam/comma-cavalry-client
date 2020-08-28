@@ -61,7 +61,6 @@
             return ['', '']
         }
         
-        console.log('index', index)
         const { maskURL, imageURL, id } = pr.files[index]        
         const entry = getEntry(id)
         
@@ -125,6 +124,8 @@
 {/if}
 
 {#if !loading}
-    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials} />            
     <GitModal bind:active={showGit} paths={$paths} /> 
+    <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials({
+        extraDesktopShortcuts: { n: 'next', p: 'previous' }
+    })} />            
 {/if}
