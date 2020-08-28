@@ -9,9 +9,9 @@ fs.removeSync('public')
 fs.copySync('../../dist', 'public')
 
 // For SSR we need to copy the template and bundle to our SSR function
-const bundle = {
-    date: new Date,
-    script: fs.readFileSync('public/build/bundle.js', 'utf8'),
-    template: fs.readFileSync('public/index.html', 'utf8')
-}
-fs.writeFileSync('api/ssr/bundle.json', JSON.stringify(bundle, null, 2))
+// const bundle = {
+//     date: new Date,
+//     script: fs.readFileSync('public/build/bundle.js', 'utf8'),
+//     template: fs.readFileSync('public/index.html', 'utf8')
+// }
+// fs.writeFileSync('api/ssr/bundle.json', JSON.stringify(bundle, null, 2))
