@@ -2,12 +2,20 @@
     import { Flex } from '@ollopa/cedar'
     import type { PullRequest } from '@lib/types'
     import { clamp } from '@lib/utils'
+    import { isDesktop } from '@lib/capacitor'
 
     export let pr: PullRequest
     export let index: number
 
     const inc = () => index = clamp(index + 1, 0, pr.files.length - 1)
     const dec = () => index = clamp(index - 1, 0, pr.files.length - 1)
+
+    if (isDesktop) {
+        document.addEventListener('keyup', ({ key }) => {
+            if (key === 'ArrowRight') inc() 
+            else if (key === 'ArrowLeft') dec()
+        })
+    }
 </script>
 
 <div>
