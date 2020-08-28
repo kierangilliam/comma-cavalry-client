@@ -2,11 +2,17 @@
     import { toolMode } from './state'
     import type { EditorContext, ToolMode } from '@lib/types'
     import { setMode, undo } from './utils'
+    import { fly } from 'svelte/transition'
     import { createEventDispatcher, getContext } from 'svelte'
+    import GitWidget from './GitWidget.svelte'
+
+    export let id: string
 
     const { paths } = getContext<EditorContext>('editor')
     const tools: ToolMode[] = ['brush', 'fill', 'autoLine', 'move']
     const dispatch = createEventDispatcher()
+    
+    let showGit = false
 </script>
 
 <div class='container'>
@@ -23,7 +29,12 @@
         <img src='/tools/undo.svg' alt='undo' on:click={() => undo(paths)} />
     </div>
     <div class='toolbar'>
-        <img src='/github.svg' alt='github' on:click={() => dispatch('github')} />
+        {#if showGit}
+            <div class='widget' transition:fly={{ x: 100, duration: 150 }}>
+                <GitWidget {id} paths={$paths} />
+            </div>
+        {/if}
+        <img src='/github.svg' alt='github' on:click={() => showGit = !showGit} />
         <img src='/help.svg' alt='help' on:click={() => dispatch('help')} />
     </div>
 </div>
@@ -40,16 +51,25 @@
         pointer-events: none; 
     }
 
+    .toolbar, .widget {
+        background: var(--background);
+        padding: var(--s-2) var(--s-3);
+        border-radius: var(--borderRadiusSmall);
+        pointer-events: all;
+    }
+
+    .widget {
+        position: absolute;
+        transform: translate(-66%, 33%);
+        z-index: 100;
+    }
+
     .toolbar {
         display: flex;
         margin-bottom: var(--s-2);
         justify-content: center;
         align-items: center;
         flex-direction: column;
-        background: var(--background);
-        padding: var(--s-2) var(--s-3);
-        border-radius: var(--borderRadiusSmall);
-        pointer-events: all;
     }
 
     img {

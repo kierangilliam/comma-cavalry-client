@@ -8,7 +8,6 @@
     import { persistent } from '@lib/utils'
     import { Editor } from '@lib/components'
     import { TutorialModal, baseTutorials } from '@lib/components/tutorial'
-    import GitModal from './_lib/GitModal.svelte'
     import { derived, writable } from 'svelte/store'
     import { notifications } from '@lib/notifications'
     import { getImage } from '@gql'
@@ -100,5 +99,4 @@
 
 {#if !loading}
     <TutorialModal bind:active={$showTutorial} tutorials={baseTutorials({})} />            
-    <GitModal bind:active={showGit} paths={$paths} /> 
 {/if}
