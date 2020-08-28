@@ -20,7 +20,8 @@
 
 <div>
     <span>
-        PR {pr.number} ({index + 1} of {pr.files.length})
+        <a target='blank' href={pr.url}>PR {pr.number}</a>
+        ({index + 1} of {pr.files.length})
     </span>
     <Flex justify='between'>
         <span class='link' on:click={dec}>prev</span>
@@ -33,9 +34,15 @@
         position: absolute;
         border-radius: var(--borderRadiusSmall);
         background: var(--black);
-        padding: var(--s-2) var(--s-3);
+        padding: var(--s-2) var(--s-4);
         top: calc(env(safe-area-inset-top) + 16px);     
         left: calc(env(safe-area-inset-left) + 16px);     
+    }
+
+    a {
+        font-weight: normal;
+        text-decoration: underline;
+        color: var(--white);
     }
 
     .link {

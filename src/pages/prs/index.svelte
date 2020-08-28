@@ -22,6 +22,7 @@
                     map={files[0].depthMapURL}
                     scale={.2}
                     drift={10}
+                    on:click={() => $goto(`../${number}`)}
                     hoverable 
                 />
                 <Spacer s={4} />
