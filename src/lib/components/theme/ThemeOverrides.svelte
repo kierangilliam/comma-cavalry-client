@@ -1,8 +1,22 @@
 <script lang='ts'>
     import { COLORS } from '@lib/constants'
     import { setCSSVar } from '@lib/utils'    
+    import { setContext } from 'svelte'
+    import { writable } from 'svelte/store'
+
+    const overflowHidden = writable<boolean>(false)
+
+    setContext('theme', { overflowHidden })
 
     Object.entries(COLORS).forEach(setCSSVar)
+
+    overflowHidden.subscribe(hidden => {
+        if (hidden) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'scroll-y'
+        }
+    })
 </script>
 
 <slot></slot>
@@ -104,7 +118,6 @@
     /* TODO move to ollopa */
     :global(body) {
         margin: 0;
-        overflow: hidden; /* ollopa mobile theme */
     }
     :global(button:hover) {
         cursor: pointer;

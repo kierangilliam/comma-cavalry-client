@@ -5,7 +5,7 @@
     import { H4, Spacer } from '@ollopa/cedar'
     import LoadingScreen from './LoadingScreen.svelte'
     import BottomSheet from '../BottomSheet.svelte'
-    import { setContext } from 'svelte'
+    import { getContext, onDestroy, onMount, setContext } from 'svelte'
     import type { Readable, Writable } from 'svelte/store'
     import { loadImageFromUrl } from '@lib/utils'
 
@@ -23,6 +23,8 @@
     export let loading: boolean
     export let error: Error
 
+    const { overflowHidden } = getContext('theme')
+
     let image: HTMLImageElement
     let mask: HTMLImageElement
     let truePathColor = false
@@ -30,6 +32,14 @@
     setContext<EditorContext>('editor', { paths })
 
     $: loadDetails(imageURL, maskURL)
+
+    onMount(() => {
+        $overflowHidden = true
+    })
+
+    onDestroy(() => {
+        $overflowHidden = false
+    })
 
     const loadDetails = async (_, __) => {
         loading = true 
