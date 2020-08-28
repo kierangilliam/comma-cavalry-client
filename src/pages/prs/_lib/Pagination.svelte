@@ -12,8 +12,8 @@
 
     if (isDesktop) {
         document.addEventListener('keyup', ({ key }) => {
-            if (key === 'ArrowRight') inc() 
-            else if (key === 'ArrowLeft') dec()
+            if (key === 'n') inc() 
+            else if (key === 'p') dec()
         })
     }
 </script>
