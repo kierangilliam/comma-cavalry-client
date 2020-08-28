@@ -11,6 +11,7 @@
     export let speed = 1
     export let source = 'https://raw.githubusercontent.com/commaai/comma10k/master/imgs/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008.png' 
     export let map = 'https://ik.imagekit.io/ollopa/0260_e61068239ce72500_2018-07-31--22-35-41_1_1008_Cq9e6Ou8dj.jpg' 
+    export let hoverable: boolean = false
     
     const DRIFT = drift    
 
@@ -139,7 +140,7 @@
 </script>
 
 {#if map && hasWebglSupport()}
-    <div {style}>
+    <div class:hoverable {style}>
         <canvas 
             bind:this={target}
             width={scaledWidthCanvas}
@@ -152,5 +153,17 @@
     </div>
 {:else}
     <!-- Fallback -->
-    <img {style} src={source} alt=''>
+    <img class:hoverable {style} src={source} alt=''>
 {/if}
+
+<style>
+    div {
+        overflow: hidden;
+    }
+
+    .hoverable:hover {
+        cursor: pointer;
+        --shadowOffset: 1.5px;
+        transform: scale(.93);
+    }
+</style>

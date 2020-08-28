@@ -18,6 +18,7 @@ export type Query = {
   image: Image;
   inProgress: Images;
   openPullRequests: PullRequests;
+  pullRequest: PullRequest;
   unclaimed: Image;
   githubToken: Scalars['String'];
 };
@@ -30,6 +31,11 @@ export type QueryImageArgs = {
 
 export type QueryInProgressArgs = {
   username: Scalars['String'];
+};
+
+
+export type QueryPullRequestArgs = {
+  number: Scalars['Int'];
 };
 
 
@@ -84,6 +90,7 @@ export type PullRequestFile = {
   filename: Scalars['String'];
   maskURL: Scalars['String'];
   imageURL: Scalars['String'];
+  depthMapURL?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {

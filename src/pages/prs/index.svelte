@@ -1,8 +1,8 @@
 <script lang='ts'>
     import { getOpenPRs } from '@lib/gql'
-    import { Image } from '@lib/components'
     import { H2, Flex, Spacer, Button } from '@ollopa/cedar'
     import { goto } from '@sveltech/routify'
+    import { DisplacementFilter } from '@lib/components'
 
     let prs = getOpenPRs()
 </script>
@@ -17,11 +17,11 @@
     {:then prs}
         {#each prs as { url, number, files }}
             <Flex justify='none'>
-                <Image 
-                    on:click={() => $goto(`../${number}`)}
-                    url={files[0].maskURL} 
-                    alt='pr {number}' 
-                    scale={.2} 
+                <DisplacementFilter 
+                    source={files[0].maskURL}                    
+                    map={files[0].depthMapURL}
+                    scale={.2}
+                    drift={10}
                     hoverable 
                 />
                 <Spacer s={4} />
@@ -46,10 +46,6 @@
         margin: 0 auto;
         max-width: 600px;
         padding: var(--viewPadding);
-    }
-
-    img {
-        width: 200px;
     }
 
     .details {
